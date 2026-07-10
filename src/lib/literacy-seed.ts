@@ -1964,7 +1964,7 @@ export const SEED_DICT: DictEntry[] = [
 ];
 
 
-export const MEME_TRIGGERS = ["어쩔티비", "저쩔티비", "누칼협", "핑프", "억텐", "찐따", "노잼", "꺼져", "존버", "ㅅㅂ", "ㅄ", "ㅈㄴ", "빡친다", "개짜증"];
+export const MEME_TRIGGERS = ["어쩔티비", "저쩔티비", "누칼협", "핑프", "억텐", "찐따", "노잼", "꺼져", "존버", "ㅅㅂ", "ㅄ", "ㅈㄴ", "빡친다", "개짜증", "야르", "개이득", "존잼", "존못", "존예", "존맛", "알빠노", "샤갈", "긁", "안물안궁", "뚝딱거리"];
 
 // Dynamic feedback arrays keyed by attempt count (0-based).
 export const MEME_FEEDBACK = [
@@ -2000,6 +2000,16 @@ export type Scenario = {
   guide: string;
   stages: ScenarioStage[];
   completeBadge?: string;
+  /** Class level (Lv.1~5) required to unlock this chatroom */
+  unlockLevel: number;
+  /** Optional short subtitle shown under NPC name */
+  subtitle?: string;
+  /**
+   * Reverse-correction mode: student plays the "teacher" correcting the NPC.
+   * Detected slang triggers in NPC lines are shown in the guide; student's
+   * reply must be polite and slang-free to advance.
+   */
+  correctionMode?: boolean;
 };
 
 export type ScenarioStage = {
@@ -2022,6 +2032,8 @@ export const SCENARIOS: Scenario[] = [
     goodExampleHint: "죄송합니다. 늦잠을 자서 늦었습니다. 앞으로 조심하겠습니다.",
     guide: "선생님께 죄송한 마음을 담아 상황을 설명해 보세요. '죄송합니다'로 문장을 시작해 볼까요?",
     completeBadge: "🎖️ 예절 배지 획득 · 담임 선생님",
+    unlockLevel: 1,
+    subtitle: "3-2 담임",
     stages: [
       {
         npc: "○○아, 오늘 왜 지각했니? 무슨 일 있었어?",
@@ -2051,6 +2063,8 @@ export const SCENARIOS: Scenario[] = [
     goodExampleHint: "죄송해요, 조금만 더 보고 바로 숙제할게요.",
     guide: "부모님을 존중하는 마음으로, 앞으로 어떻게 할지 계획을 담아 답해 보세요.",
     completeBadge: "🎖️ 예절 배지 획득 · 엄마와의 대화",
+    unlockLevel: 2,
+    subtitle: "우리집 ♥",
     stages: [
       {
         npc: "핸드폰만 보고 있네? 숙제는 다 했어?",
@@ -2080,6 +2094,8 @@ export const SCENARIOS: Scenario[] = [
     goodExampleHint: "안녕! 나는 ○○이야. 만나서 반가워.",
     guide: "밝게 인사한 뒤, 자신의 이름을 소개하고 반가운 마음을 표현해 보세요.",
     completeBadge: "🎖️ 예절 배지 획득 · 새 친구 사귀기",
+    unlockLevel: 3,
+    subtitle: "옆 반 · 하늘",
     stages: [
       {
         npc: "저기, 운동장이 어느 쪽이야? 나 오늘 전학 왔거든.",
@@ -2109,6 +2125,8 @@ export const SCENARIOS: Scenario[] = [
     goodExampleHint: "네, 죄송합니다. 조용히 하겠습니다.",
     guide: "규칙을 지키지 못한 점을 인정하고 앞으로의 행동을 약속하는 문장으로 답해 보세요.",
     completeBadge: "🎖️ 매너 배지 획득 · 도서관 예절",
+    unlockLevel: 4,
+    subtitle: "학교 도서관",
     stages: [
       {
         npc: "얘야, 도서관에서 조금 시끄러웠단다. 어떻게 해야 할까?",
@@ -2127,6 +2145,40 @@ export const SCENARIOS: Scenario[] = [
         guide: "3단계 · 감사 인사와 함께 앞으로의 다짐을 짧게 전해요.",
         hint: "감사합니다! 앞으로 규칙을 잘 지킬게요.",
         praise: "🎉 매너 배지 획득! 우리 도서관의 자랑이야. 대화 종료!",
+      },
+    ],
+  },
+  {
+    id: "slang-master",
+    npc: "유행어 마스터 김진우",
+    emoji: "🕹️",
+    opening: "야르! 오늘 PC방 개이득인 부분? 존잼 예상각인데 너 알빠노 하고 샤갈할 거임?",
+    goodExampleHint: "진우야, 유행어랑 비속어를 섞어 쓰지 말고 우리 고운 말로 대화하자.",
+    guide: "친구가 쓴 유행어와 비속어를 알아채고, 부드럽게 타이르며 바른 말로 고쳐주세요.",
+    completeBadge: "🏆 최종 수호 배지 획득 · 유행어 마스터 교정 완료",
+    unlockLevel: 5,
+    subtitle: "6학년 · 최종 보스",
+    correctionMode: true,
+    stages: [
+      {
+        npc: "야르! 오늘 PC방 개이득인 부분? 존잼 예상각인데 너 알빠노 하고 샤갈할 거임?",
+        guide:
+          "1단계 · 친구가 쓴 단어(야르·개이득·존잼·알빠노·샤갈)의 뜻을 생각하며, '유행어와 비속어를 섞어 쓰지 말고 고운 말로 대화하자'고 타이르듯 고쳐 주세요.",
+        hint: "진우야, 유행어와 비속어를 섞어 쓰지 말고 우리 고운 말로 이야기해 보자.",
+        praise: "어... 듣고 보니 내가 좀 심했나? 미안, 계속 얘기해봐.",
+      },
+      {
+        npc: "에이, 긁? 너 핑프처럼 뚝딱거리지 마셈. 어쩔티비 안물안궁임~",
+        guide:
+          "2단계 · 조롱하는 단어(긁·핑프·어쩔티비·안물안궁)에 화내지 말고, 상대를 배려하는 바른 문장으로 교정해 주세요.",
+        hint: "친구야, 내가 모르는 게 있으면 물어볼 수도 있지. 무시하는 말은 속상해.",
+        praise: "그러네... 나도 모르게 습관이 됐어. 좀 창피하다.",
+      },
+      {
+        npc: "헉... 진짜 들으니까 부끄럽네. 내가 유튜브 쇼츠를 너무 많이 봐서 말투가 오염됐나 봐. 고쳐줘서 고마워!",
+        guide: "3단계 · 반성한 친구에게 앞으로도 함께 바른 말을 쓰자고 다정하게 응원해 주세요.",
+        hint: "괜찮아! 앞으로 우리 같이 고운 말 쓰자. 언제든 도와줄게.",
+        praise: "🏆 최종 수호 배지 획득! 네 덕분에 나도 바른 말을 쓰는 친구가 될게. 정말 고마워!",
       },
     ],
   },
