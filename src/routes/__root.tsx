@@ -80,11 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "바른말 수호대 — 초등 국어 매체 리터러시" },
       { name: "description", content: "초등학생과 함께 만드는 바른 우리말 사전과 대화 예절 시뮬레이터" },
       { name: "author", content: "바른말 수호대" },
-      { property: "og:title", content: "바른말 수호대" },
-      { property: "og:description", content: "밈과 유행어 속에서 고운 말을 지키는 우리 반 리터러시 프로젝트" },
+      { property: "og:title", content: "바른말 수호대 — 초등 국어 매체 리터러시" },
+      { property: "og:description", content: "초등학생과 함께 만드는 바른 우리말 사전과 대화 예절 시뮬레이터" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "바른말 수호대 — 초등 국어 매체 리터러시" },
+      { name: "twitter:description", content: "초등학생과 함께 만드는 바른 우리말 사전과 대화 예절 시뮬레이터" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/30d825a9-dceb-4b5b-841f-f294c8683a8b/id-preview-c9b10eb5--c7048151-1aba-4248-b2b3-bf16423336e2.lovable.app-1783698490932.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/30d825a9-dceb-4b5b-841f-f294c8683a8b/id-preview-c9b10eb5--c7048151-1aba-4248-b2b3-bf16423336e2.lovable.app-1783698490932.png" },
     ],
     links: [
       {
