@@ -29,8 +29,8 @@ function Index() {
   const lv = levelOf(state.xp);
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: "linear-gradient(180deg, oklch(0.96 0.03 190), oklch(0.985 0.015 190))" }}>
-      <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b-2 border-[color:var(--border)]">
+    <div className="min-h-screen pb-24 pastel-bg">
+      <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
         <div className="max-w-6xl mx-auto grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="text-3xl shrink-0">👑</div>
@@ -81,7 +81,7 @@ function Index() {
         {tab === "dash" && <DashboardTab dict={dict} state={state} />}
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 z-30 bg-white border-t-2 border-[color:var(--border)] shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.15)]">
+      <nav className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]">
         <div className="max-w-6xl mx-auto grid grid-cols-3">
           {[
             { id: "chat", icon: "💬", label: "챗봇/역할극" },
