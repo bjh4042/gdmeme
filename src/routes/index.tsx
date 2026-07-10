@@ -19,7 +19,7 @@ type Tab = "analyze" | "chat" | "quiz" | "dict";
 function Index() {
   const hydrated = useHydrated();
   const { student, setStudent } = useStudent();
-  const { dict, addProposal, setStatus, resetSeed } = useDictionary();
+  const { dict, addProposal, setStatus, updateEntry, resetSeed } = useDictionary();
   const { state, addXP } = useClassState(student?.classCode);
   const [tab, setTab] = useState<Tab>("analyze");
   const [teacherOpen, setTeacherOpen] = useState(false);
@@ -138,6 +138,11 @@ function Index() {
             if (w) addXP(20, `제안자 ${w.suggested_by}`, "approved", w.word);
           }}
           onReject={(id) => setStatus(id, "rejected")}
+          onUpdate={(id, patch) => {
+            updateEntry(id, patch);
+            const w = dict.find((d) => d.id === id);
+            addXP(0, "교사", "edit", w?.word);
+          }}
           onClose={() => setTeacherOpen(false)}
           onReset={() => {
             if (confirm("사전을 초기 시드 데이터로 되돌릴까요? (학생 제안은 사라집니다)")) resetSeed();

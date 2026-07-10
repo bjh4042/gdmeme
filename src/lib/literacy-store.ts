@@ -149,11 +149,43 @@ export function useDictionary() {
     });
   }, []);
 
+  const updateEntry = useCallback(
+    (
+      id: number,
+      patch: {
+        word?: string;
+        student_definition?: string;
+        evaluations?: Evaluation;
+        alternatives?: string[];
+        source?: string;
+      },
+    ) => {
+      setDict((prev) => {
+        const next = prev.map((d) => {
+          if (d.id !== id) return d;
+          const evaluations = patch.evaluations ?? d.evaluations;
+          const total = Math.round(computeTotal(evaluations));
+          return {
+            ...d,
+            ...patch,
+            evaluations,
+            total_harmful_score: total,
+            grade: gradeOf(total).label,
+            timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+          };
+        });
+        safeSet(DICT_KEY, next);
+        return next;
+      });
+    },
+    [],
+  );
+
   const resetSeed = useCallback(() => {
     persist(SEED_DICT);
   }, [persist]);
 
-  return { dict, addProposal, setStatus, resetSeed, persist };
+  return { dict, addProposal, setStatus, updateEntry, resetSeed, persist };
 }
 
 export function useClassState(classCode: string | undefined) {
