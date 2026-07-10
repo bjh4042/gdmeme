@@ -357,7 +357,7 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
                 ? `🔒 학급 레벨 ${scenario.unlockLevel} 달성 시 오픈`
                 : room.done
                 ? "🎖️ 대화 완료"
-                : `Stg ${room.stage + 1}/${scenario.stages.length} · ${scenario.subtitle ?? ""}`}
+                : `Stg ${room.stage + 1}/${scenario.stages.length}`}
             </div>
           </div>
           <div className="flex items-center gap-2 text-white/80">
