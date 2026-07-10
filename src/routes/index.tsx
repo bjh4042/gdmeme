@@ -47,9 +47,12 @@ function Index() {
   }
 
   return (
-    <div className="min-h-screen pb-24 pastel-bg">
+    <div
+      className="min-h-screen pastel-bg"
+      style={{ paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))" }}
+    >
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
-        <div className="max-w-6xl mx-auto grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
+        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="text-3xl shrink-0">👑</div>
             <div className="min-w-0">
@@ -80,7 +83,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 py-4 sm:px-4 sm:py-6">
         {tab === "analyze" && (
           <AnalyzerTab
             dict={dict}
@@ -120,8 +123,11 @@ function Index() {
         )}
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]">
-        <div className="max-w-6xl mx-auto grid grid-cols-4">
+      <nav
+        className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
+        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-4">
           {[
             { id: "analyze", icon: "🔎", label: "밈 분석기" },
             { id: "chat", icon: "💬", label: "예절 역할극" },
@@ -131,12 +137,12 @@ function Index() {
             <button
               key={t.id}
               onClick={() => setTab(t.id as Tab)}
-              className={`py-3 flex flex-col items-center gap-0.5 font-bold text-xs transition ${
+              className={`py-2.5 sm:py-3 min-h-[56px] flex flex-col items-center justify-center gap-0.5 font-bold text-[11px] sm:text-xs transition ${
                 tab === t.id ? "text-[color:var(--mint-deep)]" : "text-muted-foreground"
               }`}
             >
-              <span className="text-2xl">{t.icon}</span>
-              {t.label}
+              <span className="tabbar-icon text-2xl leading-none">{t.icon}</span>
+              <span className="tabbar-label truncate max-w-full px-1">{t.label}</span>
               {tab === t.id && <span className="w-8 h-1 rounded-full bg-[color:var(--mint-deep)]" />}
             </button>
           ))}

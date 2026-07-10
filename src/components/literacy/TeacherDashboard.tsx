@@ -108,8 +108,9 @@ export function TeacherDashboard({
   const editingStudentRec = editingStudent ? students.find((s) => s.id === editingStudent) ?? null : null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-4">
-      <div className="max-w-4xl mx-auto rounded-3xl bg-card p-6 border-2 border-[color:var(--navy)]">
+    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-3 sm:p-4 scroll-touch">
+      <div className="w-[96%] sm:w-full max-w-4xl mx-auto rounded-3xl bg-card p-4 sm:p-6 border-2 border-[color:var(--navy)]"
+           style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
           <div className="min-w-0">
             <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">🧑‍🏫 교사 대시보드</h3>
@@ -248,7 +249,9 @@ export function TeacherDashboard({
                 아직 등록된 학생이 없습니다.
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
+              <>
+              {/* Desktop table */}
+              <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
                 <table className="w-full text-sm">
                   <thead className="bg-[color:var(--muted)] text-xs">
                     <tr>
@@ -303,6 +306,49 @@ export function TeacherDashboard({
                   </tbody>
                 </table>
               </div>
+              {/* Mobile card list */}
+              <div className="md:hidden space-y-2">
+                {studentList.map((s) => {
+                  const lv = levelOf(s.xp);
+                  const mine = s.classCode === currentClassCode;
+                  return (
+                    <div key={s.id} className={`rounded-2xl border-2 border-[color:var(--border)] p-3 ${mine ? "" : "opacity-70"}`}>
+                      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                        <div className="min-w-0">
+                          <div className="font-black text-[color:var(--navy)] truncate">{s.name}</div>
+                          <div className="font-mono text-[11px] text-muted-foreground truncate">{s.id}</div>
+                        </div>
+                        <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
+                          Lv.{lv.current.lv} · {s.xp}XP
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1 justify-end">
+                        <button
+                          onClick={() => setEditingStudent(s.id)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                        >
+                          <Pencil size={12} /> 정보 수정
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
+                              )
+                            ) {
+                              onDeleteStudent(s.id);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)]"
+                        >
+                          <Trash2 size={12} /> 삭제
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              </>
             )}
           </>
         )}
@@ -511,7 +557,7 @@ function EditModal({
 
   return (
     <GlassModal title="✏️ 데이터 수정" subtitle={entry.word} onClose={onClose}>
-      <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+      <div className="p-4 sm:p-6 space-y-5 flex-1 min-h-0 overflow-y-auto scroll-touch">
         <Field label="낱말명">
           <input
             value={word}
@@ -643,7 +689,7 @@ function StudentEditModal({
 
   return (
     <GlassModal title="✏️ 학생 정보 수정" subtitle={`${student.id} · ${student.name}`} onClose={onClose}>
-      <div className="p-6 space-y-5">
+      <div className="p-4 sm:p-6 space-y-5 flex-1 min-h-0 overflow-y-auto scroll-touch">
         <Field label="이름">
           <input
             value={name}
@@ -725,20 +771,20 @@ function GlassModal({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm overflow-y-auto p-4 flex items-start sm:items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-3 sm:p-4 flex items-center justify-center animate-fade-in">
       <div
-        className="w-full max-w-2xl rounded-3xl border border-white/60 shadow-2xl overflow-hidden"
+        className="w-[92%] sm:w-full max-w-2xl max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
         style={{
           background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
           backdropFilter: "blur(24px) saturate(160%)",
         }}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-6 py-4 border-b border-white/50 bg-white/40">
+        <div className="shrink-0 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/50 bg-white/40">
           <div className="min-w-0">
             <div className="text-xs font-bold text-[color:var(--mint-deep)]">{title}</div>
             {subtitle && <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{subtitle}</h3>}
           </div>
-          <button onClick={onClose} className="w-9 h-9 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
+          <button onClick={onClose} className="shrink-0 w-11 h-11 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
             <X size={18} />
           </button>
         </div>
@@ -758,7 +804,7 @@ function ModalFooter({
   disabled?: boolean;
 }) {
   return (
-    <div className="px-6 py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
+    <div className="shrink-0 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
       <button
         onClick={onClose}
         className="px-4 py-2 rounded-xl bg-[color:var(--muted)] text-sm font-bold"

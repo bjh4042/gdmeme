@@ -395,7 +395,7 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
         ) : (
           <>
             {/* Chat area */}
-            <div className="flex-1 p-3 space-y-2 overflow-y-auto">
+            <div className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
               <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
                 {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
               </div>
@@ -444,7 +444,7 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
             </div>
 
             {/* Guide */}
-            <div className="mx-3 mb-2 flex items-start gap-2 rounded-2xl bg-white/10 backdrop-blur border border-white/10 px-3 py-2 text-xs text-white shadow-sm animate-fade-in" key={`g-${scenario.id}-${room.stage}-${room.done}`}>
+            <div className="shrink-0 mx-3 mb-2 flex items-start gap-2 rounded-2xl bg-white/10 backdrop-blur border border-white/10 px-3 py-2 text-xs text-white shadow-sm animate-fade-in max-h-[30vh] overflow-y-auto scroll-touch" key={`g-${scenario.id}-${room.stage}-${room.done}`}>
               <Lightbulb size={14} className="mt-0.5 shrink-0 text-[#FEE500]" />
               <div className="min-w-0">
                 <b>💡 가이드:</b> {guideText}
@@ -462,8 +462,8 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
             </div>
 
             {/* Input bar */}
-            <div className="p-2 bg-[#111] grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center border-t border-white/5">
-              <button className="w-9 h-9 grid place-items-center rounded-full text-white/60 hover:bg-white/5" aria-label="추가"><Plus size={18} /></button>
+            <div className="shrink-0 p-2 bg-[#111] grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center border-t border-white/5">
+              <button className="shrink-0 w-11 h-11 grid place-items-center rounded-full text-white/60 hover:bg-white/5" aria-label="추가"><Plus size={18} /></button>
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -475,9 +475,10 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
               <button
                 onClick={send}
                 disabled={room.done}
-                className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[#FEE500] text-black px-4 py-2 text-sm font-bold hover:scale-[1.03] active:scale-95 transition disabled:opacity-40"
+                aria-label="전송"
+                className="shrink-0 inline-flex items-center justify-center gap-1 rounded-full bg-[#FEE500] text-black px-3 sm:px-4 min-w-[44px] min-h-[44px] text-sm font-bold hover:scale-[1.03] active:scale-95 transition disabled:opacity-40"
               >
-                <Send size={14} /> 전송
+                <Send size={16} /> <span className="hidden sm:inline">전송</span>
               </button>
             </div>
           </>
