@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Lightbulb, Send, Sparkles, Zap, Theater, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
+import { Lightbulb, Send, Sparkles, Zap, Theater, RefreshCw, CheckCircle2, XCircle, ChevronLeft, Menu, Search } from "lucide-react";
 import {
   SCENARIOS,
   QUIZZES,
@@ -152,46 +152,67 @@ function Roleplay({ onXP }: { onXP: (d: number, k: string, n?: string) => void }
         ))}
       </aside>
 
-      <div className="glass-card overflow-hidden flex flex-col min-h-[560px]">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 p-4 border-b border-white/60 bg-white/40">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="text-4xl shrink-0 w-14 h-14 grid place-items-center rounded-2xl bg-gradient-to-br from-[color:var(--mint)] to-[color:var(--accent)]">
-              {scenario.emoji}
-            </div>
-            <div className="min-w-0">
-              <div className="font-black text-[color:var(--navy)] truncate">{scenario.npc}</div>
-              <div className="text-xs text-muted-foreground">성취기준 4국01-02 · 대화 예절</div>
-            </div>
+      {/* KakaoTalk-themed chat room */}
+      <div className="rounded-3xl overflow-hidden flex flex-col min-h-[600px] shadow-[var(--shadow-soft)] border border-white/60" style={{ background: "#B2C7D9" }}>
+        {/* Top bar (KakaoTalk style) */}
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 bg-[#A2B8CB] text-[#1a1a1a]">
+          <button className="p-1 rounded hover:bg-black/5" aria-label="뒤로">
+            <ChevronLeft size={20} />
+          </button>
+          <div className="min-w-0 text-center">
+            <div className="font-bold truncate text-sm">{scenario.npc}</div>
+            <div className="text-[10px] opacity-70">성취기준 4국01-02 · 대화 예절</div>
           </div>
-          <div className="shrink-0 text-right">
-            <div className="text-2xl">{moodEmoji}</div>
-            <div className="w-28 h-2 rounded-full bg-white/70 overflow-hidden mt-1">
-              <div
-                className="h-full transition-all duration-500"
-                style={{ width: `${mood}%`, background: mood >= 40 ? "var(--safe)" : "var(--danger)" }}
-              />
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1" title={`대화 분위기 ${mood}점`}>
+              <span className="text-lg">{moodEmoji}</span>
+              <div className="w-16 h-1.5 rounded-full bg-white/60 overflow-hidden">
+                <div
+                  className="h-full transition-all duration-500"
+                  style={{ width: `${mood}%`, background: mood >= 40 ? "#22c55e" : "#ef4444" }}
+                />
+              </div>
             </div>
+            <button className="p-1 rounded hover:bg-black/5" aria-label="검색"><Search size={18} /></button>
+            <button className="p-1 rounded hover:bg-black/5" aria-label="메뉴"><Menu size={18} /></button>
           </div>
         </div>
 
-        <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+        {/* Chat area */}
+        <div className="flex-1 p-3 space-y-2 overflow-y-auto">
+          <div className="mx-auto w-fit text-[10px] px-3 py-0.5 rounded-full bg-black/15 text-white/95 font-medium">
+            {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
+          </div>
           {msgs.map((m, i) => (
             <div key={i} className={`flex animate-fade-in ${m.from === "me" ? "justify-end" : "justify-start"}`}>
               {m.from === "sys" ? (
-                <div className="mx-auto text-xs px-3 py-1.5 rounded-full bg-[color:var(--safe)]/25 text-[color:var(--navy)] font-bold">
+                <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/85 text-[color:var(--navy)] font-bold shadow-sm">
                   {m.text}
+                </div>
+              ) : m.from === "npc" ? (
+                <div className="flex items-end gap-1.5 max-w-[80%]">
+                  <div className="w-9 h-9 shrink-0 rounded-2xl bg-white grid place-items-center text-lg shadow-sm border border-white">
+                    {scenario.emoji}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] text-black/70 mb-0.5 ml-1">{scenario.npc}</div>
+                    <div
+                      className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words ${
+                        m.tone === "danger"
+                          ? "bg-red-100 text-[color:var(--navy)] border border-red-300"
+                          : m.tone === "warn"
+                          ? "bg-amber-100 text-[color:var(--navy)] border border-amber-300"
+                          : "bg-white text-[#111]"
+                      }`}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div
-                  className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm shadow-sm ${
-                    m.from === "me"
-                      ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)] rounded-br-md"
-                      : m.tone === "danger"
-                      ? "bg-[color:var(--danger)]/15 text-[color:var(--navy)] rounded-bl-md border border-[color:var(--danger)]/30"
-                      : m.tone === "warn"
-                      ? "bg-[color:var(--warn)]/25 text-[color:var(--navy)] rounded-bl-md border border-[color:var(--warn)]/40"
-                      : "bg-white/80 text-[color:var(--navy)] rounded-bl-md border border-white/60"
-                  }`}
+                  className="max-w-[80%] px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words text-[#111]"
+                  style={{ background: "#FEE500" }}
                 >
                   {m.text}
                 </div>
@@ -200,28 +221,30 @@ function Roleplay({ onXP }: { onXP: (d: number, k: string, n?: string) => void }
           ))}
         </div>
 
-        {/* Guide */}
-        <div className="mx-4 mb-2 flex items-start gap-2 rounded-2xl bg-gradient-to-r from-[color:var(--mint)]/60 to-[color:var(--accent)]/50 border border-white/60 px-3 py-2 text-xs text-[color:var(--navy)]">
-          <Lightbulb size={14} className="mt-0.5 shrink-0 text-[color:var(--mint-deep)]" />
+        {/* Guide (always visible above input) */}
+        <div className="mx-3 mb-2 flex items-start gap-2 rounded-2xl bg-white/95 border border-white px-3 py-2 text-xs text-[color:var(--navy)] shadow-sm">
+          <Lightbulb size={14} className="mt-0.5 shrink-0 text-[color:var(--warn)]" />
           <div className="min-w-0">
-            <b>가이드:</b> {scenario.guide}
+            <b>💡 가이드:</b> {scenario.guide}
             <div className="text-[11px] text-muted-foreground mt-0.5">예시 → "{scenario.goodExampleHint}"</div>
           </div>
         </div>
 
-        <div className="p-3 border-t border-white/60 bg-white/50 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+        {/* Input bar (KakaoTalk style) */}
+        <div className="p-2 bg-white grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center border-t border-black/5">
+          <button className="w-9 h-9 grid place-items-center rounded-full text-xl text-black/40 hover:bg-black/5" aria-label="추가">+</button>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send()}
             placeholder="바른 말로 답장해 보세요..."
-            className="min-w-0 rounded-2xl border-2 border-white/70 bg-white/80 px-4 py-3 outline-none focus:border-[color:var(--mint-deep)] transition"
+            className="min-w-0 rounded-full bg-[#F1F2F4] px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)] transition"
           />
           <button
             onClick={send}
-            className="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-[color:var(--mint-deep)] text-white px-5 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+            className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-4 py-2 text-sm font-bold hover:scale-[1.03] active:scale-95 transition"
           >
-            <Send size={16} /> 전송
+            <Send size={14} /> 전송
           </button>
         </div>
       </div>
