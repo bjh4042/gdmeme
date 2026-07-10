@@ -120,6 +120,7 @@ function kindLabel(k: string) {
   if (k === "quiz") return "밈 퀴즈 정답";
   if (k === "roleplay") return "역할극 통과";
   if (k === "approved") return "사전 승인";
+  if (k === "chat") return "챗봇 대화";
   return k;
 }
 

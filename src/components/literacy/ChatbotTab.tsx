@@ -93,6 +93,8 @@ function Roleplay({ onXP }: { onXP: (d: number, k: string, n?: string) => void }
       if (!cleared) {
         onXP(15, "roleplay", scenario.id);
         setCleared(true);
+      } else {
+        onXP(0, "chat", `[${scenario.npc}] 정중한 답변 "${text}"`);
       }
       return;
     }
@@ -101,19 +103,29 @@ function Roleplay({ onXP }: { onXP: (d: number, k: string, n?: string) => void }
     const idx = Math.min(wrongCount, 2);
     let tpl: string;
     let delta = 0;
+    let cause = "부적절";
     if (meme) {
       tpl = MEME_FEEDBACK[idx];
       delta = -25;
+      cause = `밈/비속어(${meme})`;
     } else if (short) {
       tpl = SHORT_FEEDBACK[idx];
       delta = -8;
+      cause = "너무 짧음";
     } else {
       tpl = IMPOLITE_FEEDBACK[idx];
       delta = -12;
+      cause = "예절 미흡";
     }
     setMood((v) => Math.max(0, v + delta));
-    setWrongCount((c) => c + 1);
+    const nextWrong = wrongCount + 1;
+    setWrongCount(nextWrong);
     pushNpc(fill(tpl, meme ?? text, scenario.goodExampleHint), meme ? "danger" : "warn");
+    onXP(
+      0,
+      "chat",
+      `[${scenario.npc}] "${text}" · ${cause} · 오답 ${nextWrong}회`,
+    );
   }
 
   const moodEmoji = mood >= 70 ? "😊" : mood >= 40 ? "😐" : mood >= 20 ? "😢" : "😠";

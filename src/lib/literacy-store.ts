@@ -47,7 +47,16 @@ export function useStudent() {
 export function useDictionary() {
   const [dict, setDict] = useState<DictEntry[]>([]);
   useEffect(() => {
-    setDict(safeGet<DictEntry[]>(DICT_KEY, SEED_DICT));
+    const raw = safeGet<DictEntry[]>(DICT_KEY, SEED_DICT);
+    // Migration: backfill missing `source` on older LocalStorage entries
+    let mutated = false;
+    const migrated = raw.map((d) => {
+      if (d.source && d.source.trim()) return d;
+      mutated = true;
+      return { ...d, source: "출처 미상" };
+    });
+    if (mutated) safeSet(DICT_KEY, migrated);
+    setDict(migrated);
   }, []);
   const persist = useCallback((next: DictEntry[]) => {
     setDict(next);
