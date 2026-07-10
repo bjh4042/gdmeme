@@ -79,6 +79,7 @@ function Index() {
         )}
         {tab === "chat" && (
           <ChatbotTab
+            classLevel={lv.current.lv}
             onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
           />
         )}
