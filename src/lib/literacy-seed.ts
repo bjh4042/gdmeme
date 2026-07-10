@@ -6,6 +6,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "핑프",
     student_definition: "스스로 찾아보지 않고 남에게 무조건 물어보는 사람을 비꼬는 말",
     suggested_by: "3105_14",
+    source: "온라인 커뮤니티(디시인사이드 등)",
     evaluations: { aggression: 3, bullying: 4, discrimination: 1, violence: 1, grammar_destruction: 4 },
     total_harmful_score: 52,
     status: "approved",
@@ -19,6 +20,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "누칼협",
     student_definition: "누가 칼 들고 협박함의 줄임말로 타인의 힘든 상황을 비웃는 말",
     suggested_by: "3105_02",
+    source: "온라인 커뮤니티, 유튜브 댓글",
     evaluations: { aggression: 5, bullying: 5, discrimination: 2, violence: 4, grammar_destruction: 4 },
     total_harmful_score: 80,
     status: "approved",
@@ -32,6 +34,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "어쩔티비",
     student_definition: "어쩌라고 티비나 봐라 라는 뜻으로 상대방의 말을 무시하는 표현",
     suggested_by: "3105_07",
+    source: "틱톡, 유튜브 쇼츠",
     evaluations: { aggression: 4, bullying: 4, discrimination: 1, violence: 1, grammar_destruction: 5 },
     total_harmful_score: 60,
     status: "approved",
@@ -45,6 +48,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "억텐",
     student_definition: "억지 텐션의 줄임말로 무리하게 밝은 척하는 모습",
     suggested_by: "3105_11",
+    source: "유튜브 예능 채널",
     evaluations: { aggression: 2, bullying: 2, discrimination: 1, violence: 1, grammar_destruction: 4 },
     total_harmful_score: 40,
     status: "approved",
@@ -58,6 +62,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "찐",
     student_definition: "진짜의 줄임말",
     suggested_by: "3105_04",
+    source: "일상 대화, SNS",
     evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
     total_harmful_score: 28,
     status: "approved",
@@ -71,6 +76,7 @@ export const SEED_DICT: DictEntry[] = [
     word: "GG",
     student_definition: "게임을 포기한다는 뜻으로 쓰이는 표현",
     suggested_by: "3105_09",
+    source: "온라인 게임(롤, 배그 등)",
     evaluations: { aggression: 2, bullying: 2, discrimination: 1, violence: 1, grammar_destruction: 3 },
     total_harmful_score: 36,
     status: "approved",
@@ -83,12 +89,38 @@ export const SEED_DICT: DictEntry[] = [
 
 export const MEME_TRIGGERS = ["어쩔티비", "저쩔티비", "누칼협", "핑프", "억텐", "찐따", "노잼", "꺼져", "존버", "ㅅㅂ", "ㅄ", "ㅈㄴ", "빡친다", "개짜증"];
 
+// Dynamic feedback arrays keyed by attempt count (0-based).
+export const MEME_FEEDBACK = [
+  '방금 쓴 "{word}"는 이 상황에 어울리지 않는 표현이에요. 아래 💡 가이드를 참고해서 다시 써볼래요?',
+  '"{word}" 같은 유행어 대신, 상대방을 존중하는 우리말로 바꿔볼까요? 예: "{hint}"',
+  '선생님은 너의 바른 모습을 기대하고 있어요. 이번엔 "죄송합니다" 또는 존댓말로 시작하는 문장을 완성해 보세요.',
+];
+
+export const SHORT_FEEDBACK = [
+  '문장이 조금 짧아요. 상황을 담아 조금 더 자세히 말해볼까요?',
+  '누가·언제·왜를 담아 완성된 문장으로 답해 보세요. 예: "{hint}"',
+  '가이드의 예시 문장을 그대로 따라 써 봐도 좋아요. 함께 연습해요! 예: "{hint}"',
+];
+
+export const IMPOLITE_FEEDBACK = [
+  '조금 더 예의를 담은 말투가 필요해요. 존댓말로 다시 표현해 볼까요?',
+  '상대의 마음을 생각하며, 부드러운 표현으로 바꿔 볼까요? 예: "{hint}"',
+  '이번에는 가이드를 그대로 참고해서 마무리해 보세요. 예: "{hint}"',
+];
+
+export const PRAISE_FEEDBACK = [
+  '고마워요! 그렇게 예의 바르게 말해줘서 마음이 따뜻해졌어요. ✨',
+  '멋진 표현이에요! 상황과 예절이 딱 맞았어요. 🌱',
+  '와, 정말 훌륭한 답이에요. 우리 반 언어 기상도가 맑아졌어요! ☀️',
+];
+
 export type Scenario = {
   id: string;
   npc: string;
   emoji: string;
   opening: string;
   goodExampleHint: string;
+  guide: string;
 };
 
 export const SCENARIOS: Scenario[] = [
@@ -98,6 +130,7 @@ export const SCENARIOS: Scenario[] = [
     emoji: "👩‍🏫",
     opening: "○○아, 오늘 왜 지각했니? 무슨 일 있었어?",
     goodExampleHint: "죄송합니다. 늦잠을 자서 늦었습니다. 앞으로 조심하겠습니다.",
+    guide: "선생님께 죄송한 마음을 담아 상황을 설명해 보세요. '죄송합니다'로 문장을 시작해 볼까요?",
   },
   {
     id: "parent-phone",
@@ -105,6 +138,7 @@ export const SCENARIOS: Scenario[] = [
     emoji: "👩",
     opening: "핸드폰만 보고 있네? 숙제는 다 했어?",
     goodExampleHint: "죄송해요, 조금만 더 보고 바로 숙제할게요.",
+    guide: "부모님을 존중하는 마음으로, 앞으로 어떻게 할지 계획을 담아 답해 보세요.",
   },
   {
     id: "new-friend",
@@ -112,6 +146,7 @@ export const SCENARIOS: Scenario[] = [
     emoji: "🧒",
     opening: "안녕! 나는 옆 반 하늘이야. 너 이름이 뭐야?",
     goodExampleHint: "안녕! 나는 ○○이야. 만나서 반가워.",
+    guide: "밝게 인사한 뒤, 자신의 이름을 소개하고 반가운 마음을 표현해 보세요.",
   },
   {
     id: "librarian",
@@ -119,6 +154,7 @@ export const SCENARIOS: Scenario[] = [
     emoji: "📚",
     opening: "얘야, 도서관에서는 조용히 해야 한단다.",
     goodExampleHint: "네, 죄송합니다. 조용히 하겠습니다.",
+    guide: "규칙을 지키지 못한 점을 인정하고 앞으로의 행동을 약속하는 문장으로 답해 보세요.",
   },
 ];
 

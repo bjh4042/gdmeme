@@ -61,6 +61,7 @@ export function useDictionary() {
       alternatives: string[];
       evaluations: Evaluation;
       suggested_by: string;
+      source?: string;
     }) => {
       setDict((prev) => {
         const existingIdx = prev.findIndex((d) => d.word.trim() === payload.word.trim());
@@ -97,6 +98,7 @@ export function useDictionary() {
             total_harmful_score: total,
             grade: gradeOf(total).label,
             alternatives: Array.from(new Set([...existing.alternatives, ...payload.alternatives])).slice(0, 6),
+            source: existing.source || payload.source,
             vote_count: vc,
             sum_eval: sum,
             timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
@@ -110,6 +112,7 @@ export function useDictionary() {
             word: payload.word.trim(),
             student_definition: payload.student_definition,
             suggested_by: payload.suggested_by,
+            source: payload.source,
             evaluations: payload.evaluations,
             total_harmful_score: total,
             status: "pending",

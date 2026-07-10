@@ -11,6 +11,7 @@ export type DictEntry = {
   word: string;
   student_definition: string;
   suggested_by: string;
+  source?: string;
   evaluations: Evaluation;
   total_harmful_score: number;
   status: "pending" | "approved" | "rejected";

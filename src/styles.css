@@ -153,3 +153,25 @@
     color: var(--color-foreground);
   }
 }
+
+/* Pastel + glassmorphism helpers */
+@utility glass-card {
+  background: color-mix(in oklab, white 70%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 60%, transparent);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px -16px oklch(0.24 0.08 258 / 0.25);
+}
+@utility glass-soft {
+  background: color-mix(in oklab, white 55%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 55%, transparent);
+  border-radius: 20px;
+}
+@utility pastel-bg {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, oklch(0.92 0.08 200 / 0.9), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, oklch(0.92 0.07 300 / 0.7), transparent 60%),
+    radial-gradient(800px 500px at 50% 110%, oklch(0.94 0.06 160 / 0.7), transparent 60%),
+    linear-gradient(180deg, oklch(0.98 0.02 220), oklch(0.98 0.02 300));
+}
