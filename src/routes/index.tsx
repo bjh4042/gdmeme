@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Onboarding } from "@/components/literacy/Onboarding";
 import { AnalyzerTab } from "@/components/literacy/AnalyzerTab";
 import { ChatbotTab } from "@/components/literacy/ChatbotTab";
+import { QuizTab } from "@/components/literacy/QuizTab";
 import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
 import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "analyze" | "chat" | "dict";
+type Tab = "analyze" | "chat" | "quiz" | "dict";
 
 function Index() {
   const hydrated = useHydrated();
@@ -81,6 +82,12 @@ function Index() {
             onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
           />
         )}
+        {tab === "quiz" && (
+          <QuizTab
+            dict={dict}
+            onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
+          />
+        )}
         {tab === "dict" && (
           <div className="space-y-6">
             <DashboardTab dict={dict} state={state} />
@@ -99,11 +106,12 @@ function Index() {
       </main>
 
       <nav className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]">
-        <div className="max-w-6xl mx-auto grid grid-cols-3">
+        <div className="max-w-6xl mx-auto grid grid-cols-4">
           {[
             { id: "analyze", icon: "🔎", label: "밈 분석기" },
-            { id: "chat", icon: "💬", label: "챗봇/역할극" },
-            { id: "dict", icon: "📖", label: "사전 & 대시보드" },
+            { id: "chat", icon: "💬", label: "예절 역할극" },
+            { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
+            { id: "dict", icon: "📚", label: "우리말 사전" },
           ].map((t) => (
             <button
               key={t.id}
