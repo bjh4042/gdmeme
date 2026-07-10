@@ -557,7 +557,7 @@ function EditModal({
 
   return (
     <GlassModal title="✏️ 데이터 수정" subtitle={entry.word} onClose={onClose}>
-      <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+      <div className="p-4 sm:p-6 space-y-5 flex-1 min-h-0 overflow-y-auto scroll-touch">
         <Field label="낱말명">
           <input
             value={word}
@@ -689,7 +689,7 @@ function StudentEditModal({
 
   return (
     <GlassModal title="✏️ 학생 정보 수정" subtitle={`${student.id} · ${student.name}`} onClose={onClose}>
-      <div className="p-6 space-y-5">
+      <div className="p-4 sm:p-6 space-y-5 flex-1 min-h-0 overflow-y-auto scroll-touch">
         <Field label="이름">
           <input
             value={name}
@@ -771,20 +771,20 @@ function GlassModal({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm overflow-y-auto p-4 flex items-start sm:items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-3 sm:p-4 flex items-center justify-center animate-fade-in">
       <div
-        className="w-full max-w-2xl rounded-3xl border border-white/60 shadow-2xl overflow-hidden"
+        className="w-[92%] sm:w-full max-w-2xl max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
         style={{
           background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
           backdropFilter: "blur(24px) saturate(160%)",
         }}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-6 py-4 border-b border-white/50 bg-white/40">
+        <div className="shrink-0 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/50 bg-white/40">
           <div className="min-w-0">
             <div className="text-xs font-bold text-[color:var(--mint-deep)]">{title}</div>
             {subtitle && <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{subtitle}</h3>}
           </div>
-          <button onClick={onClose} className="w-9 h-9 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
+          <button onClick={onClose} className="shrink-0 w-11 h-11 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
             <X size={18} />
           </button>
         </div>
@@ -804,7 +804,7 @@ function ModalFooter({
   disabled?: boolean;
 }) {
   return (
-    <div className="px-6 py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
+    <div className="shrink-0 px-4 sm:px-6 py-3 sm:py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
       <button
         onClick={onClose}
         className="px-4 py-2 rounded-xl bg-[color:var(--muted)] text-sm font-bold"
