@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
@@ -7,16 +7,29 @@ export function DictionaryTab({
   dict,
   onSubmit,
   student,
+  prefillWord,
+  openModalKey,
 }: {
   dict: DictEntry[];
   onSubmit: (payload: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; suggested_by: string; source?: string }) => void;
   student: { classCode: string; number: string; name: string };
+  prefillWord?: string;
+  openModalKey?: number;
 }) {
   const [filter, setFilter] = useState<string>("전체");
   const [openModal, setOpenModal] = useState(false);
   const [query, setQuery] = useState("");
   const [risk, setRisk] = useState<"all" | "safe" | "warn" | "danger">("all");
   const [field, setField] = useState<"all" | "word" | "source">("all");
+  const [initialWord, setInitialWord] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (openModalKey !== undefined) {
+      setInitialWord(prefillWord);
+      setOpenModal(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openModalKey]);
 
   const approved = useMemo(
     () => dict.filter((d) => d.status === "approved").sort((a, b) => sortByInitial(a.word, b.word)),
@@ -152,10 +165,15 @@ export function DictionaryTab({
 
       {openModal && (
         <ProposalModal
-          onClose={() => setOpenModal(false)}
+          onClose={() => {
+            setOpenModal(false);
+            setInitialWord(undefined);
+          }}
+          initialWord={initialWord}
           onSubmit={(payload) => {
             onSubmit({ ...payload, suggested_by: `${student.classCode}_${student.number.padStart(2, "0")}` });
             setOpenModal(false);
+            setInitialWord(undefined);
           }}
         />
       )}
@@ -220,11 +238,13 @@ const EVAL_LABELS: { key: keyof Evaluation; label: string; hint: string }[] = [
 function ProposalModal({
   onClose,
   onSubmit,
+  initialWord,
 }: {
   onClose: () => void;
   onSubmit: (p: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; source?: string }) => void;
+  initialWord?: string;
 }) {
-  const [word, setWord] = useState("");
+  const [word, setWord] = useState(initialWord ?? "");
   const [def, setDef] = useState("");
   const [alt, setAlt] = useState("");
   const [source, setSource] = useState("");
