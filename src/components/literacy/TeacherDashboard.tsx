@@ -108,8 +108,9 @@ export function TeacherDashboard({
   const editingStudentRec = editingStudent ? students.find((s) => s.id === editingStudent) ?? null : null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-4">
-      <div className="max-w-4xl mx-auto rounded-3xl bg-card p-6 border-2 border-[color:var(--navy)]">
+    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-3 sm:p-4 scroll-touch">
+      <div className="w-[96%] sm:w-full max-w-4xl mx-auto rounded-3xl bg-card p-4 sm:p-6 border-2 border-[color:var(--navy)]"
+           style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
           <div className="min-w-0">
             <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">🧑‍🏫 교사 대시보드</h3>
@@ -248,7 +249,9 @@ export function TeacherDashboard({
                 아직 등록된 학생이 없습니다.
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
+              <>
+              {/* Desktop table */}
+              <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
                 <table className="w-full text-sm">
                   <thead className="bg-[color:var(--muted)] text-xs">
                     <tr>
@@ -303,6 +306,49 @@ export function TeacherDashboard({
                   </tbody>
                 </table>
               </div>
+              {/* Mobile card list */}
+              <div className="md:hidden space-y-2">
+                {studentList.map((s) => {
+                  const lv = levelOf(s.xp);
+                  const mine = s.classCode === currentClassCode;
+                  return (
+                    <div key={s.id} className={`rounded-2xl border-2 border-[color:var(--border)] p-3 ${mine ? "" : "opacity-70"}`}>
+                      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                        <div className="min-w-0">
+                          <div className="font-black text-[color:var(--navy)] truncate">{s.name}</div>
+                          <div className="font-mono text-[11px] text-muted-foreground truncate">{s.id}</div>
+                        </div>
+                        <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
+                          Lv.{lv.current.lv} · {s.xp}XP
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1 justify-end">
+                        <button
+                          onClick={() => setEditingStudent(s.id)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                        >
+                          <Pencil size={12} /> 정보 수정
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
+                              )
+                            ) {
+                              onDeleteStudent(s.id);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)]"
+                        >
+                          <Trash2 size={12} /> 삭제
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              </>
             )}
           </>
         )}
