@@ -47,6 +47,8 @@ export function TeacherDashboard({
   const [status, setStatus] = useState<"pending" | "approved" | "rejected">("pending");
   const [query, setQuery] = useState("");
   const [studentQuery, setStudentQuery] = useState("");
+  const [curriculumFilter, setCurriculumFilter] = useState<string>("all");
+  const [gradeFilter, setGradeFilter] = useState<string>("all");
 
   if (!ok) {
     return (
@@ -85,14 +87,18 @@ export function TeacherDashboard({
   const rejected = dict.filter((d) => d.status === "rejected");
   const base = status === "pending" ? pending : status === "approved" ? approved : rejected;
   const q = query.trim().toLowerCase();
-  const list = q
-    ? base.filter(
-        (d) =>
-          d.word.toLowerCase().includes(q) ||
-          d.student_definition.toLowerCase().includes(q) ||
-          (d.source ?? "").toLowerCase().includes(q),
-      )
-    : base;
+  const list = base.filter((d) => {
+    if (curriculumFilter !== "all" && d.curriculum_code !== curriculumFilter) return false;
+    if (gradeFilter !== "all" && d.grade !== gradeFilter) return false;
+    if (!q) return true;
+    return (
+      d.word.toLowerCase().includes(q) ||
+      d.student_definition.toLowerCase().includes(q) ||
+      (d.source ?? "").toLowerCase().includes(q)
+    );
+  });
+  const curriculumOptions = Array.from(new Set(dict.map((d) => d.curriculum_code))).sort();
+  const gradeOptions = Array.from(new Set(dict.map((d) => d.grade)));
   const editing = editingId != null ? dict.find((d) => d.id === editingId) ?? null : null;
 
   const sq = studentQuery.trim().toLowerCase();
@@ -147,6 +153,48 @@ export function TeacherDashboard({
                   <X size={14} />
                 </button>
               )}
+            </div>
+
+            {/* Filters */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">교육과정 코드</span>
+                <select
+                  value={curriculumFilter}
+                  onChange={(e) => setCurriculumFilter(e.target.value)}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  <option value="all">전체</option>
+                  {curriculumOptions.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">유해 등급</span>
+                <select
+                  value={gradeFilter}
+                  onChange={(e) => setGradeFilter(e.target.value)}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  <option value="all">전체</option>
+                  {gradeOptions.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                <span className="text-[11px] font-bold text-muted-foreground">승인 상태</span>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as "pending" | "approved" | "rejected")}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  <option value="pending">대기 ({pending.length})</option>
+                  <option value="approved">승인 ({approved.length})</option>
+                  <option value="rejected">반려 ({rejected.length})</option>
+                </select>
+              </label>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-4 text-center">
@@ -208,8 +256,6 @@ export function TeacherDashboard({
                       <Th>이름</Th>
                       <Th className="text-right">누적 XP</Th>
                       <Th>레벨</Th>
-                      <Th className="hidden sm:table-cell">가입일</Th>
-                      <Th className="hidden md:table-cell">최근 활동</Th>
                       <Th className="text-right">관리</Th>
                     </tr>
                   </thead>
@@ -227,8 +273,6 @@ export function TeacherDashboard({
                               Lv.{lv.current.lv}
                             </span>
                           </Td>
-                          <Td className="hidden sm:table-cell text-xs text-muted-foreground">{fmtDate(s.joinedAt)}</Td>
-                          <Td className="hidden md:table-cell text-xs text-muted-foreground">{fmtDate(s.lastActiveAt)}</Td>
                           <Td className="text-right">
                             <div className="flex justify-end gap-1">
                               <button
@@ -287,15 +331,6 @@ export function TeacherDashboard({
       )}
     </div>
   );
-}
-
-function fmtDate(iso: string) {
-  try {
-    const d = new Date(iso);
-    return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes().toString().padStart(2, "0")}`;
-  } catch {
-    return iso.slice(0, 10);
-  }
 }
 
 function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -375,7 +410,7 @@ function EntryRow({
         <div className="min-w-0">
           <div className="font-black text-[color:var(--navy)] text-lg truncate">{entry.word}</div>
           <div className="text-xs text-muted-foreground truncate">
-            제안 {entry.suggested_by} · {entry.timestamp} · 투표 {entry.vote_count ?? 1}
+            제안 {entry.suggested_by} · 투표 {entry.vote_count ?? 1}
           </div>
         </div>
         <span className="shrink-0 text-xs font-bold px-2 py-1 rounded-full text-white" style={{ background: bg }}>

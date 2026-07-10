@@ -221,7 +221,7 @@ function EntryCard({ entry }: { entry: DictEntry }) {
       </div>
       <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex justify-between">
         <span>제안 {entry.suggested_by}</span>
-        <span>{entry.curriculum_code} · 투표 {entry.vote_count ?? 1}</span>
+        <span>투표 {entry.vote_count ?? 1}</span>
       </div>
     </div>
   );
