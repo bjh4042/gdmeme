@@ -29,6 +29,17 @@ export type Student = {
   name: string;
 };
 
+export type StudentRecord = {
+  id: string; // `${classCode}_${number}`
+  classCode: string;
+  number: string;
+  name: string;
+  password?: string;
+  xp: number;
+  joinedAt: string;
+  lastActiveAt: string;
+};
+
 export type ClassState = {
   xp: number;
   activityLog: { at: string; who: string; kind: string; delta: number; note?: string }[];

@@ -1,11 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
-import type { DictEntry, Student, ClassState, Evaluation } from "./literacy-types";
+import type { DictEntry, Student, StudentRecord, ClassState, Evaluation } from "./literacy-types";
 import { computeTotal, gradeOf } from "./literacy-types";
 import { SEED_DICT } from "./literacy-seed";
 
 const DICT_KEY = "wtmeme:dict:v5";
 const STUDENT_KEY = "wtmeme:student:v1";
 const CLASS_KEY_PREFIX = "wtmeme:class:v1:";
+const STUDENTS_KEY = "wtmeme:students:v1";
+
+function studentId(classCode: string, number: string) {
+  return `${classCode}_${number.padStart(2, "0")}`;
+}
 
 function safeGet<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -211,5 +216,120 @@ export function useClassState(classCode: string | undefined) {
     },
     [classCode],
   );
-  return { state, addXP };
+  const setXP = useCallback(
+    (nextXp: number, who: string, note?: string) => {
+      if (!classCode) return;
+      setState((prev) => {
+        const clean = Math.max(0, Math.round(nextXp));
+        const delta = clean - prev.xp;
+        const next: ClassState = {
+          xp: clean,
+          activityLog: [
+            { at: new Date().toISOString(), who, kind: "teacher-adjust", delta, note },
+            ...prev.activityLog,
+          ].slice(0, 200),
+        };
+        safeSet(CLASS_KEY_PREFIX + classCode, next);
+        return next;
+      });
+    },
+    [classCode],
+  );
+  return { state, addXP, setXP };
 }
+
+/** Roster of all students that have ever logged in on this device. */
+export function useStudents() {
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+  useEffect(() => {
+    setStudents(safeGet<StudentRecord[]>(STUDENTS_KEY, []));
+  }, []);
+
+  const write = useCallback((next: StudentRecord[]) => {
+    setStudents(next);
+    safeSet(STUDENTS_KEY, next);
+  }, []);
+
+  const upsertActive = useCallback((s: Student) => {
+    const id = studentId(s.classCode, s.number);
+    const now = new Date().toISOString();
+    setStudents((prev) => {
+      const idx = prev.findIndex((r) => r.id === id);
+      let next: StudentRecord[];
+      if (idx >= 0) {
+        next = [...prev];
+        next[idx] = { ...next[idx], name: s.name, lastActiveAt: now };
+      } else {
+        next = [
+          { id, classCode: s.classCode, number: s.number, name: s.name, xp: 0, joinedAt: now, lastActiveAt: now },
+          ...prev,
+        ];
+      }
+      safeSet(STUDENTS_KEY, next);
+      return next;
+    });
+  }, []);
+
+  const addStudentXP = useCallback((id: string, delta: number) => {
+    if (!delta) return;
+    const now = new Date().toISOString();
+    setStudents((prev) => {
+      const next = prev.map((r) =>
+        r.id === id ? { ...r, xp: Math.max(0, r.xp + delta), lastActiveAt: now } : r,
+      );
+      safeSet(STUDENTS_KEY, next);
+      return next;
+    });
+  }, []);
+
+  /** Teacher edit. Returns the XP delta so caller can sync class XP. */
+  const updateStudent = useCallback(
+    (
+      id: string,
+      patch: { name?: string; password?: string; xp?: number },
+    ): { xpDelta: number; classCode?: string } => {
+      const now = new Date().toISOString();
+      let xpDelta = 0;
+      let classCode: string | undefined;
+      setStudents((prev) => {
+        const next = prev.map((r) => {
+          if (r.id !== id) return r;
+          classCode = r.classCode;
+          const newXp = patch.xp != null ? Math.max(0, Math.round(patch.xp)) : r.xp;
+          xpDelta = newXp - r.xp;
+          return {
+            ...r,
+            name: patch.name?.trim() || r.name,
+            password: patch.password !== undefined ? patch.password : r.password,
+            xp: newXp,
+            lastActiveAt: now,
+          };
+        });
+        safeSet(STUDENTS_KEY, next);
+        return next;
+      });
+      return { xpDelta, classCode };
+    },
+    [],
+  );
+
+  const removeStudent = useCallback((id: string): { removedXp: number; classCode?: string } => {
+    let removedXp = 0;
+    let classCode: string | undefined;
+    setStudents((prev) => {
+      const target = prev.find((r) => r.id === id);
+      if (target) {
+        removedXp = target.xp;
+        classCode = target.classCode;
+      }
+      const next = prev.filter((r) => r.id !== id);
+      safeSet(STUDENTS_KEY, next);
+      return next;
+    });
+    return { removedXp, classCode };
+  }, []);
+
+  return { students, upsertActive, addStudentXP, updateStudent, removeStudent, write };
+}
+
+export { studentId };

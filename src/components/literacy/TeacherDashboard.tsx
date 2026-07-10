@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import type { DictEntry, Evaluation } from "@/lib/literacy-types";
-import { computeTotal, gradeOf } from "@/lib/literacy-types";
-import { Pencil, X, Plus, Trash2 } from "lucide-react";
+import type { DictEntry, Evaluation, StudentRecord } from "@/lib/literacy-types";
+import { computeTotal, gradeOf, levelOf } from "@/lib/literacy-types";
+import { Pencil, X, Plus, Trash2, Search, BookOpen, Users } from "lucide-react";
 
 const MASTER_PW = "1234";
 
@@ -13,26 +13,40 @@ type UpdatePayload = {
   source?: string;
 };
 
+type StudentPatch = { name?: string; password?: string; xp?: number };
+
 export function TeacherDashboard({
   dict,
+  students,
+  currentClassCode,
   onApprove,
   onReject,
   onUpdate,
+  onUpdateStudent,
+  onDeleteStudent,
   onClose,
   onReset,
 }: {
   dict: DictEntry[];
+  students: StudentRecord[];
+  currentClassCode: string;
   onApprove: (id: number) => void;
   onReject: (id: number) => void;
   onUpdate: (id: number, patch: UpdatePayload) => void;
+  onUpdateStudent: (id: string, patch: StudentPatch) => void;
+  onDeleteStudent: (id: string) => void;
   onClose: () => void;
   onReset: () => void;
 }) {
   const [pw, setPw] = useState("");
   const [ok, setOk] = useState(false);
   const [err, setErr] = useState("");
+  const [section, setSection] = useState<"words" | "students">("words");
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [tab, setTab] = useState<"pending" | "approved" | "rejected">("pending");
+  const [editingStudent, setEditingStudent] = useState<string | null>(null);
+  const [status, setStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [query, setQuery] = useState("");
+  const [studentQuery, setStudentQuery] = useState("");
 
   if (!ok) {
     return (
@@ -69,50 +83,184 @@ export function TeacherDashboard({
   const pending = dict.filter((d) => d.status === "pending");
   const approved = dict.filter((d) => d.status === "approved");
   const rejected = dict.filter((d) => d.status === "rejected");
-  const list = tab === "pending" ? pending : tab === "approved" ? approved : rejected;
+  const base = status === "pending" ? pending : status === "approved" ? approved : rejected;
+  const q = query.trim().toLowerCase();
+  const list = q
+    ? base.filter(
+        (d) =>
+          d.word.toLowerCase().includes(q) ||
+          d.student_definition.toLowerCase().includes(q) ||
+          (d.source ?? "").toLowerCase().includes(q),
+      )
+    : base;
   const editing = editingId != null ? dict.find((d) => d.id === editingId) ?? null : null;
+
+  const sq = studentQuery.trim().toLowerCase();
+  const studentList = students
+    .filter((s) => (sq ? s.name.toLowerCase().includes(sq) || s.id.toLowerCase().includes(sq) : true))
+    .sort((a, b) => (a.classCode === currentClassCode && b.classCode !== currentClassCode ? -1 : a.classCode === b.classCode ? Number(a.number) - Number(b.number) : a.classCode.localeCompare(b.classCode)));
+  const editingStudentRec = editingStudent ? students.find((s) => s.id === editingStudent) ?? null : null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-4">
       <div className="max-w-4xl mx-auto rounded-3xl bg-card p-6 border-2 border-[color:var(--navy)]">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-5">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
           <div className="min-w-0">
             <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">🧑‍🏫 교사 대시보드</h3>
-            <p className="text-xs text-muted-foreground">단어 승인·반려 및 데이터 편집</p>
+            <p className="text-xs text-muted-foreground">단어 관리 · 학생 회원 관리</p>
           </div>
           <div className="shrink-0 flex gap-2">
-            <button onClick={onReset} className="text-xs px-3 py-2 rounded-lg bg-[color:var(--muted)] font-bold">
-              시드로 초기화
-            </button>
+            {section === "words" && (
+              <button onClick={onReset} className="text-xs px-3 py-2 rounded-lg bg-[color:var(--muted)] font-bold">
+                시드로 초기화
+              </button>
+            )}
             <button onClick={onClose} className="text-xs px-3 py-2 rounded-lg bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold">
               닫기
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-          <TabStat label="대기" n={pending.length} active={tab === "pending"} color="var(--warn)" onClick={() => setTab("pending")} />
-          <TabStat label="승인" n={approved.length} active={tab === "approved"} color="var(--safe)" onClick={() => setTab("approved")} />
-          <TabStat label="반려" n={rejected.length} active={tab === "rejected"} color="var(--danger)" onClick={() => setTab("rejected")} />
+        {/* Sub-tabs */}
+        <div className="grid grid-cols-2 gap-2 mb-5 p-1 rounded-2xl bg-[color:var(--muted)]">
+          <SubTab active={section === "words"} onClick={() => setSection("words")} icon={<BookOpen size={15} />} label={`단어 관리 (${dict.length})`} />
+          <SubTab active={section === "students"} onClick={() => setSection("students")} icon={<Users size={15} />} label={`학생 회원 관리 (${students.length})`} />
         </div>
 
-        {list.length === 0 ? (
-          <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-            해당 상태의 단어가 없습니다.
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {list.map((d) => (
-              <EntryRow
-                key={d.id}
-                entry={d}
-                showActions={tab === "pending"}
-                onApprove={onApprove}
-                onReject={onReject}
-                onEdit={() => setEditingId(d.id)}
+        {section === "words" ? (
+          <>
+            {/* Search bar */}
+            <div className="relative mb-4">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
+                className="w-full rounded-xl border-2 border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[color:var(--mint-deep)]"
               />
-            ))}
-          </div>
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center rounded-full hover:bg-black/5"
+                  aria-label="검색 초기화"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+              <TabStat label="대기" n={pending.length} active={status === "pending"} color="var(--warn)" onClick={() => setStatus("pending")} />
+              <TabStat label="승인" n={approved.length} active={status === "approved"} color="var(--safe)" onClick={() => setStatus("approved")} />
+              <TabStat label="반려" n={rejected.length} active={status === "rejected"} color="var(--danger)" onClick={() => setStatus("rejected")} />
+            </div>
+
+            <div className="text-xs text-muted-foreground mb-2">
+              총 <b className="text-[color:var(--navy)]">{list.length}</b>개
+              {query && <> · 검색어 "{query}"</>}
+            </div>
+
+            {list.length === 0 ? (
+              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
+                {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {list.map((d) => (
+                  <EntryRow
+                    key={d.id}
+                    entry={d}
+                    showActions={status === "pending"}
+                    onApprove={onApprove}
+                    onReject={onReject}
+                    onEdit={() => setEditingId(d.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="relative mb-4">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={studentQuery}
+                onChange={(e) => setStudentQuery(e.target.value)}
+                placeholder="🔍 학생 검색 (이름·아이디)"
+                className="w-full rounded-xl border-2 border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[color:var(--mint-deep)]"
+              />
+            </div>
+
+            <div className="text-xs text-muted-foreground mb-2">
+              총 <b className="text-[color:var(--navy)]">{studentList.length}</b>명 등록됨
+            </div>
+
+            {studentList.length === 0 ? (
+              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
+                아직 등록된 학생이 없습니다.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
+                <table className="w-full text-sm">
+                  <thead className="bg-[color:var(--muted)] text-xs">
+                    <tr>
+                      <Th>아이디</Th>
+                      <Th>이름</Th>
+                      <Th className="text-right">누적 XP</Th>
+                      <Th>레벨</Th>
+                      <Th className="hidden sm:table-cell">가입일</Th>
+                      <Th className="hidden md:table-cell">최근 활동</Th>
+                      <Th className="text-right">관리</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentList.map((s) => {
+                      const lv = levelOf(s.xp);
+                      const mine = s.classCode === currentClassCode;
+                      return (
+                        <tr key={s.id} className={`border-t border-[color:var(--border)] ${mine ? "" : "opacity-70"}`}>
+                          <Td className="font-mono text-xs">{s.id}</Td>
+                          <Td className="font-bold text-[color:var(--navy)]">{s.name}</Td>
+                          <Td className="text-right font-black text-[color:var(--navy)]">{s.xp}</Td>
+                          <Td>
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
+                              Lv.{lv.current.lv}
+                            </span>
+                          </Td>
+                          <Td className="hidden sm:table-cell text-xs text-muted-foreground">{fmtDate(s.joinedAt)}</Td>
+                          <Td className="hidden md:table-cell text-xs text-muted-foreground">{fmtDate(s.lastActiveAt)}</Td>
+                          <Td className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <button
+                                onClick={() => setEditingStudent(s.id)}
+                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)] hover:scale-[1.03] transition"
+                              >
+                                <Pencil size={11} /> 정보 수정
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
+                                    )
+                                  ) {
+                                    onDeleteStudent(s.id);
+                                  }
+                                }}
+                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)] hover:bg-red-200 transition"
+                              >
+                                <Trash2 size={11} /> 삭제
+                              </button>
+                            </div>
+                          </Td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -126,7 +274,58 @@ export function TeacherDashboard({
           }}
         />
       )}
+
+      {editingStudentRec && (
+        <StudentEditModal
+          student={editingStudentRec}
+          onClose={() => setEditingStudent(null)}
+          onSave={(patch) => {
+            onUpdateStudent(editingStudentRec.id, patch);
+            setEditingStudent(null);
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function fmtDate(iso: string) {
+  try {
+    const d = new Date(iso);
+    return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes().toString().padStart(2, "0")}`;
+  } catch {
+    return iso.slice(0, 10);
+  }
+}
+
+function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <th className={`text-left font-bold text-[color:var(--navy)] px-3 py-2 ${className}`}>{children}</th>;
+}
+function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>;
+}
+
+function SubTab({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold transition ${
+        active ? "bg-white text-[color:var(--navy)] shadow-sm" : "text-muted-foreground hover:text-[color:var(--navy)]"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
 
@@ -276,6 +475,221 @@ function EditModal({
   }
 
   return (
+    <GlassModal title="✏️ 데이터 수정" subtitle={entry.word} onClose={onClose}>
+      <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <Field label="낱말명">
+          <input
+            value={word}
+            onChange={(e) => setWord(e.target.value)}
+            maxLength={40}
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+        </Field>
+        <Field label="뜻풀이 (초등 국어 눈높이 설명)">
+          <textarea
+            value={def}
+            onChange={(e) => setDef(e.target.value)}
+            maxLength={600}
+            rows={4}
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)] resize-y"
+          />
+          <div className="text-[10px] text-muted-foreground text-right mt-1">{def.length}/600</div>
+        </Field>
+        <Field label="출처 (선택)">
+          <input
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            maxLength={120}
+            placeholder="예: 국립국어원, 인터넷 커뮤니티 등"
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+        </Field>
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-bold text-[color:var(--navy)]">5대 리터러시 유해성 점수 (1~5)</div>
+            <div
+              className="text-xs font-black px-3 py-1.5 rounded-full text-white shadow-sm transition-colors"
+              style={{ background: badgeBg }}
+            >
+              {g.emoji} 종합 {total}/100 · {g.label}
+            </div>
+          </div>
+          <div className="space-y-2">
+            {EVAL_META.map(({ key, label, emoji }) => (
+              <div key={key} className="rounded-xl bg-white/60 border border-white/70 px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-bold text-[color:var(--navy)]">{emoji} {label}</div>
+                  <div className="text-xs font-black text-[color:var(--navy)]">{evals[key].toFixed(1)}</div>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={5}
+                  step={0.5}
+                  value={evals[key]}
+                  onChange={(e) => updateEval(key, Number(e.target.value))}
+                  className="w-full accent-[color:var(--mint-deep)]"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <Field label="바른 우리말 대안 표현">
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {alts.length === 0 && <span className="text-xs text-muted-foreground">아직 대안이 없어요. 아래에서 추가해 주세요.</span>}
+            {alts.map((a, i) => (
+              <span
+                key={`${a}-${i}`}
+                className="inline-flex items-center gap-1 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)] text-xs font-bold px-2.5 py-1"
+              >
+                {a}
+                <button
+                  onClick={() => setAlts(alts.filter((_, idx) => idx !== i))}
+                  className="opacity-70 hover:opacity-100"
+                  aria-label={`${a} 삭제`}
+                  type="button"
+                >
+                  <Trash2 size={11} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={newAlt}
+              onChange={(e) => setNewAlt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addAlt();
+                }
+              }}
+              maxLength={30}
+              placeholder="새 대안 표현 (Enter로 추가)"
+              className="flex-1 rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+            />
+            <button
+              type="button"
+              onClick={addAlt}
+              className="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-[color:var(--mint-deep)] text-white text-sm font-bold hover:scale-[1.03] transition"
+            >
+              <Plus size={14} /> 추가
+            </button>
+          </div>
+        </Field>
+      </div>
+      <ModalFooter onClose={onClose} onSave={save} disabled={!word.trim() || !def.trim()} />
+    </GlassModal>
+  );
+}
+
+function StudentEditModal({
+  student,
+  onClose,
+  onSave,
+}: {
+  student: StudentRecord;
+  onClose: () => void;
+  onSave: (patch: StudentPatch) => void;
+}) {
+  const [name, setName] = useState(student.name);
+  const [password, setPassword] = useState(student.password ?? "");
+  const [xp, setXp] = useState<number>(student.xp);
+  const lv = levelOf(Math.max(0, Math.round(xp)));
+
+  function save() {
+    if (!name.trim()) return;
+    onSave({
+      name: name.trim(),
+      password,
+      xp: Math.max(0, Math.round(xp)),
+    });
+  }
+
+  return (
+    <GlassModal title="✏️ 학생 정보 수정" subtitle={`${student.id} · ${student.name}`} onClose={onClose}>
+      <div className="p-6 space-y-5">
+        <Field label="이름">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={20}
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+        </Field>
+        <Field label="비밀번호 (재설정하려면 입력 · 비우면 삭제)">
+          <input
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            maxLength={40}
+            placeholder="새 비밀번호"
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm font-mono outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+          <div className="flex gap-2 mt-2">
+            <button
+              type="button"
+              onClick={() => setPassword("1234")}
+              className="text-xs px-2 py-1 rounded-md bg-[color:var(--muted)] font-bold"
+            >
+              1234로 초기화
+            </button>
+            <button
+              type="button"
+              onClick={() => setPassword("")}
+              className="text-xs px-2 py-1 rounded-md bg-[color:var(--muted)] font-bold"
+            >
+              비밀번호 제거
+            </button>
+          </div>
+        </Field>
+        <Field label="누적 XP 강제 조정">
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min={0}
+              value={xp}
+              onChange={(e) => setXp(Number(e.target.value))}
+              className="w-32 rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+            />
+            <input
+              type="range"
+              min={0}
+              max={2000}
+              step={10}
+              value={Math.min(2000, Math.max(0, xp))}
+              onChange={(e) => setXp(Number(e.target.value))}
+              className="flex-1 accent-[color:var(--mint-deep)]"
+            />
+          </div>
+          <div className="mt-2 flex items-center gap-2 text-xs">
+            <span className="px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)] font-bold">
+              Lv.{lv.current.lv} {lv.current.name}
+            </span>
+            <span className="text-muted-foreground">이전 {student.xp} XP → 새로 {Math.max(0, Math.round(xp))} XP</span>
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            ⚠︎ XP를 조정하면 학급 총합 XP도 그 차이만큼 함께 반영되어 [우리 반 언어 기상도]와 카톡 잠금 해제에 영향을 줍니다.
+          </div>
+        </Field>
+      </div>
+      <ModalFooter onClose={onClose} onSave={save} disabled={!name.trim()} />
+    </GlassModal>
+  );
+}
+
+function GlassModal({
+  title,
+  subtitle,
+  onClose,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  return (
     <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm overflow-y-auto p-4 flex items-start sm:items-center justify-center animate-fade-in">
       <div
         className="w-full max-w-2xl rounded-3xl border border-white/60 shadow-2xl overflow-hidden"
@@ -284,148 +698,45 @@ function EditModal({
           backdropFilter: "blur(24px) saturate(160%)",
         }}
       >
-        {/* Header */}
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-6 py-4 border-b border-white/50 bg-white/40">
           <div className="min-w-0">
-            <div className="text-xs font-bold text-[color:var(--mint-deep)]">✏️ 데이터 수정</div>
-            <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{entry.word}</h3>
+            <div className="text-xs font-bold text-[color:var(--mint-deep)]">{title}</div>
+            {subtitle && <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{subtitle}</h3>}
           </div>
           <button onClick={onClose} className="w-9 h-9 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
             <X size={18} />
           </button>
         </div>
-
-        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-          {/* Word */}
-          <Field label="낱말명">
-            <input
-              value={word}
-              onChange={(e) => setWord(e.target.value)}
-              maxLength={40}
-              className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
-            />
-          </Field>
-
-          {/* Definition */}
-          <Field label="뜻풀이 (초등 국어 눈높이 설명)">
-            <textarea
-              value={def}
-              onChange={(e) => setDef(e.target.value)}
-              maxLength={600}
-              rows={4}
-              className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)] resize-y"
-            />
-            <div className="text-[10px] text-muted-foreground text-right mt-1">{def.length}/600</div>
-          </Field>
-
-          {/* Source */}
-          <Field label="출처 (선택)">
-            <input
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              maxLength={120}
-              placeholder="예: 국립국어원, 인터넷 커뮤니티 등"
-              className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
-            />
-          </Field>
-
-          {/* Harm sliders */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-sm font-bold text-[color:var(--navy)]">5대 리터러시 유해성 점수 (1~5)</div>
-              <div
-                className="text-xs font-black px-3 py-1.5 rounded-full text-white shadow-sm transition-colors"
-                style={{ background: badgeBg }}
-              >
-                {g.emoji} 종합 {total}/100 · {g.label}
-              </div>
-            </div>
-            <div className="space-y-2">
-              {EVAL_META.map(({ key, label, emoji }) => (
-                <div key={key} className="rounded-xl bg-white/60 border border-white/70 px-3 py-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="text-xs font-bold text-[color:var(--navy)]">
-                      {emoji} {label}
-                    </div>
-                    <div className="text-xs font-black text-[color:var(--navy)]">{evals[key].toFixed(1)}</div>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={5}
-                    step={0.5}
-                    value={evals[key]}
-                    onChange={(e) => updateEval(key, Number(e.target.value))}
-                    className="w-full accent-[color:var(--mint-deep)]"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Alternatives */}
-          <Field label="바른 우리말 대안 표현">
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {alts.length === 0 && <span className="text-xs text-muted-foreground">아직 대안이 없어요. 아래에서 추가해 주세요.</span>}
-              {alts.map((a, i) => (
-                <span
-                  key={`${a}-${i}`}
-                  className="inline-flex items-center gap-1 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)] text-xs font-bold px-2.5 py-1"
-                >
-                  {a}
-                  <button
-                    onClick={() => setAlts(alts.filter((_, idx) => idx !== i))}
-                    className="opacity-70 hover:opacity-100"
-                    aria-label={`${a} 삭제`}
-                    type="button"
-                  >
-                    <Trash2 size={11} />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                value={newAlt}
-                onChange={(e) => setNewAlt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addAlt();
-                  }
-                }}
-                maxLength={30}
-                placeholder="새 대안 표현 (Enter로 추가)"
-                className="flex-1 rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
-              />
-              <button
-                type="button"
-                onClick={addAlt}
-                className="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-[color:var(--mint-deep)] text-white text-sm font-bold hover:scale-[1.03] transition"
-              >
-                <Plus size={14} /> 추가
-              </button>
-            </div>
-          </Field>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[color:var(--muted)] text-sm font-bold"
-          >
-            취소
-          </button>
-          <button
-            onClick={save}
-            disabled={!word.trim() || !def.trim()}
-            className="px-5 py-2 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] text-sm font-bold disabled:opacity-40 hover:scale-[1.03] transition"
-          >
-            💾 변경사항 저장하기
-          </button>
-        </div>
+        {children}
       </div>
+    </div>
+  );
+}
+
+function ModalFooter({
+  onClose,
+  onSave,
+  disabled,
+}: {
+  onClose: () => void;
+  onSave: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="px-6 py-4 border-t border-white/50 bg-white/40 flex flex-wrap items-center justify-end gap-2">
+      <button
+        onClick={onClose}
+        className="px-4 py-2 rounded-xl bg-[color:var(--muted)] text-sm font-bold"
+      >
+        취소
+      </button>
+      <button
+        onClick={onSave}
+        disabled={disabled}
+        className="px-5 py-2 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] text-sm font-bold disabled:opacity-40 hover:scale-[1.03] transition"
+      >
+        💾 변경사항 저장하기
+      </button>
     </div>
   );
 }
