@@ -175,3 +175,31 @@
     radial-gradient(800px 500px at 50% 110%, oklch(0.94 0.06 160 / 0.7), transparent 60%),
     linear-gradient(180deg, oklch(0.98 0.02 220), oklch(0.98 0.02 300));
 }
+
+/* Responsive helpers: safe-area, touch scrolling, mobile framing */
+@utility safe-pb {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+@utility scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+@utility mobile-frame {
+  width: 100%;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@utility touch-tap {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+html, body { height: 100%; }
+body { overscroll-behavior-y: contain; }
+
+/* Compact tab bar labels on small phones */
+@media (max-width: 480px) {
+  .tabbar-label { font-size: 10px; line-height: 1.1; }
+  .tabbar-icon { font-size: 20px; }
+}
