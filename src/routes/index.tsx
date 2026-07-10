@@ -7,7 +7,8 @@ import { QuizTab } from "@/components/literacy/QuizTab";
 import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
 import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
-import { useHydrated, useStudent, useDictionary, useClassState } from "@/lib/literacy-store";
+import { useEffect } from "react";
+import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId } from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
 
 export const Route = createFileRoute("/")({
@@ -20,17 +21,30 @@ function Index() {
   const hydrated = useHydrated();
   const { student, setStudent } = useStudent();
   const { dict, addProposal, setStatus, updateEntry, resetSeed } = useDictionary();
-  const { state, addXP } = useClassState(student?.classCode);
+  const { state, addXP, setXP } = useClassState(student?.classCode);
+  const roster = useStudents();
   const [tab, setTab] = useState<Tab>("analyze");
   const [teacherOpen, setTeacherOpen] = useState(false);
   const [prefillWord, setPrefillWord] = useState<string | undefined>();
   const [openModalKey, setOpenModalKey] = useState<number | undefined>();
 
+  // Register the active student into the roster on every session start / name change.
+  useEffect(() => {
+    if (student) roster.upsertActive(student);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [student?.classCode, student?.number, student?.name]);
+
   if (!hydrated) return <div className="min-h-screen" style={{ background: "var(--gradient-hero)" }} />;
   if (!student) return <Onboarding onSubmit={setStudent} />;
 
   const who = `${student.classCode}_${student.number.padStart(2, "0")} ${student.name}`;
+  const activeId = studentId(student.classCode, student.number);
   const lv = levelOf(state.xp);
+
+  function awardXP(delta: number, kind: string, note?: string) {
+    addXP(delta, who, kind, note);
+    if (delta) roster.addStudentXP(activeId, delta);
+  }
 
   return (
     <div className="min-h-screen pb-24 pastel-bg">
@@ -80,13 +94,13 @@ function Index() {
         {tab === "chat" && (
           <ChatbotTab
             classLevel={lv.current.lv}
-            onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
+            onXP={(delta, kind, note) => awardXP(delta, kind, note)}
           />
         )}
         {tab === "quiz" && (
           <QuizTab
             dict={dict}
-            onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
+            onXP={(delta, kind, note) => awardXP(delta, kind, note)}
           />
         )}
         {tab === "dict" && (
@@ -99,7 +113,7 @@ function Index() {
               openModalKey={openModalKey}
               onSubmit={(p) => {
                 addProposal(p);
-                addXP(5, who, "proposal", p.word);
+              awardXP(5, "proposal", p.word);
               }}
             />
           </div>
@@ -132,6 +146,8 @@ function Index() {
       {teacherOpen && (
         <TeacherDashboard
           dict={dict}
+          students={roster.students}
+          currentClassCode={student.classCode}
           onApprove={(id) => {
             setStatus(id, "approved");
             const w = dict.find((d) => d.id === id);
@@ -142,6 +158,21 @@ function Index() {
             updateEntry(id, patch);
             const w = dict.find((d) => d.id === id);
             addXP(0, "교사", "edit", w?.word);
+          }}
+          onUpdateStudent={(id, patch) => {
+            const { xpDelta, classCode } = roster.updateStudent(id, patch);
+            // Only mirror the delta into the currently-viewed class ledger.
+            if (xpDelta && classCode === student.classCode) {
+              setXP(state.xp + xpDelta, `교사 조정 · ${id}`, patch.name);
+            }
+          }}
+          onDeleteStudent={(id) => {
+            const { removedXp, classCode } = roster.removeStudent(id);
+            if (removedXp && classCode === student.classCode) {
+              setXP(Math.max(0, state.xp - removedXp), `교사 삭제 · ${id}`);
+            }
+            // If the currently active student was deleted, end the session.
+            if (id === activeId) setStudent(null);
           }}
           onClose={() => setTeacherOpen(false)}
           onReset={() => {
