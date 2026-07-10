@@ -89,6 +89,31 @@ export const SEED_DICT: DictEntry[] = [
 
 export const MEME_TRIGGERS = ["어쩔티비", "저쩔티비", "누칼협", "핑프", "억텐", "찐따", "노잼", "꺼져", "존버", "ㅅㅂ", "ㅄ", "ㅈㄴ", "빡친다", "개짜증"];
 
+// Dynamic feedback arrays keyed by attempt count (0-based).
+export const MEME_FEEDBACK = [
+  '방금 쓴 "{word}"는 이 상황에 어울리지 않는 표현이에요. 아래 💡 가이드를 참고해서 다시 써볼래요?',
+  '"{word}" 같은 유행어 대신, 상대방을 존중하는 우리말로 바꿔볼까요? 예: "{hint}"',
+  '선생님은 너의 바른 모습을 기대하고 있어요. 이번엔 "죄송합니다" 또는 존댓말로 시작하는 문장을 완성해 보세요.',
+];
+
+export const SHORT_FEEDBACK = [
+  '문장이 조금 짧아요. 상황을 담아 조금 더 자세히 말해볼까요?',
+  '누가·언제·왜를 담아 완성된 문장으로 답해 보세요. 예: "{hint}"',
+  '가이드의 예시 문장을 그대로 따라 써 봐도 좋아요. 함께 연습해요! 예: "{hint}"',
+];
+
+export const IMPOLITE_FEEDBACK = [
+  '조금 더 예의를 담은 말투가 필요해요. 존댓말로 다시 표현해 볼까요?',
+  '상대의 마음을 생각하며, 부드러운 표현으로 바꿔 볼까요? 예: "{hint}"',
+  '이번에는 가이드를 그대로 참고해서 마무리해 보세요. 예: "{hint}"',
+];
+
+export const PRAISE_FEEDBACK = [
+  '고마워요! 그렇게 예의 바르게 말해줘서 마음이 따뜻해졌어요. ✨',
+  '멋진 표현이에요! 상황과 예절이 딱 맞았어요. 🌱',
+  '와, 정말 훌륭한 답이에요. 우리 반 언어 기상도가 맑아졌어요! ☀️',
+];
+
 export type Scenario = {
   id: string;
   npc: string;
