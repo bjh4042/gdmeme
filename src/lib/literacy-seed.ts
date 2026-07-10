@@ -1998,6 +1998,19 @@ export type Scenario = {
   opening: string;
   goodExampleHint: string;
   guide: string;
+  stages: ScenarioStage[];
+  completeBadge?: string;
+};
+
+export type ScenarioStage = {
+  /** NPC opening line for this stage */
+  npc: string;
+  /** Guide box heading & instruction for the student */
+  guide: string;
+  /** Bold example the student should model */
+  hint: string;
+  /** Praise line NPC sends when student clears this stage */
+  praise: string;
 };
 
 export const SCENARIOS: Scenario[] = [
@@ -2008,6 +2021,27 @@ export const SCENARIOS: Scenario[] = [
     opening: "○○아, 오늘 왜 지각했니? 무슨 일 있었어?",
     goodExampleHint: "죄송합니다. 늦잠을 자서 늦었습니다. 앞으로 조심하겠습니다.",
     guide: "선생님께 죄송한 마음을 담아 상황을 설명해 보세요. '죄송합니다'로 문장을 시작해 볼까요?",
+    completeBadge: "🎖️ 예절 배지 획득 · 담임 선생님",
+    stages: [
+      {
+        npc: "○○아, 오늘 왜 지각했니? 무슨 일 있었어?",
+        guide: "1단계 · 지각한 이유를 사과와 함께 설명해요. '죄송합니다'로 시작해요.",
+        hint: "죄송합니다. 늦잠을 자서 늦었습니다.",
+        praise: "그렇게 솔직히 말해줘서 고마워. 이유를 잘 설명했구나.",
+      },
+      {
+        npc: "그렇구나. 그럼 앞으로 어떻게 하면 좋을까?",
+        guide: "2단계 · 앞으로 어떻게 실천할지 구체적인 다짐을 약속해요.",
+        hint: "앞으로는 알람을 두 개 맞추고 일찍 자겠습니다.",
+        praise: "구체적인 계획이 정말 훌륭해! 선생님도 응원할게.",
+      },
+      {
+        npc: "좋아. 마지막으로 이 약속을 지킬 수 있겠니?",
+        guide: "3단계 · 다짐을 확인하며 정중하게 마무리 인사를 해요.",
+        hint: "네, 꼭 지키겠습니다. 감사합니다.",
+        praise: "🎉 정말 멋진 대화였어. 너의 진심이 잘 느껴졌단다. 대화 종료!",
+      },
+    ],
   },
   {
     id: "parent-phone",
@@ -2016,6 +2050,27 @@ export const SCENARIOS: Scenario[] = [
     opening: "핸드폰만 보고 있네? 숙제는 다 했어?",
     goodExampleHint: "죄송해요, 조금만 더 보고 바로 숙제할게요.",
     guide: "부모님을 존중하는 마음으로, 앞으로 어떻게 할지 계획을 담아 답해 보세요.",
+    completeBadge: "🎖️ 예절 배지 획득 · 엄마와의 대화",
+    stages: [
+      {
+        npc: "핸드폰만 보고 있네? 숙제는 다 했어?",
+        guide: "1단계 · 사실대로 이실직고하고 죄송한 마음을 담아 답해요.",
+        hint: "죄송해요, 아직 다 못 했어요. 지금 시작할게요.",
+        praise: "솔직히 말해줘서 고마워. 엄마도 마음이 놓이네.",
+      },
+      {
+        npc: "그럼 앞으로 핸드폰 사용은 어떻게 조절할래?",
+        guide: "2단계 · 알람 맞추기 등 스스로 지킬 수 있는 대안을 제안해요.",
+        hint: "숙제 알람을 맞춰서 30분만 쓰고 바로 숙제할게요.",
+        praise: "스스로 방법을 찾다니 정말 대견하구나.",
+      },
+      {
+        npc: "그래, 우리 아들/딸 참 든든하네. 오늘도 힘내자!",
+        guide: "3단계 · 응원에 감사 인사를 담아 대화를 정리해요.",
+        hint: "네, 응원해줘서 고마워요. 잘 해볼게요!",
+        praise: "🎉 따뜻한 대화 고마워. 우리 가족의 하루가 밝아졌어. 대화 종료!",
+      },
+    ],
   },
   {
     id: "new-friend",
@@ -2024,6 +2079,27 @@ export const SCENARIOS: Scenario[] = [
     opening: "안녕! 나는 옆 반 하늘이야. 너 이름이 뭐야?",
     goodExampleHint: "안녕! 나는 ○○이야. 만나서 반가워.",
     guide: "밝게 인사한 뒤, 자신의 이름을 소개하고 반가운 마음을 표현해 보세요.",
+    completeBadge: "🎖️ 예절 배지 획득 · 새 친구 사귀기",
+    stages: [
+      {
+        npc: "저기, 운동장이 어느 쪽이야? 나 오늘 전학 왔거든.",
+        guide: "1단계 · 친절하게 방향을 알려주고 도움을 줘요.",
+        hint: "안녕! 운동장은 저쪽 계단으로 내려가면 있어. 같이 갈래?",
+        praise: "고마워! 친절히 알려줘서 마음이 놓여.",
+      },
+      {
+        npc: "정말 고마워! 근데 네 이름이 뭐야? 친구가 되고 싶어.",
+        guide: "2단계 · 밝게 이름을 소개하고 친구 제안을 수락해요.",
+        hint: "나는 ○○이야. 좋아, 우리 친구하자!",
+        praise: "와, 반가워! 좋은 친구가 될 것 같아.",
+      },
+      {
+        npc: "그럼 내일 쉬는 시간에 같이 놀자! 어때?",
+        guide: "3단계 · 약속을 반갑게 수락하며 환영 인사를 해요.",
+        hint: "좋아! 내일 쉬는 시간에 우리 반 앞에서 만나자.",
+        praise: "🎉 새 친구가 생겨서 정말 기뻐! 대화 종료!",
+      },
+    ],
   },
   {
     id: "librarian",
@@ -2032,6 +2108,27 @@ export const SCENARIOS: Scenario[] = [
     opening: "얘야, 도서관에서는 조용히 해야 한단다.",
     goodExampleHint: "네, 죄송합니다. 조용히 하겠습니다.",
     guide: "규칙을 지키지 못한 점을 인정하고 앞으로의 행동을 약속하는 문장으로 답해 보세요.",
+    completeBadge: "🎖️ 매너 배지 획득 · 도서관 예절",
+    stages: [
+      {
+        npc: "얘야, 도서관에서 조금 시끄러웠단다. 어떻게 해야 할까?",
+        guide: "1단계 · 소란을 피운 행동을 즉시 사과해요.",
+        hint: "죄송합니다. 앞으로 조용히 하겠습니다.",
+        praise: "바로 사과해줘서 고마워. 마음이 느껴지는구나.",
+      },
+      {
+        npc: "그런데 책도 제자리에 두지 않았더구나. 어떻게 하면 좋겠니?",
+        guide: "2단계 · 정리하지 않은 점을 인정하고 해결 방법을 제시해요.",
+        hint: "제가 정리하지 않았어요. 지금 바로 제자리에 꽂아둘게요.",
+        praise: "책임감이 정말 훌륭하구나. 도서관이 밝아졌어.",
+      },
+      {
+        npc: "정말 훌륭한 태도야! 매너 배지를 줄게. 앞으로도 잘 부탁해!",
+        guide: "3단계 · 감사 인사와 함께 앞으로의 다짐을 짧게 전해요.",
+        hint: "감사합니다! 앞으로 규칙을 잘 지킬게요.",
+        praise: "🎉 매너 배지 획득! 우리 도서관의 자랑이야. 대화 종료!",
+      },
+    ],
   },
 ];
 
