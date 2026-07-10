@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Onboarding } from "@/components/literacy/Onboarding";
+import { AnalyzerTab } from "@/components/literacy/AnalyzerTab";
 import { ChatbotTab } from "@/components/literacy/ChatbotTab";
 import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
@@ -12,15 +13,17 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "chat" | "dict" | "dash";
+type Tab = "analyze" | "chat" | "dict";
 
 function Index() {
   const hydrated = useHydrated();
   const { student, setStudent } = useStudent();
   const { dict, addProposal, setStatus, resetSeed } = useDictionary();
   const { state, addXP } = useClassState(student?.classCode);
-  const [tab, setTab] = useState<Tab>("chat");
+  const [tab, setTab] = useState<Tab>("analyze");
   const [teacherOpen, setTeacherOpen] = useState(false);
+  const [prefillWord, setPrefillWord] = useState<string | undefined>();
+  const [openModalKey, setOpenModalKey] = useState<number | undefined>();
 
   if (!hydrated) return <div className="min-h-screen" style={{ background: "var(--gradient-hero)" }} />;
   if (!student) return <Onboarding onSubmit={setStudent} />;
@@ -63,30 +66,44 @@ function Index() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        {tab === "analyze" && (
+          <AnalyzerTab
+            dict={dict}
+            onRegisterNew={(w) => {
+              setPrefillWord(w);
+              setOpenModalKey(Date.now());
+              setTab("dict");
+            }}
+          />
+        )}
         {tab === "chat" && (
           <ChatbotTab
             onXP={(delta, kind, note) => addXP(delta, who, kind, note)}
           />
         )}
         {tab === "dict" && (
-          <DictionaryTab
-            dict={dict}
-            student={student}
-            onSubmit={(p) => {
-              addProposal(p);
-              addXP(5, who, "proposal", p.word);
-            }}
-          />
+          <div className="space-y-6">
+            <DashboardTab dict={dict} state={state} />
+            <DictionaryTab
+              dict={dict}
+              student={student}
+              prefillWord={prefillWord}
+              openModalKey={openModalKey}
+              onSubmit={(p) => {
+                addProposal(p);
+                addXP(5, who, "proposal", p.word);
+              }}
+            />
+          </div>
         )}
-        {tab === "dash" && <DashboardTab dict={dict} state={state} />}
       </main>
 
       <nav className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]">
         <div className="max-w-6xl mx-auto grid grid-cols-3">
           {[
+            { id: "analyze", icon: "🔎", label: "밈 분석기" },
             { id: "chat", icon: "💬", label: "챗봇/역할극" },
-            { id: "dict", icon: "📖", label: "바른말 사전" },
-            { id: "dash", icon: "🌤️", label: "학급 대시보드" },
+            { id: "dict", icon: "📖", label: "사전 & 대시보드" },
           ].map((t) => (
             <button
               key={t.id}
