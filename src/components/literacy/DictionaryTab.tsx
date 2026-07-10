@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BookOpen, Plus, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
+import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
 
@@ -14,15 +14,29 @@ export function DictionaryTab({
 }) {
   const [filter, setFilter] = useState<string>("전체");
   const [openModal, setOpenModal] = useState(false);
+  const [query, setQuery] = useState("");
+  const [risk, setRisk] = useState<"all" | "safe" | "warn" | "danger">("all");
+  const [field, setField] = useState<"all" | "word" | "source">("all");
 
   const approved = useMemo(
     () => dict.filter((d) => d.status === "approved").sort((a, b) => sortByInitial(a.word, b.word)),
     [dict],
   );
   const shown = useMemo(() => {
-    if (filter === "전체") return approved;
-    return approved.filter((d) => firstInitial(d.word) === filter);
-  }, [approved, filter]);
+    const q = query.trim().toLowerCase();
+    return approved.filter((d) => {
+      if (filter !== "전체" && firstInitial(d.word) !== filter) return false;
+      if (risk !== "all" && gradeOf(d.total_harmful_score).tone !== risk) return false;
+      if (q) {
+        const inWord = d.word.toLowerCase().includes(q);
+        const inSource = (d.source ?? "").toLowerCase().includes(q);
+        if (field === "word" && !inWord) return false;
+        if (field === "source" && !inSource) return false;
+        if (field === "all" && !inWord && !inSource) return false;
+      }
+      return true;
+    });
+  }, [approved, filter, query, risk, field]);
 
   const filters = ["전체", ...KOREAN_INITIALS, ...ALPHABET];
 
@@ -47,16 +61,75 @@ export function DictionaryTab({
       </div>
 
       <div className="glass-soft p-3">
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] mb-3">
+          <label className="relative">
+            <span className="sr-only">단어·출처 검색</span>
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="단어나 출처로 검색"
+              aria-label="사전 검색"
+              className="w-full rounded-2xl border-2 border-white/70 bg-white/70 pl-9 pr-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] transition"
+            />
+          </label>
+          <div role="radiogroup" aria-label="검색 대상" className="flex gap-1 bg-white/50 rounded-2xl p-1">
+            {[
+              { id: "all", label: "전체" },
+              { id: "word", label: "단어" },
+              { id: "source", label: "출처" },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                role="radio"
+                aria-checked={field === f.id}
+                onClick={() => setField(f.id as typeof field)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] ${
+                  field === f.id ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]" : "text-[color:var(--navy)] hover:bg-white"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <div role="radiogroup" aria-label="위험도 필터" className="flex gap-1 bg-white/50 rounded-2xl p-1">
+            {[
+              { id: "all", label: "🌐 전체", tone: "" },
+              { id: "safe", label: "🟢 안전", tone: "var(--safe)" },
+              { id: "warn", label: "🟡 주의", tone: "var(--warn)" },
+              { id: "danger", label: "🔴 위험", tone: "var(--danger)" },
+            ].map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                role="radio"
+                aria-checked={risk === r.id}
+                aria-label={`위험도 ${r.label} 필터`}
+                onClick={() => setRisk(r.id as typeof risk)}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] ${
+                  risk === r.id ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]" : "text-[color:var(--navy)] hover:bg-white"
+                }`}
+                style={risk === r.id && r.tone ? { boxShadow: `inset 0 -3px 0 ${r.tone}` } : undefined}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex flex-wrap gap-1">
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
+              aria-pressed={filter === f}
+              aria-label={`초성 ${f} 필터`}
               className={`min-w-[36px] px-2.5 py-1.5 rounded-xl text-sm font-bold transition ${
                 filter === f
                   ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)] shadow-[var(--shadow-soft)]"
                   : "bg-white/60 text-[color:var(--navy)] hover:bg-[color:var(--mint)]"
-              }`}
+              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)]`}
             >
               {f}
             </button>
@@ -67,7 +140,7 @@ export function DictionaryTab({
       {shown.length === 0 ? (
         <div className="glass-soft p-10 text-center text-muted-foreground border-2 border-dashed border-white/50">
           <Sparkles className="mx-auto mb-2 text-[color:var(--mint-deep)]" />
-          해당 초성/알파벳으로 등록된 단어가 아직 없어요.
+          검색 조건에 맞는 단어가 없어요. 다른 초성·위험도·검색어를 시도해 보세요.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,14 +309,30 @@ function ProposalModal({
               <div key={l.key} className="rounded-2xl bg-white/50 backdrop-blur p-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-bold text-[color:var(--navy)]">{l.label}</span>
-                  <div className="flex items-center gap-0.5">
+                  <div
+                    className="flex items-center gap-0.5"
+                    role="radiogroup"
+                    aria-label={`${l.label} 별점 선택 (1점부터 5점)`}
+                  >
                     {[1, 2, 3, 4, 5].map((n) => (
                       <button
                         type="button"
                         key={n}
                         onClick={() => setEv({ ...ev, [l.key]: n })}
-                        className="transition-transform hover:scale-125 active:scale-90"
-                        aria-label={`${n}점`}
+                        onKeyDown={(e) => {
+                          if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                            e.preventDefault();
+                            setEv({ ...ev, [l.key]: Math.min(5, ev[l.key] + 1) });
+                          } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                            e.preventDefault();
+                            setEv({ ...ev, [l.key]: Math.max(1, ev[l.key] - 1) });
+                          }
+                        }}
+                        className="transition-transform hover:scale-125 active:scale-90 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)]"
+                        role="radio"
+                        aria-checked={ev[l.key] === n}
+                        aria-label={`${l.label} ${n}점`}
+                        tabIndex={ev[l.key] === n ? 0 : -1}
                       >
                         <Star
                           size={20}
@@ -262,7 +351,12 @@ function ProposalModal({
                   max={5}
                   value={ev[l.key]}
                   onChange={(e) => setEv({ ...ev, [l.key]: Number(e.target.value) })}
-                  className="w-full accent-[color:var(--mint-deep)]"
+                  className="w-full accent-[color:var(--mint-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] rounded"
+                  aria-label={`${l.label} 슬라이더, 현재 ${ev[l.key]}점`}
+                  aria-valuemin={1}
+                  aria-valuemax={5}
+                  aria-valuenow={ev[l.key]}
+                  aria-valuetext={`${ev[l.key]}점 (${l.hint})`}
                 />
               </div>
             ))}
