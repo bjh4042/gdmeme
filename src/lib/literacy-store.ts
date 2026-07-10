@@ -3,7 +3,7 @@ import type { DictEntry, Student, ClassState, Evaluation } from "./literacy-type
 import { computeTotal, gradeOf } from "./literacy-types";
 import { SEED_DICT } from "./literacy-seed";
 
-const DICT_KEY = "wtmeme:dict:v1";
+const DICT_KEY = "wtmeme:dict:v2";
 const STUDENT_KEY = "wtmeme:student:v1";
 const CLASS_KEY_PREFIX = "wtmeme:class:v1:";
 
