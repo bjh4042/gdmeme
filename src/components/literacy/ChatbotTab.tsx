@@ -26,14 +26,38 @@ function isPolite(text: string) {
 function fill(tpl: string, word: string, hint: string) {
   return tpl.replace("{word}", word).replace("{hint}", hint);
 }
-function nowStamp() {
-  const d = new Date();
+function fmtStamp(d: Date) {
   const h = d.getHours();
   const m = d.getMinutes().toString().padStart(2, "0");
   const ap = h < 12 ? "오전" : "오후";
   const hh = ((h + 11) % 12) + 1;
   return `${ap} ${hh}:${m}`;
 }
+function nowStamp() {
+  return fmtStamp(new Date());
+}
+
+// Yesterday at a specific H/M
+function yesterdayAt(h: number, m: number) {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+// 5 unique random times yesterday between 17:00 and 21:00, sorted DESC (newest first).
+function makeYesterdayTimes(count: number): Date[] {
+  const pool = new Set<number>();
+  while (pool.size < count) {
+    // minutes since 17:00, range 0..240
+    pool.add(Math.floor(Math.random() * 241));
+  }
+  return [...pool]
+    .sort((a, b) => b - a)
+    .map((mins) => yesterdayAt(17 + Math.floor(mins / 60), mins % 60));
+}
+
+const WEEKDAY_KO = ["일", "월", "화", "수", "목", "금", "토"];
 
 type RoomState = {
   msgs: Msg[];
@@ -62,6 +86,35 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
     Object.fromEntries(SCENARIOS.map((s) => [s.id, initialRoom(s)])),
   );
   const [hydrated, setHydrated] = useState(false);
+
+  // Assign a random yesterday-evening timestamp to each scenario (top = newest).
+  const scenarioTimes = useMemo(() => {
+    const times = makeYesterdayTimes(SCENARIOS.length);
+    const map: Record<string, Date> = {};
+    SCENARIOS.forEach((s, i) => (map[s.id] = times[i]));
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Backfill the initial NPC message's timestamp with the assigned yesterday time.
+  useEffect(() => {
+    setRooms((prev) => {
+      const next = { ...prev };
+      for (const s of SCENARIOS) {
+        const r = next[s.id];
+        if (!r || r.msgs.length === 0) continue;
+        const first = r.msgs[0];
+        if (first.from === "npc" && r.stage === 0 && !r.done) {
+          const at = fmtStamp(scenarioTimes[s.id]);
+          if (first.at !== at) {
+            next[s.id] = { ...r, msgs: [{ ...first, at }, ...r.msgs.slice(1)] };
+          }
+        }
+      }
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
 
   // Hydrate rooms from localStorage after mount
   useEffect(() => {
@@ -238,6 +291,13 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
     return last ? last.text.slice(0, 26) : "";
   };
 
+  const yesterday = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d;
+  }, []);
+  const yesterdayWeekday = `${WEEKDAY_KO[yesterday.getDay()]}요일`;
+
   // Detected slang triggers in the current NPC line (for correction-mode guide)
   const npcMemes = scenario.correctionMode ? findAllMemes(currentStage.npc) : [];
 
@@ -297,7 +357,7 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
                         {s.npc}
                       </div>
                       <div className="shrink-0 text-[10px] text-white/40">
-                        {locked ? "" : r.done ? "완료" : `Stg ${Math.min(r.stage + 1, s.stages.length)}/${s.stages.length}`}
+                        {locked ? "" : r.done ? "완료" : yesterdayWeekday}
                       </div>
                     </div>
                     <div className={`text-[12px] truncate ${locked ? "text-white/35" : "text-white/55"}`}>
@@ -397,7 +457,7 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
             {/* Chat area */}
             <div className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
               <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
-                {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
+                {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
               </div>
               {room.msgs.map((m, i) => (
                 <div key={i} className={`flex animate-fade-in ${m.from === "me" ? "justify-end" : "justify-start"}`}>
