@@ -84,7 +84,7 @@ function Index() {
   if (!student) {
     return (
       <>
-        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} />
+        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
         {teacherView}
       </>
     );
@@ -92,7 +92,7 @@ function Index() {
   if (!hydrated) {
     return (
       <>
-        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} />
+        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
         {teacherView}
       </>
     );
