@@ -411,7 +411,7 @@ export function ChatbotTab({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)] animate-fade-in">
-      <style>{`.wt-panel{height:calc(100dvh - 168px);min-height:480px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
+      <style>{`.wt-panel{height:calc(var(--wt-vv-h, 100dvh) - 168px);min-height:320px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
       {/* KakaoTalk mobile-style dark chat list */}
       <aside
         className={`wt-panel rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
