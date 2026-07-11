@@ -36,8 +36,8 @@ function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student?.classCode, student?.number, student?.name]);
 
-  if (!hydrated) return <div className="min-h-screen" style={{ background: "var(--gradient-hero)" }} />;
   if (!student) return <Onboarding onSubmit={setStudent} />;
+  if (!hydrated) return <Onboarding onSubmit={setStudent} />;
 
   const who = `${student.classCode}_${student.number.padStart(2, "0")} ${student.name}`;
   const activeId = studentId(student.classCode, student.number);

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Student } from "@/lib/literacy-types";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export function Onboarding({ onSubmit }: { onSubmit: (s: Student) => void }) {
   const [classCode, setClassCode] = useState("");
@@ -19,7 +20,11 @@ export function Onboarding({ onSubmit }: { onSubmit: (s: Student) => void }) {
     <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-[var(--shadow-soft)] border-2 border-[color:var(--mint-deep)]">
         <div className="text-center mb-6">
-          <div className="text-6xl mb-2">👑</div>
+          <img
+            src={logoAsset.url}
+            alt="바른말 수호대 로고"
+            className="h-16 w-auto mx-auto mb-2 rounded-xl"
+          />
           <h1 className="text-2xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
           <p className="text-sm text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
         </div>
