@@ -172,6 +172,7 @@ function Index() {
         {tab === "chat" && (
           <ChatbotTab
             classLevel={lv.current.lv}
+            studentKey={activeId}
             onXP={(delta, kind, note) => awardXP(delta, kind, note)}
           />
         )}
