@@ -262,6 +262,7 @@ function ProposalModal({
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (submittingRef.current) return; // 중복 제출 방어
     if (!source.trim()) {
       setErrorMsg("단어가 사용된 출처를 적어주어야 신청할 수 있어요!");
       return;
@@ -271,6 +272,8 @@ function ProposalModal({
       return;
     }
     setErrorMsg("");
+    submittingRef.current = true;
+    setTimeout(() => (submittingRef.current = false), 800);
     onSubmit({
       word: word.trim(),
       student_definition: def.trim(),
