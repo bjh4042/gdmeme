@@ -201,3 +201,7 @@ export function reasonLabel(r: EvalReason) {
     default: return "통과";
   }
 }
+
+export function stageHintWords(scenarioId: string, stageIdx: number): string[] {
+  return CONCEPTS[scenarioId]?.[stageIdx]?.slice(0, 6) ?? [];
+}
