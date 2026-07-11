@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import logoAsset from "@/assets/logo.png.asset.json";
+import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import { Onboarding } from "@/components/literacy/Onboarding";
 import { AnalyzerTab } from "@/components/literacy/AnalyzerTab";
 import { ChatbotTab } from "@/components/literacy/ChatbotTab";
