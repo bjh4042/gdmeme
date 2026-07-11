@@ -31,21 +31,22 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
       )}
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-[var(--shadow-soft)] border-2 border-[color:var(--mint-deep)]">
         <div className="text-center mb-6">
-          <div className="relative w-full mb-3 rounded-xl overflow-hidden bg-[color:var(--mint)]/30" style={{ aspectRatio: "1 / 1" }}>
+          <div
+            className="relative w-full mb-3 rounded-xl overflow-hidden bg-[color:var(--mint)]/20"
+            style={{ aspectRatio: "1428 / 798" }}
+          >
             {!logoLoaded && (
-              <div className="absolute inset-0 grid place-items-center animate-pulse text-5xl" aria-hidden="true">
-                👑
-              </div>
+              <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[color:var(--mint)]/40 to-[color:var(--mint-deep)]/20" aria-hidden="true" />
             )}
             <img
               src={logoAsset.url}
               alt="바른말 수호대 로고"
-              width={512}
-              height={512}
+              width={1428}
+              height={798}
               fetchPriority="high"
               decoding="async"
               onLoad={() => setLogoLoaded(true)}
-              className={`w-full h-full object-contain transition-opacity duration-200 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+              className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
             />
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
