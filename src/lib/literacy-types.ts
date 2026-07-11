@@ -43,7 +43,7 @@ export type StudentRecord = {
 
 export type ClassState = {
   xp: number;
-  activityLog: { at: string; who: string; kind: string; delta: number; note?: string }[];
+  activityLog: { at: string; who: string; kind: string; delta: number; note?: string; classCode?: string }[];
 };
 
 export function computeTotal(e: Evaluation) {
