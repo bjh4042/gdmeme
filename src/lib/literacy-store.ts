@@ -438,3 +438,28 @@ export function useStudents() {
 }
 
 export { studentId };
+
+/**
+ * Direct LocalStorage credit to a specific class's XP pool.
+ * Used when the acting user (e.g. teacher) is not necessarily in the same
+ * class as the target (e.g. crediting the applicant's home class on approval).
+ */
+export function addClassXPFor(
+  classCode: string,
+  delta: number,
+  who: string,
+  kind: string,
+  note?: string,
+) {
+  if (!classCode || !delta) return;
+  const key = CLASS_KEY_PREFIX + classCode;
+  const prev = safeGet<ClassState>(key, { xp: 0, activityLog: [] });
+  const next: ClassState = {
+    xp: Math.max(0, prev.xp + delta),
+    activityLog: [
+      { at: new Date().toISOString(), who, kind, delta, note },
+      ...prev.activityLog,
+    ].slice(0, 200),
+  };
+  safeSet(key, next);
+}
