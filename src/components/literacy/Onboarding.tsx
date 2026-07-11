@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import type { Student } from "@/lib/literacy-types";
+import type { Student, StudentRecord } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo.png.asset.json";
 
-export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => void; onAdmin?: () => void }) {
+export function Onboarding({
+  onSubmit,
+  onAdmin,
+  roster = [],
+}: {
+  onSubmit: (s: Student) => void;
+  onAdmin?: () => void;
+  roster?: StudentRecord[];
+}) {
   const [classCode, setClassCode] = useState("");
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
@@ -22,7 +30,18 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
     if (!/^\d{4}$/.test(classCode)) return setErr("학급 코드는 4자리 숫자여야 해요.");
     if (!number.trim()) return setErr("학생 번호를 입력해 주세요.");
     if (!name.trim()) return setErr("이름을 입력해 주세요.");
-    onSubmit({ classCode, number: number.trim(), name: name.trim() });
+    const trimmedNumber = number.trim();
+    const trimmedName = name.trim();
+    const dup = roster.find(
+      (r) => r.classCode === classCode && r.number === trimmedNumber,
+    );
+    if (dup && dup.name.trim() !== trimmedName) {
+      const msg = `이미 등록된 아이디입니다.\n\n학급 ${classCode} · ${trimmedNumber}번은 이미 '${dup.name}' 학생이 사용 중이에요.\n번호를 다르게 입력하거나, 본인이면 등록된 이름 그대로 입력해 주세요.`;
+      setErr("중복된 아이디입니다. 번호 또는 이름을 확인해 주세요.");
+      if (typeof window !== "undefined") window.alert(msg);
+      return;
+    }
+    onSubmit({ classCode, number: trimmedNumber, name: trimmedName });
   }
 
   return (
