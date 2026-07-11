@@ -168,7 +168,27 @@ export function ChatbotTab({
   // 대화 피드 자동 스크롤: 사용자가 최하단 근처에 있을 때만 따라 내려간다.
   const feedRef = useRef<HTMLDivElement | null>(null);
   const atBottomRef = useRef(true);
-  const [showJumpPill, setShowJumpPill] = useState(false);
+  const [unreadNew, setUnreadNew] = useState(0);
+
+  // 모바일 키보드 대응: visualViewport 높이를 --wt-vv-h 로 반영해서
+  // .wt-panel 이 항상 실제 보이는 뷰포트에 맞게 재계산되도록 한다.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const vv = window.visualViewport;
+    const setVar = () => {
+      const h = vv?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty("--wt-vv-h", `${h}px`);
+    };
+    setVar();
+    vv?.addEventListener("resize", setVar);
+    vv?.addEventListener("scroll", setVar);
+    window.addEventListener("orientationchange", setVar);
+    return () => {
+      vv?.removeEventListener("resize", setVar);
+      vv?.removeEventListener("scroll", setVar);
+      window.removeEventListener("orientationchange", setVar);
+    };
+  }, []);
 
   // 유저 스위칭 또는 잠금 변화 → 활성 방을 잠금 해제된 첫 방(담임)으로 스냅.
   useEffect(() => {
@@ -208,7 +228,7 @@ export function ChatbotTab({
     const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
     const atBottom = dist < 48;
     atBottomRef.current = atBottom;
-    if (atBottom && showJumpPill) setShowJumpPill(false);
+    if (atBottom && unreadNew > 0) setUnreadNew(0);
   }
 
   function scrollFeedToBottom(behavior: ScrollBehavior = "smooth") {
@@ -218,15 +238,18 @@ export function ChatbotTab({
     // 이미지·폰트 리페인트로 인해 높이가 늘어나는 경우까지 안전하게 커버
     requestAnimationFrame(() => {
       el.scrollTo({ top: el.scrollHeight, behavior });
+      // 한 번 더 (가상화 measure 후 최종 높이 반영)
+      requestAnimationFrame(() => el.scrollTo({ top: el.scrollHeight, behavior: "auto" }));
     });
     atBottomRef.current = true;
-    setShowJumpPill(false);
+    setUnreadNew(0);
   }
 
   // 방을 바꾸거나 잠금이 풀리면 무조건 최하단
   useEffect(() => {
     if (isLocked) return;
     atBottomRef.current = true;
+    setUnreadNew(0);
     requestAnimationFrame(() => scrollFeedToBottom("auto"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId, isLocked]);
@@ -238,7 +261,7 @@ export function ChatbotTab({
     if (atBottomRef.current) {
       scrollFeedToBottom("smooth");
     } else {
-      setShowJumpPill(true);
+      setUnreadNew((n) => n + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msgCount]);
