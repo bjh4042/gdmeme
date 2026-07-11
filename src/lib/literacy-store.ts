@@ -270,7 +270,7 @@ export function useClassState(classCode: string | undefined) {
           activityLog: [
             { at: new Date().toISOString(), who, kind, delta, note, classCode },
             ...prev.activityLog,
-          ].slice(0, 200),
+          ].slice(0, 100), // GC: 최근 100건만 유지 (LocalStorage 용량 방어)
         };
         writeClass(classCode, next);
         return next;
@@ -289,7 +289,7 @@ export function useClassState(classCode: string | undefined) {
           activityLog: [
             { at: new Date().toISOString(), who, kind: "teacher-adjust", delta, note, classCode },
             ...prev.activityLog,
-          ].slice(0, 200),
+          ].slice(0, 100), // GC: 최근 100건만 유지
         };
         writeClass(classCode, next);
         return next;
@@ -514,7 +514,7 @@ export function addClassXPFor(
     activityLog: [
       { at: new Date().toISOString(), who, kind, delta, note, classCode },
       ...prev.activityLog,
-    ].slice(0, 200),
+    ].slice(0, 100), // GC: 최근 100건만 유지
   };
   writeClass(classCode, next);
 }
