@@ -7,6 +7,12 @@ import {
   type Scenario,
 } from "@/lib/literacy-seed";
 import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel, stageHintWords } from "@/lib/literacy-evaluator";
+import { useDebouncedAction } from "@/lib/use-debounced-action";
+
+const MAX_MSGS_PER_ROOM = 100; // GC: 방당 최근 100개만 유지
+function capMsgs(arr: Msg[]): Msg[] {
+  return arr.length > MAX_MSGS_PER_ROOM ? arr.slice(-MAX_MSGS_PER_ROOM) : arr;
+}
 
 type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
 
@@ -285,7 +291,7 @@ export function ChatbotTab({
         ...prev,
         [scenario.id]: {
           ...prev[scenario.id],
-          msgs: [...prev[scenario.id].msgs, { from: "npc", text, tone, at: nowStamp() }],
+          msgs: capMsgs([...prev[scenario.id].msgs, { from: "npc", text, tone, at: nowStamp() }]),
         },
       }));
     }, 380);
@@ -296,7 +302,7 @@ export function ChatbotTab({
         ...prev,
         [scenario.id]: {
           ...prev[scenario.id],
-          msgs: [...prev[scenario.id].msgs, { from: "sys", text }],
+          msgs: capMsgs([...prev[scenario.id].msgs, { from: "sys", text }]),
         },
       }));
     }, 700);
@@ -310,7 +316,7 @@ export function ChatbotTab({
       ...prev,
       [scenario.id]: {
         ...prev[scenario.id],
-        msgs: [...prev[scenario.id].msgs, { from: "me", text, at: nowStamp() }],
+        msgs: capMsgs([...prev[scenario.id].msgs, { from: "me", text, at: nowStamp() }]),
       },
     }));
 
@@ -345,7 +351,7 @@ export function ChatbotTab({
             ...prev,
             [scenario.id]: {
               ...prev[scenario.id],
-              msgs: [...prev[scenario.id].msgs, { from: "npc", text: nextPrompt, at: nowStamp() }],
+              msgs: capMsgs([...prev[scenario.id].msgs, { from: "npc", text: nextPrompt, at: nowStamp() }]),
             },
           }));
         }, 900);
