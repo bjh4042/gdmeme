@@ -3,11 +3,9 @@ import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Mu
 import {
   SCENARIOS,
   MEME_TRIGGERS,
-  MEME_FEEDBACK,
-  SHORT_FEEDBACK,
-  IMPOLITE_FEEDBACK,
   type Scenario,
 } from "@/lib/literacy-seed";
+import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel } from "@/lib/literacy-evaluator";
 
 type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
 
@@ -16,15 +14,6 @@ function containsMeme(text: string) {
 }
 function findAllMemes(text: string) {
   return MEME_TRIGGERS.filter((m) => text.includes(m));
-}
-function isPolite(text: string) {
-  const t = text.trim();
-  if (t.length < 6) return false;
-  if (containsMeme(t)) return false;
-  return /(요\.?|니다\.?|습니다|하겠습니다|드릴게요|감사합니다|죄송합니다|반가워|안녕하|고마워|같이|우리|친구야|괜찮아)/.test(t);
-}
-function fill(tpl: string, word: string, hint: string) {
-  return tpl.replace("{word}", word).replace("{hint}", hint);
 }
 function fmtStamp(d: Date) {
   const h = d.getHours();
