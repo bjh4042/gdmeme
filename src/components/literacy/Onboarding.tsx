@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Student } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo.png.asset.json";
 
@@ -8,6 +8,14 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
   const [name, setName] = useState("");
   const [err, setErr] = useState("");
   const [logoLoaded, setLogoLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    // If the image was already cached (e.g. via <link rel=preload>), onLoad
+    // may fire before React attaches the listener — sync from the DOM.
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setLogoLoaded(true);
+    }
+  }, []);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,6 +47,7 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
               <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[color:var(--mint)]/40 to-[color:var(--mint-deep)]/20" aria-hidden="true" />
             )}
             <img
+              ref={imgRef}
               src={logoAsset.url}
               alt="바른말 수호대 로고"
               width={1428}
