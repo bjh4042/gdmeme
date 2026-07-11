@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus } from "lucide-react";
 import {
   SCENARIOS,
@@ -164,6 +164,9 @@ export function ChatbotTab({
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
+  // 대화 피드 자동 스크롤 (메시지가 늘어나거나 방을 바꿀 때 항상 최하단)
+  const feedRef = useRef<HTMLDivElement | null>(null);
+
   // 유저 스위칭 또는 잠금 변화 → 활성 방을 잠금 해제된 첫 방(담임)으로 스냅.
   useEffect(() => {
     if (!unlockedIds.includes(activeId)) {
@@ -175,6 +178,14 @@ export function ChatbotTab({
   const scenario = useMemo(() => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0], [activeId]);
   const isLocked = !unlockedIds.includes(scenario.id);
   const room = rooms[scenario.id];
+
+  useEffect(() => {
+    const el = feedRef.current;
+    if (!el) return;
+    // 부드럽게 최하단으로
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [room?.msgs.length, activeId, isLocked]);
+
   const currentStage = scenario.stages[Math.min(room.stage, scenario.stages.length - 1)];
   const guideText = room.done ? "🎉 모든 대화를 완료했어요! 목록에서 다른 인물과 대화해보세요." : currentStage.guide;
   const hintText = room.done ? scenario.completeBadge ?? "예절 배지 획득!" : currentStage.hint;
@@ -329,7 +340,7 @@ export function ChatbotTab({
         className={`rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
           mobileView === "chat" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1c1c1e", minHeight: 640 }}
+        style={{ background: "#1c1c1e", height: "min(75vh, 720px)", minHeight: 520 }}
       >
         {/* Top header */}
         <div className="px-5 pt-4 pb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
@@ -421,10 +432,10 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
-        className={`rounded-3xl overflow-hidden flex-col min-h-[640px] shadow-[var(--shadow-soft)] border border-black/40 ${
+        className={`rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 ${
           mobileView === "list" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1a1a1a" }}
+        style={{ background: "#1a1a1a", height: "min(75vh, 720px)", minHeight: 520 }}
       >
         {/* Top bar */}
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-3 bg-[#111] text-white border-b border-white/5">
@@ -476,7 +487,7 @@ export function ChatbotTab({
         ) : (
           <>
             {/* Chat area */}
-            <div className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
+            <div ref={feedRef} className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
               <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
                 {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
               </div>
