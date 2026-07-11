@@ -51,7 +51,7 @@ export function Onboarding({
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white">
+    <div className="relative min-h-screen flex items-center justify-center p-3 sm:p-6 bg-white">
       {onAdmin && (
         <button
           type="button"
@@ -64,7 +64,7 @@ export function Onboarding({
       )}
       {/* Smartphone frame */}
       <div
-        className="relative w-full max-w-[360px] h-[min(760px,90vh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
+        className="relative w-full max-w-[360px] h-[min(92dvh,760px)] sm:h-[min(760px,90dvh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
       >
         {/* Side buttons */}
         <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
