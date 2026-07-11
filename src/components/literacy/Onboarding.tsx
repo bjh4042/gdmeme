@@ -7,6 +7,7 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   const [err, setErr] = useState("");
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,13 +31,25 @@ export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => vo
       )}
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-[var(--shadow-soft)] border-2 border-[color:var(--mint-deep)]">
         <div className="text-center mb-6">
-          <img
-            src={logoAsset.url}
-            alt="바른말 수호대 로고"
-            className="w-full h-auto mb-2 rounded-xl"
-          />
-          <h1 className="text-2xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
-          <p className="text-sm text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
+          <div className="relative w-full mb-3 rounded-xl overflow-hidden bg-[color:var(--mint)]/30" style={{ aspectRatio: "1 / 1" }}>
+            {!logoLoaded && (
+              <div className="absolute inset-0 grid place-items-center animate-pulse text-5xl" aria-hidden="true">
+                👑
+              </div>
+            )}
+            <img
+              src={logoAsset.url}
+              alt="바른말 수호대 로고"
+              width={512}
+              height={512}
+              fetchPriority="high"
+              decoding="async"
+              onLoad={() => setLogoLoaded(true)}
+              className={`w-full h-full object-contain transition-opacity duration-200 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+            />
+          </div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
         </div>
         <form onSubmit={submit} className="space-y-4">
           <div>
