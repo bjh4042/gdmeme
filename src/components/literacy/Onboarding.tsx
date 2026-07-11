@@ -23,7 +23,7 @@ export function Onboarding({ onSubmit }: { onSubmit: (s: Student) => void }) {
           <img
             src={logoAsset.url}
             alt="바른말 수호대 로고"
-            className="h-16 w-auto mx-auto mb-2 rounded-xl"
+            className="w-full h-auto mb-2 rounded-xl"
           />
           <h1 className="text-2xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
           <p className="text-sm text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
