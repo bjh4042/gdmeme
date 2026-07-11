@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import { Onboarding } from "@/components/literacy/Onboarding";
 import { AnalyzerTab } from "@/components/literacy/AnalyzerTab";
@@ -8,7 +8,7 @@ import { QuizTab } from "@/components/literacy/QuizTab";
 import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
 import { AssistantTab } from "@/components/literacy/AssistantTab";
-import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
+import { TeacherGate } from "@/components/literacy/TeacherGate";
 import { useEffect } from "react";
 import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId, addClassXPFor } from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
@@ -41,7 +41,7 @@ function Index() {
   const activeId = student ? studentId(student.classCode, student.number) : "";
 
   const teacherView = teacherOpen ? (
-    <TeacherDashboard
+    <TeacherGate
       dict={dict}
       students={roster.students}
       currentClassCode={student?.classCode ?? ""}
@@ -116,10 +116,64 @@ function Index() {
   const who = `${student.classCode}_${student.number.padStart(2, "0")} ${student.name}`;
   const lv = levelOf(state.xp);
 
-  function awardXP(delta: number, kind: string, note?: string) {
-    addXP(delta, who, kind, note);
-    if (delta) roster.addStudentXP(activeId, delta);
-  }
+  // useCallback으로 자식 탭에 넘기는 콜백을 안정화(memo 회피 방지).
+  const awardXP = useCallback(
+    (delta: number, kind: string, note?: string) => {
+      addXP(delta, who, kind, note);
+      if (delta) roster.addStudentXP(activeId, delta);
+    },
+    [addXP, who, activeId, roster],
+  );
+
+  const onRegisterNew = useCallback((w: string) => {
+    setPrefillWord(w);
+    setOpenModalKey(Date.now());
+    setTab("dict");
+  }, []);
+
+  const onDictSubmit = useCallback(
+    (p: Parameters<React.ComponentProps<typeof DictionaryTab>["onSubmit"]>[0]) => {
+      addProposal(p);
+      awardXP(5, "proposal", p.word);
+    },
+    [addProposal, awardXP],
+  );
+
+  const classLv = lv.current.lv;
+
+  // 4개 탭을 항상 마운트하고 hidden 토글로만 전환 → 탭 이동해도
+  // 스크롤/입력/챗 상태가 그대로 살아있는 keep-alive.
+  const analyzerNode = useMemo(
+    () => <AnalyzerTab dict={dict} onRegisterNew={onRegisterNew} />,
+    [dict, onRegisterNew],
+  );
+  const chatbotNode = useMemo(
+    () => <ChatbotTab classLevel={classLv} studentKey={activeId} onXP={awardXP} />,
+    [classLv, activeId, awardXP],
+  );
+  const assistNode = useMemo(
+    () => <AssistantTab onXP={awardXP} />,
+    [awardXP],
+  );
+  const quizNode = useMemo(
+    () => <QuizTab dict={dict} onXP={awardXP} />,
+    [dict, awardXP],
+  );
+  const dictNode = useMemo(
+    () => (
+      <div className="space-y-6">
+        <DashboardTab dict={dict} state={state} />
+        <DictionaryTab
+          dict={dict}
+          student={student}
+          prefillWord={prefillWord}
+          openModalKey={openModalKey}
+          onSubmit={onDictSubmit}
+        />
+      </div>
+    ),
+    [dict, state, student, prefillWord, openModalKey, onDictSubmit],
+  );
 
   return (
     <div
@@ -159,47 +213,11 @@ function Index() {
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 py-4 sm:px-4 sm:py-6">
-        {tab === "analyze" && (
-          <AnalyzerTab
-            dict={dict}
-            onRegisterNew={(w) => {
-              setPrefillWord(w);
-              setOpenModalKey(Date.now());
-              setTab("dict");
-            }}
-          />
-        )}
-        {tab === "chat" && (
-          <ChatbotTab
-            classLevel={lv.current.lv}
-            studentKey={activeId}
-            onXP={(delta, kind, note) => awardXP(delta, kind, note)}
-          />
-        )}
-        {tab === "assist" && (
-          <AssistantTab onXP={(delta, kind, note) => awardXP(delta, kind, note)} />
-        )}
-        {tab === "quiz" && (
-          <QuizTab
-            dict={dict}
-            onXP={(delta, kind, note) => awardXP(delta, kind, note)}
-          />
-        )}
-        {tab === "dict" && (
-          <div className="space-y-6">
-            <DashboardTab dict={dict} state={state} />
-            <DictionaryTab
-              dict={dict}
-              student={student}
-              prefillWord={prefillWord}
-              openModalKey={openModalKey}
-              onSubmit={(p) => {
-                addProposal(p);
-              awardXP(5, "proposal", p.word);
-              }}
-            />
-          </div>
-        )}
+        <div hidden={tab !== "analyze"}>{analyzerNode}</div>
+        <div hidden={tab !== "chat"}>{chatbotNode}</div>
+        <div hidden={tab !== "assist"}>{assistNode}</div>
+        <div hidden={tab !== "quiz"}>{quizNode}</div>
+        <div hidden={tab !== "dict"}>{dictNode}</div>
       </main>
 
       <nav
