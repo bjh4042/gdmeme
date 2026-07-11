@@ -17,8 +17,9 @@ export function Onboarding({
   const [err, setErr] = useState("");
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [kstTime, setKstTime] = useState(() => formatKST());
+  const [kstTime, setKstTime] = useState("");
   useEffect(() => {
+    setKstTime(formatKST());
     const t = window.setInterval(() => setKstTime(formatKST()), 15_000);
     return () => window.clearInterval(t);
   }, []);
