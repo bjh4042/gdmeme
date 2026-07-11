@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import logoAsset from "../assets/logo-v2.webp.asset.json";
 import level1 from "../assets/level1.webp.asset.json";
 import level2 from "../assets/level2.webp.asset.json";
@@ -137,6 +138,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <SonnerToaster richColors position="top-center" />
     </QueryClientProvider>
   );
 }

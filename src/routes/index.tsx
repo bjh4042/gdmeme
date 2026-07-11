@@ -10,8 +10,9 @@ import { DashboardTab } from "@/components/literacy/DashboardTab";
 import { AssistantTab } from "@/components/literacy/AssistantTab";
 import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
 import { useEffect } from "react";
-import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId } from "@/lib/literacy-store";
+import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId, addClassXPFor } from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
+import { toast } from "sonner";
 
 
 export const Route = createFileRoute("/")({
@@ -45,9 +46,23 @@ function Index() {
       students={roster.students}
       currentClassCode={student?.classCode ?? ""}
       onApprove={(id) => {
-        setStatus(id, "approved");
         const w = dict.find((d) => d.id === id);
-        if (w && student) addXP(20, `제안자 ${w.suggested_by}`, "approved", w.word);
+        setStatus(id, "approved");
+        if (!w) return;
+        const applicantId = w.suggested_by;
+        // 1) 신청 학생 개인 누적 XP에 +5
+        roster.addStudentXP(applicantId, 5);
+        // 2) 신청 학생의 학급 공동 XP에도 +5 (교사 현재 학급/타 학급 모두 대응)
+        const applicant = roster.students.find((r) => r.id === applicantId);
+        const applicantClass = applicant?.classCode ?? student?.classCode;
+        if (applicantClass === student?.classCode) {
+          addXP(5, `승인 · ${applicant?.name ?? applicantId}`, "word-approved", w.word);
+        } else if (applicantClass) {
+          addClassXPFor(applicantClass, 5, `승인 · ${applicant?.name ?? applicantId}`, "word-approved", w.word);
+        }
+        toast.success("교사 승인 완료! 신청 학생에게 수호 경험치 5 XP가 지급되었습니다.", {
+          description: `단어: ${w.word} · 신청자: ${applicant?.name ?? applicantId}`,
+        });
       }}
       onReject={(id) => setStatus(id, "rejected")}
       onUpdate={(id, patch) => {
