@@ -12,6 +12,11 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import logoAsset from "../assets/logo-v2.webp.asset.json";
+import level1 from "../assets/level1.webp.asset.json";
+import level2 from "../assets/level2.webp.asset.json";
+import level3 from "../assets/level3.webp.asset.json";
+import level4 from "../assets/level4.webp.asset.json";
+import level5 from "../assets/level5.webp.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -98,6 +103,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preload", as: "image", href: logoAsset.url, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: level1.url },
+      { rel: "preload", as: "image", href: level2.url },
+      { rel: "preload", as: "image", href: level3.url },
+      { rel: "preload", as: "image", href: level4.url },
+      { rel: "preload", as: "image", href: level5.url },
     ],
   }),
   shellComponent: RootShell,
