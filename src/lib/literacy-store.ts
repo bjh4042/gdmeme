@@ -5,8 +5,61 @@ import { SEED_DICT } from "./literacy-seed";
 
 const DICT_KEY = "wtmeme:dict:v5";
 const STUDENT_KEY = "wtmeme:student:v1";
-const CLASS_KEY_PREFIX = "wtmeme:class:v1:";
+// Legacy combined key (kept for one-time migration): { xp, activityLog }.
+const LEGACY_CLASS_KEY_PREFIX = "wtmeme:class:v1:";
+// New: fully isolated per-class sandboxes — one key per concern.
+const CLASS_XP_KEY_PREFIX = "class_share_xp_";
+const CLASS_ACTIVITY_KEY_PREFIX = "class_recent_activities_";
 const STUDENTS_KEY = "wtmeme:students:v1";
+
+type ActivityEntry = ClassState["activityLog"][number];
+
+function xpKey(classCode: string) {
+  return `${CLASS_XP_KEY_PREFIX}${classCode}`;
+}
+function activityKey(classCode: string) {
+  return `${CLASS_ACTIVITY_KEY_PREFIX}${classCode}`;
+}
+
+/**
+ * Read a class's isolated sandbox. Migrates from the legacy combined key
+ * `wtmeme:class:v1:${classCode}` on first read, then removes it so future
+ * writes never leak across classes via a shared object.
+ */
+function readClass(classCode: string): ClassState {
+  if (typeof window === "undefined") return { xp: 0, activityLog: [] };
+  const legacyKey = LEGACY_CLASS_KEY_PREFIX + classCode;
+  const legacy = window.localStorage.getItem(legacyKey);
+  if (legacy) {
+    try {
+      const parsed = JSON.parse(legacy) as ClassState;
+      const migrated: ClassState = {
+        xp: Math.max(0, Number(parsed?.xp) || 0),
+        activityLog: Array.isArray(parsed?.activityLog)
+          ? parsed.activityLog.map((a) => ({ ...a, classCode: a.classCode ?? classCode }))
+          : [],
+      };
+      safeSet(xpKey(classCode), migrated.xp);
+      safeSet(activityKey(classCode), migrated.activityLog);
+      window.localStorage.removeItem(legacyKey);
+      return migrated;
+    } catch {
+      window.localStorage.removeItem(legacyKey);
+    }
+  }
+  const xp = Math.max(0, Number(safeGet<number>(xpKey(classCode), 0)) || 0);
+  const raw = safeGet<ActivityEntry[]>(activityKey(classCode), []);
+  // Defensive filter: only surface entries that belong to this class.
+  const activityLog = (Array.isArray(raw) ? raw : []).filter(
+    (a) => !a.classCode || a.classCode === classCode,
+  );
+  return { xp, activityLog };
+}
+
+function writeClass(classCode: string, next: ClassState) {
+  safeSet(xpKey(classCode), next.xp);
+  safeSet(activityKey(classCode), next.activityLog);
+}
 
 function studentId(classCode: string, number: string) {
   return `${classCode}_${number.padStart(2, "0")}`;
@@ -202,8 +255,11 @@ export function useDictionary() {
 export function useClassState(classCode: string | undefined) {
   const [state, setState] = useState<ClassState>({ xp: 0, activityLog: [] });
   useEffect(() => {
+    // Always reset first so the previous class's data cannot flash into UI
+    // during account/class switches.
+    setState({ xp: 0, activityLog: [] });
     if (!classCode) return;
-    setState(safeGet<ClassState>(CLASS_KEY_PREFIX + classCode, { xp: 0, activityLog: [] }));
+    setState(readClass(classCode));
   }, [classCode]);
   const addXP = useCallback(
     (delta: number, who: string, kind: string, note?: string) => {
@@ -212,11 +268,11 @@ export function useClassState(classCode: string | undefined) {
         const next: ClassState = {
           xp: Math.max(0, prev.xp + delta),
           activityLog: [
-            { at: new Date().toISOString(), who, kind, delta, note },
+            { at: new Date().toISOString(), who, kind, delta, note, classCode },
             ...prev.activityLog,
           ].slice(0, 200),
         };
-        safeSet(CLASS_KEY_PREFIX + classCode, next);
+        writeClass(classCode, next);
         return next;
       });
     },
@@ -231,11 +287,11 @@ export function useClassState(classCode: string | undefined) {
         const next: ClassState = {
           xp: clean,
           activityLog: [
-            { at: new Date().toISOString(), who, kind: "teacher-adjust", delta, note },
+            { at: new Date().toISOString(), who, kind: "teacher-adjust", delta, note, classCode },
             ...prev.activityLog,
           ].slice(0, 200),
         };
-        safeSet(CLASS_KEY_PREFIX + classCode, next);
+        writeClass(classCode, next);
         return next;
       });
     },
@@ -452,14 +508,13 @@ export function addClassXPFor(
   note?: string,
 ) {
   if (!classCode || !delta) return;
-  const key = CLASS_KEY_PREFIX + classCode;
-  const prev = safeGet<ClassState>(key, { xp: 0, activityLog: [] });
+  const prev = readClass(classCode);
   const next: ClassState = {
     xp: Math.max(0, prev.xp + delta),
     activityLog: [
-      { at: new Date().toISOString(), who, kind, delta, note },
+      { at: new Date().toISOString(), who, kind, delta, note, classCode },
       ...prev.activityLog,
     ].slice(0, 200),
   };
-  safeSet(key, next);
+  writeClass(classCode, next);
 }
