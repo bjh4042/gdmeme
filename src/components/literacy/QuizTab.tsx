@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, XCircle, RefreshCw, Sparkles, Zap, Timer, Trophy, Play } from "lucide-react";
 import { QUIZZES, type QuizItem } from "@/lib/literacy-seed";
 import type { DictEntry } from "@/lib/literacy-types";
+import { useDebouncedAction } from "@/lib/use-debounced-action";
 
 type Question =
   | ({ kind: "mc" } & QuizItem)
@@ -119,6 +120,10 @@ export function QuizTab({
     const ok = q.answers.some((a) => a.replace(/\s/g, "") === t.replace(/\s/g, ""));
     markResult(ok);
   }
+
+  // 500ms 리딩 엣지 스로틀 → 연타 시 XP 중복/이중 채점 방어
+  const pickMCDebounced = useDebouncedAction(pickMC, 500);
+  const submitFillDebounced = useDebouncedAction(submitFill, 500);
   function next() {
     if (idx + 1 >= deck.length) {
       setPhase("done");
@@ -227,7 +232,7 @@ export function QuizTab({
               return (
                 <button
                   key={i}
-                  onClick={() => pickMC(i)}
+                  onClick={() => pickMCDebounced(i)}
                   disabled={result !== null}
                   className={`text-left px-4 py-3 rounded-2xl border-2 font-medium transition inline-flex items-center gap-2 disabled:cursor-not-allowed ${
                     isRight
@@ -248,7 +253,7 @@ export function QuizTab({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              submitFill();
+              submitFillDebounced();
             }}
             className="flex gap-2"
           >
