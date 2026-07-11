@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Student } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo.png.asset.json";
 
-export function Onboarding({ onSubmit }: { onSubmit: (s: Student) => void }) {
+export function Onboarding({ onSubmit, onAdmin }: { onSubmit: (s: Student) => void; onAdmin?: () => void }) {
   const [classCode, setClassCode] = useState("");
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
@@ -17,7 +17,17 @@ export function Onboarding({ onSubmit }: { onSubmit: (s: Student) => void }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
+    <div className="relative min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
+      {onAdmin && (
+        <button
+          type="button"
+          onClick={onAdmin}
+          title="교사 관리자 모드"
+          className="fixed top-3 right-3 z-50 w-10 h-10 grid place-items-center rounded-full bg-white/80 shadow-md text-lg hover:bg-[color:var(--mint)] transition"
+        >
+          🧑‍🏫
+        </button>
+      )}
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-[var(--shadow-soft)] border-2 border-[color:var(--mint-deep)]">
         <div className="text-center mb-6">
           <img
