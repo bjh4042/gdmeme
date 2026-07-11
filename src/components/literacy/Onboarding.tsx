@@ -17,8 +17,9 @@ export function Onboarding({
   const [err, setErr] = useState("");
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const [kstTime, setKstTime] = useState(() => formatKST());
+  const [kstTime, setKstTime] = useState("");
   useEffect(() => {
+    setKstTime(formatKST());
     const t = window.setInterval(() => setKstTime(formatKST()), 15_000);
     return () => window.clearInterval(t);
   }, []);
@@ -63,7 +64,7 @@ export function Onboarding({
       )}
       {/* Smartphone frame */}
       <div
-        className="relative w-full max-w-[360px] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
+        className="relative w-full max-w-[360px] h-[min(760px,90vh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
       >
         {/* Side buttons */}
         <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
@@ -76,7 +77,7 @@ export function Onboarding({
           <div aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20" />
           {/* Status bar */}
           <div className="relative z-10 flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-slate-700">
-            <span>{kstTime}</span>
+            <span suppressHydrationWarning>{kstTime || "9:41"}</span>
             <span className="flex items-center gap-1">
               <span aria-hidden>📶</span>
               <span aria-hidden>🔋</span>
@@ -84,71 +85,73 @@ export function Onboarding({
           </div>
 
           {/* Scrollable screen content */}
-          <div className="px-5 pt-3 pb-4">
-            <div className="text-center mb-3">
-              <div
-                className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
-                style={{ aspectRatio: "1024 / 559" }}
-              >
-                {!logoLoaded && (
-                  <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
-                )}
-                <img
-                  ref={imgRef}
-                  src={logoAsset.url}
-                  alt="바른말 수호대 로고"
-                  width={1024}
-                  height={559}
-                  fetchPriority="high"
-                  decoding="async"
-                  onLoad={() => setLogoLoaded(true)}
-                  className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
-                />
+          <div className="flex-1 overflow-y-auto px-6 py-8">
+            <div className="min-h-full flex flex-col justify-center gap-8">
+              <div className="text-center">
+                <div
+                  className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
+                  style={{ aspectRatio: "1024 / 559" }}
+                >
+                  {!logoLoaded && (
+                    <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
+                  )}
+                  <img
+                    ref={imgRef}
+                    src={logoAsset.url}
+                    alt="바른말 수호대 로고"
+                    width={1024}
+                    height={559}
+                    fetchPriority="high"
+                    decoding="async"
+                    onLoad={() => setLogoLoaded(true)}
+                    className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+                  />
+                </div>
               </div>
+              <form onSubmit={submit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">학급 코드 (4자리)</label>
+                  <input
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={classCode}
+                    onChange={(e) => setClassCode(e.target.value.replace(/\D/g, ""))}
+                    placeholder="예: 3105"
+                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 text-base font-mono tracking-widest focus:border-[color:var(--navy)] outline-none"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">번호</label>
+                    <input
+                      value={number}
+                      onChange={(e) => setNumber(e.target.value)}
+                      placeholder="14"
+                      className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 focus:border-[color:var(--navy)] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">이름</label>
+                    <input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="홍길동"
+                      className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 focus:border-[color:var(--navy)] outline-none"
+                    />
+                  </div>
+                </div>
+                {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-4 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
+                >
+                  수업 시작하기 →
+                </button>
+                <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                  개인정보는 저장되지 않으며, 이 기기의 브라우저에만 기록됩니다.
+                </p>
+              </form>
             </div>
-            <form onSubmit={submit} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">학급 코드 (4자리)</label>
-                <input
-                  inputMode="numeric"
-                  maxLength={4}
-                  value={classCode}
-                  onChange={(e) => setClassCode(e.target.value.replace(/\D/g, ""))}
-                  placeholder="예: 3105"
-                  className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 text-base font-mono tracking-widest focus:border-[color:var(--navy)] outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">번호</label>
-                  <input
-                    value={number}
-                    onChange={(e) => setNumber(e.target.value)}
-                    placeholder="14"
-                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 focus:border-[color:var(--navy)] outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">이름</label>
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="홍길동"
-                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 focus:border-[color:var(--navy)] outline-none"
-                  />
-                </div>
-              </div>
-              {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-3 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
-              >
-                수업 시작하기 →
-              </button>
-              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                개인정보는 저장되지 않으며, 이 기기의 브라우저에만 기록됩니다.
-              </p>
-            </form>
           </div>
 
           {/* Home indicator */}
