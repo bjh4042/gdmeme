@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import logoAsset from "@/assets/logo.png.asset.json";
 import { Onboarding } from "@/components/literacy/Onboarding";
 import { AnalyzerTab } from "@/components/literacy/AnalyzerTab";
 import { ChatbotTab } from "@/components/literacy/ChatbotTab";
@@ -10,6 +11,7 @@ import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
 import { useEffect } from "react";
 import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId } from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
+
 
 export const Route = createFileRoute("/")({
   component: Index,
