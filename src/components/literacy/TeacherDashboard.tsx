@@ -959,6 +959,7 @@ function StudentEditModal({
 }) {
   const [name, setName] = useState(student.name);
   const [password, setPassword] = useState(student.password ?? "");
+  const [group, setGroup] = useState(student.group ?? "");
   const [xp, setXp] = useState<number>(student.xp);
   const lv = levelOf(Math.max(0, Math.round(xp)));
 
@@ -967,6 +968,7 @@ function StudentEditModal({
     onSave({
       name: name.trim(),
       password,
+      group,
       xp: Math.max(0, Math.round(xp)),
     });
   }
@@ -979,6 +981,15 @@ function StudentEditModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+        </Field>
+        <Field label="그룹 / 모둠 (선택)">
+          <input
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            maxLength={20}
+            placeholder="예: 모둠A, 1분단, 도서부…"
             className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
           />
         </Field>
