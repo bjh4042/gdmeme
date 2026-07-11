@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
@@ -256,6 +256,7 @@ function ProposalModal({
     violence: 3,
     grammar_destruction: 3,
   });
+  const submittingRef = useRef(false);
   const total = computeTotal(ev);
   const g = gradeOf(total);
   const bg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
