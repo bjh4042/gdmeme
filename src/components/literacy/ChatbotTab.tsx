@@ -388,15 +388,14 @@ export function ChatbotTab({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)] animate-fade-in">
+      <style>{`.wt-panel{height:calc(100dvh - 168px);min-height:480px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
       {/* KakaoTalk mobile-style dark chat list */}
       <aside
-        className={`rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
+        className={`wt-panel rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
           mobileView === "chat" ? "hidden lg:flex" : "flex"
         }`}
         style={{ background: "#1c1c1e" }}
       >
-        <style>{`.wt-panel{height:calc(100dvh - 168px);min-height:480px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
-        <div className="wt-panel hidden" aria-hidden />
         {/* Top header */}
         <div className="px-5 pt-4 pb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <div className="text-white font-black text-[22px] tracking-tight">채팅</div>
@@ -487,7 +486,7 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
-        className={`rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
+        className={`wt-panel rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
           mobileView === "list" ? "hidden lg:flex" : "flex"
         }`}
         style={{ background: "#1a1a1a" }}
