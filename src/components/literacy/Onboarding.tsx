@@ -45,84 +45,115 @@ export function Onboarding({
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-6" style={{ background: "var(--gradient-hero)" }}>
+    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white">
       {onAdmin && (
         <button
           type="button"
           onClick={onAdmin}
           title="교사 관리자 모드"
-          className="fixed top-3 right-3 z-50 w-10 h-10 grid place-items-center rounded-full bg-white/80 shadow-md text-lg hover:bg-[color:var(--mint)] transition"
+          className="fixed top-3 right-3 z-50 w-10 h-10 grid place-items-center rounded-full bg-white shadow-md border border-slate-200 text-lg hover:bg-slate-50 transition"
         >
           🧑‍🏫
         </button>
       )}
-      <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-[var(--shadow-soft)] border-2 border-[color:var(--mint-deep)]">
-        <div className="text-center mb-6">
-          <div
-            className="relative w-full mb-3 rounded-xl overflow-hidden bg-[color:var(--mint)]/20"
-            style={{ aspectRatio: "1428 / 798" }}
-          >
-            {!logoLoaded && (
-              <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[color:var(--mint)]/40 to-[color:var(--mint-deep)]/20" aria-hidden="true" />
-            )}
-            <img
-              ref={imgRef}
-              src={logoAsset.url}
-              alt="바른말 수호대 로고"
-              width={1428}
-              height={798}
-              fetchPriority="high"
-              decoding="async"
-              onLoad={() => setLogoLoaded(true)}
-              className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
-            />
+      {/* Smartphone frame */}
+      <div
+        className="relative w-full max-w-[380px] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
+        style={{ aspectRatio: "9 / 19.5" }}
+      >
+        {/* Side buttons */}
+        <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
+        <span aria-hidden className="absolute -left-[3px] top-40 h-16 w-[3px] rounded-l bg-slate-700" />
+        <span aria-hidden className="absolute -right-[3px] top-32 h-20 w-[3px] rounded-r bg-slate-700" />
+
+        {/* Inner screen */}
+        <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] bg-white flex flex-col">
+          {/* Dynamic-island / notch */}
+          <div aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20" />
+          {/* Status bar */}
+          <div className="relative z-10 flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-slate-700">
+            <span>9:41</span>
+            <span className="flex items-center gap-1">
+              <span aria-hidden>📶</span>
+              <span aria-hidden>🔋</span>
+            </span>
           </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
+
+          {/* Scrollable screen content */}
+          <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
+            <div className="text-center mb-5">
+              <div
+                className="relative w-full mb-3 rounded-2xl overflow-hidden bg-slate-100"
+                style={{ aspectRatio: "1428 / 798" }}
+              >
+                {!logoLoaded && (
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
+                )}
+                <img
+                  ref={imgRef}
+                  src={logoAsset.url}
+                  alt="바른말 수호대 로고"
+                  width={1428}
+                  height={798}
+                  fetchPriority="high"
+                  decoding="async"
+                  onLoad={() => setLogoLoaded(true)}
+                  className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+                />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
+            </div>
+            <form onSubmit={submit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">학급 코드 (4자리)</label>
+                <input
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={classCode}
+                  onChange={(e) => setClassCode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="예: 3105"
+                  className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 text-base font-mono tracking-widest focus:border-[color:var(--navy)] outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">번호</label>
+                  <input
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                    placeholder="14"
+                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 focus:border-[color:var(--navy)] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1">이름</label>
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="홍길동"
+                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 focus:border-[color:var(--navy)] outline-none"
+                  />
+                </div>
+              </div>
+              {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-3 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
+              >
+                수업 시작하기 →
+              </button>
+              <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+                개인정보는 저장되지 않으며, 이 기기의 브라우저에만 기록됩니다.
+              </p>
+            </form>
+          </div>
+
+          {/* Home indicator */}
+          <div aria-hidden className="pb-2 pt-1 flex justify-center">
+            <span className="h-1 w-24 rounded-full bg-slate-800/80" />
+          </div>
         </div>
-        <form onSubmit={submit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">학급 코드 (4자리)</label>
-            <input
-              inputMode="numeric"
-              maxLength={4}
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="예: 3105"
-              className="w-full rounded-xl border-2 border-[color:var(--border)] px-4 py-3 text-lg font-mono tracking-widest focus:border-[color:var(--mint-deep)] outline-none"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">번호</label>
-              <input
-                value={number}
-                onChange={(e) => setNumber(e.target.value)}
-                placeholder="14"
-                className="w-full rounded-xl border-2 border-[color:var(--border)] px-4 py-3 focus:border-[color:var(--mint-deep)] outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">이름</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="홍길동"
-                className="w-full rounded-xl border-2 border-[color:var(--border)] px-4 py-3 focus:border-[color:var(--mint-deep)] outline-none"
-              />
-            </div>
-          </div>
-          {err && <p className="text-sm text-[color:var(--danger)]">{err}</p>}
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-3 font-bold text-lg hover:opacity-90 transition shadow-[var(--shadow-pop)]"
-          >
-            수업 시작하기 →
-          </button>
-          <p className="text-xs text-muted-foreground text-center">
-            개인정보는 저장되지 않으며, 이 기기의 브라우저에만 기록됩니다.
-          </p>
-        </form>
       </div>
     </div>
   );
