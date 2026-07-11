@@ -90,7 +90,7 @@ export function Onboarding({
               <div className="text-center">
                 <div
                   className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
-                  style={{ aspectRatio: "1024 / 559" }}
+                  style={{ aspectRatio: "720 / 393" }}
                 >
                   {!logoLoaded && (
                     <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
@@ -99,8 +99,8 @@ export function Onboarding({
                     ref={imgRef}
                     src={logoAsset.url}
                     alt="바른말 수호대 로고"
-                    width={1024}
-                    height={559}
+                    width={720}
+                    height={393}
                     fetchPriority="high"
                     decoding="async"
                     onLoad={() => setLogoLoaded(true)}
