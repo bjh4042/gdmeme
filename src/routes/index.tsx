@@ -202,43 +202,7 @@ function Index() {
         </div>
       </nav>
 
-      {teacherOpen && (
-        <TeacherDashboard
-          dict={dict}
-          students={roster.students}
-          currentClassCode={student.classCode}
-          onApprove={(id) => {
-            setStatus(id, "approved");
-            const w = dict.find((d) => d.id === id);
-            if (w) addXP(20, `제안자 ${w.suggested_by}`, "approved", w.word);
-          }}
-          onReject={(id) => setStatus(id, "rejected")}
-          onUpdate={(id, patch) => {
-            updateEntry(id, patch);
-            const w = dict.find((d) => d.id === id);
-            addXP(0, "교사", "edit", w?.word);
-          }}
-          onUpdateStudent={(id, patch) => {
-            const { xpDelta, classCode } = roster.updateStudent(id, patch);
-            // Only mirror the delta into the currently-viewed class ledger.
-            if (xpDelta && classCode === student.classCode) {
-              setXP(state.xp + xpDelta, `교사 조정 · ${id}`, patch.name);
-            }
-          }}
-          onDeleteStudent={(id) => {
-            const { removedXp, classCode } = roster.removeStudent(id);
-            if (removedXp && classCode === student.classCode) {
-              setXP(Math.max(0, state.xp - removedXp), `교사 삭제 · ${id}`);
-            }
-            // If the currently active student was deleted, end the session.
-            if (id === activeId) setStudent(null);
-          }}
-          onClose={() => setTeacherOpen(false)}
-          onReset={() => {
-            if (confirm("사전을 초기 시드 데이터로 되돌릴까요? (학생 제안은 사라집니다)")) resetSeed();
-          }}
-        />
-      )}
+      {teacherView}
     </div>
   );
 }
