@@ -248,6 +248,7 @@ function ProposalModal({
   const [def, setDef] = useState("");
   const [alt, setAlt] = useState("");
   const [source, setSource] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [ev, setEv] = useState<Evaluation>({
     aggression: 3,
     bullying: 3,
@@ -261,7 +262,15 @@ function ProposalModal({
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!word.trim() || !def.trim() || !alt.trim() || !source.trim()) return;
+    if (!source.trim()) {
+      setErrorMsg("단어가 사용된 출처를 적어주어야 신청할 수 있어요!");
+      return;
+    }
+    if (!word.trim() || !def.trim() || !alt.trim()) {
+      setErrorMsg("낱말명·뜻풀이·대안 표현을 모두 입력해 주세요.");
+      return;
+    }
+    setErrorMsg("");
     onSubmit({
       word: word.trim(),
       student_definition: def.trim(),
@@ -294,14 +303,25 @@ function ProposalModal({
           </label>
           <label className="block">
             <span className="text-sm font-bold text-[color:var(--navy)] flex items-center gap-1">
-              <Radio size={14} /> 출처 * <span className="text-xs font-normal text-muted-foreground">(유튜브 채널, 게임, 커뮤니티 등)</span>
+              <Radio size={14} /> 🔗 이 단어를 어디서 보거나 들었나요? (출처) * <span className="text-xs font-normal text-muted-foreground">필수</span>
             </span>
             <input
               value={source}
-              onChange={(e) => setSource(e.target.value)}
-              className="mt-1 w-full rounded-2xl border-2 border-white/70 bg-white/70 backdrop-blur px-3 py-2.5 outline-none focus:border-[color:var(--mint-deep)] transition"
-              placeholder="예: 유튜브 쇼츠, 롤(게임), 디시인사이드"
+              onChange={(e) => {
+                setSource(e.target.value);
+                if (errorMsg) setErrorMsg("");
+              }}
+              aria-invalid={!!errorMsg && !source.trim()}
+              className={`mt-1 w-full rounded-2xl border-2 bg-white/70 backdrop-blur px-3 py-2.5 outline-none transition focus:border-[color:var(--mint-deep)] ${
+                errorMsg && !source.trim() ? "border-[color:var(--danger)]" : "border-white/70"
+              }`}
+              placeholder="예: 유튜브 쇼츠 000채널, 인스타그램 릴스, 인터넷 신문기사, 학교 운동장"
             />
+            {errorMsg && (
+              <p role="alert" className="mt-1 text-xs font-bold text-[color:var(--danger)]">
+                ⚠️ {errorMsg}
+              </p>
+            )}
           </label>
           <label className="block">
             <span className="text-sm font-bold text-[color:var(--navy)]">학생들이 정의한 뜻 *</span>
