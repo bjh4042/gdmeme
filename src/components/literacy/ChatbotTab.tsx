@@ -3,11 +3,9 @@ import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Mu
 import {
   SCENARIOS,
   MEME_TRIGGERS,
-  MEME_FEEDBACK,
-  SHORT_FEEDBACK,
-  IMPOLITE_FEEDBACK,
   type Scenario,
 } from "@/lib/literacy-seed";
+import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel, stageHintWords } from "@/lib/literacy-evaluator";
 
 type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
 
@@ -16,15 +14,6 @@ function containsMeme(text: string) {
 }
 function findAllMemes(text: string) {
   return MEME_TRIGGERS.filter((m) => text.includes(m));
-}
-function isPolite(text: string) {
-  const t = text.trim();
-  if (t.length < 6) return false;
-  if (containsMeme(t)) return false;
-  return /(요\.?|니다\.?|습니다|하겠습니다|드릴게요|감사합니다|죄송합니다|반가워|안녕하|고마워|같이|우리|친구야|괜찮아)/.test(t);
-}
-function fill(tpl: string, word: string, hint: string) {
-  return tpl.replace("{word}", word).replace("{hint}", hint);
 }
 function fmtStamp(d: Date) {
   const h = d.getHours();
@@ -214,13 +203,17 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
       },
     }));
 
-    const meme = containsMeme(text);
-    const short = text.length < 6;
-    const polite = isPolite(text);
+    // 3중 시맨틱 예절 평가 매트릭스 통과 여부
+    const result = evaluateReply({
+      text,
+      scenarioId: scenario.id,
+      stageIdx: room.stage,
+      correctionMode: !!scenario.correctionMode,
+    });
 
-    // Correction mode: reward correcting a slang-heavy line; a polite, slang-free
-    // response of adequate length counts as a successful correction.
-    if (polite && !meme) {
+    if (result.pass) {
+      const wrongBefore = room.wrong;
+      const xp = xpForStageClear(wrongBefore);
       const nextStageIdx = room.stage + 1;
       const isFinal = nextStageIdx >= scenario.stages.length;
       setRooms((prev) => ({
@@ -245,44 +238,48 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
             },
           }));
         }, 900);
-        const xp = scenario.correctionMode ? 25 : 15;
-        pushSys(`✅ ${nextStageIdx}단계 통과! +${xp} XP`);
-        onXP(xp, "roleplay", `${scenario.id} · Stg${nextStageIdx}`);
+        pushSys(`✅ ${nextStageIdx}단계 통과! +${xp} XP${wrongBefore > 0 ? ` (반려 ${wrongBefore}회 후 통과)` : ""}`);
+        onXP(xp, "roleplay", `${scenario.id} · Stg${nextStageIdx} · 반려${wrongBefore}회`);
       } else {
-        const xp = scenario.correctionMode ? 80 : 30;
-        pushSys(`🎖️ ${scenario.completeBadge ?? "완료 배지 획득"} · +${xp} XP`);
-        onXP(xp, "roleplay", `${scenario.id} · 완료`);
+        const bonus = scenario.correctionMode ? 40 : 20;
+        const totalXp = xp + bonus;
+        pushSys(`🎖️ ${scenario.completeBadge ?? "완료 배지 획득"} · +${totalXp} XP`);
+        onXP(totalXp, "roleplay", `${scenario.id} · 완료 · 반려${wrongBefore}회`);
       }
       return;
     }
 
-    const idx = Math.min(room.wrong, 2);
-    let tpl: string;
-    let delta = 0;
-    let cause = "부적절";
-    if (meme) {
-      tpl = MEME_FEEDBACK[idx];
-      delta = scenario.correctionMode ? -10 : -25;
-      cause = `밈/비속어(${meme})`;
-    } else if (short) {
-      tpl = SHORT_FEEDBACK[idx];
-      delta = -8;
-      cause = "너무 짧음";
-    } else {
-      tpl = IMPOLITE_FEEDBACK[idx];
-      delta = -12;
-      cause = "예절 미흡";
-    }
+    // 실패: stage 고정, wrong 증가, NPC 반려 대사 렌더
+    const nextWrong = room.wrong + 1;
+    const delta =
+      result.reason === "slang"
+        ? scenario.correctionMode ? -10 : -25
+        : result.reason === "sarcastic-mockery"
+        ? -20
+        : result.reason === "evasive-question"
+        ? -12
+        : result.reason === "low-effort" || result.reason === "too-short"
+        ? -8
+        : -10;
     setRooms((prev) => ({
       ...prev,
       [scenario.id]: {
         ...prev[scenario.id],
-        wrong: prev[scenario.id].wrong + 1,
+        wrong: nextWrong,
         mood: Math.max(0, prev[scenario.id].mood + delta),
       },
     }));
-    pushNpc(fill(tpl, meme ?? text, currentStage.hint), meme ? "danger" : "warn");
-    onXP(0, "chat", `[${scenario.npc}] "${text}" · ${cause} · 오답 ${room.wrong + 1}회`);
+    const line = rejectionLine(scenario.id, nextWrong);
+    const tone: "warn" | "danger" =
+      result.reason === "slang" || result.reason === "sarcastic-mockery" ? "danger" : "warn";
+    pushNpc(line, tone);
+    onXP(
+      0,
+      "chat",
+      `[${scenario.npc}] "${text}" · ${reasonLabel(result.reason)}${
+        result.detail ? `(${result.detail})` : ""
+      } · 반려 ${nextWrong}회`,
+    );
   }
 
   const moodEmoji = room.mood >= 70 ? "😊" : room.mood >= 40 ? "😐" : room.mood >= 20 ? "😢" : "😠";
@@ -516,6 +513,21 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
                         ⚠︎ {w}
                       </span>
                     ))}
+                  </div>
+                )}
+                {room.wrong >= 3 && !room.done && (
+                  <div className="mt-2">
+                    <div className="text-[11px] text-[#FEE500] font-bold mb-1">🔑 결정적 단어 힌트</div>
+                    <div className="flex flex-wrap gap-1">
+                      {stageHintWords(scenario.id, room.stage).map((w) => (
+                        <span key={w} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FEE500]/25 text-yellow-100 border border-[#FEE500]/40">
+                          #{w}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="text-[10px] text-white/60 mt-1">
+                      위 단어 중 하나 이상을 포함하고, 존댓말 어미(~요/~습니다)로 8자 이상 말해보세요.
+                    </div>
                   </div>
                 )}
               </div>
