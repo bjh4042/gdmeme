@@ -7,6 +7,7 @@ import { ChatbotTab } from "@/components/literacy/ChatbotTab";
 import { QuizTab } from "@/components/literacy/QuizTab";
 import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
+import { AssistantTab } from "@/components/literacy/AssistantTab";
 import { TeacherDashboard } from "@/components/literacy/TeacherDashboard";
 import { useEffect } from "react";
 import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId } from "@/lib/literacy-store";
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "analyze" | "chat" | "quiz" | "dict";
+type Tab = "analyze" | "chat" | "assist" | "quiz" | "dict";
 
 function Index() {
   const hydrated = useHydrated();
@@ -159,6 +160,9 @@ function Index() {
             onXP={(delta, kind, note) => awardXP(delta, kind, note)}
           />
         )}
+        {tab === "assist" && (
+          <AssistantTab onXP={(delta, kind, note) => awardXP(delta, kind, note)} />
+        )}
         {tab === "quiz" && (
           <QuizTab
             dict={dict}
@@ -186,10 +190,11 @@ function Index() {
         className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
-        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-4">
+        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-5">
           {[
             { id: "analyze", icon: "🔎", label: "밈 분석기" },
             { id: "chat", icon: "💬", label: "예절 역할극" },
+            { id: "assist", icon: "🤖", label: "AI 수호비서" },
             { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
             { id: "dict", icon: "📚", label: "우리말 사전" },
           ].map((t) => (
