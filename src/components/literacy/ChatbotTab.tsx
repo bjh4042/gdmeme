@@ -7,6 +7,12 @@ import {
   type Scenario,
 } from "@/lib/literacy-seed";
 import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel, stageHintWords } from "@/lib/literacy-evaluator";
+import { useDebouncedAction } from "@/lib/use-debounced-action";
+
+const MAX_MSGS_PER_ROOM = 100; // GC: 방당 최근 100개만 유지
+function capMsgs(arr: Msg[]): Msg[] {
+  return arr.length > MAX_MSGS_PER_ROOM ? arr.slice(-MAX_MSGS_PER_ROOM) : arr;
+}
 
 type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
 
@@ -285,7 +291,7 @@ export function ChatbotTab({
         ...prev,
         [scenario.id]: {
           ...prev[scenario.id],
-          msgs: [...prev[scenario.id].msgs, { from: "npc", text, tone, at: nowStamp() }],
+          msgs: capMsgs([...prev[scenario.id].msgs, { from: "npc", text, tone, at: nowStamp() }]),
         },
       }));
     }, 380);
@@ -296,7 +302,7 @@ export function ChatbotTab({
         ...prev,
         [scenario.id]: {
           ...prev[scenario.id],
-          msgs: [...prev[scenario.id].msgs, { from: "sys", text }],
+          msgs: capMsgs([...prev[scenario.id].msgs, { from: "sys", text }]),
         },
       }));
     }, 700);
@@ -310,7 +316,7 @@ export function ChatbotTab({
       ...prev,
       [scenario.id]: {
         ...prev[scenario.id],
-        msgs: [...prev[scenario.id].msgs, { from: "me", text, at: nowStamp() }],
+        msgs: capMsgs([...prev[scenario.id].msgs, { from: "me", text, at: nowStamp() }]),
       },
     }));
 
@@ -345,7 +351,7 @@ export function ChatbotTab({
             ...prev,
             [scenario.id]: {
               ...prev[scenario.id],
-              msgs: [...prev[scenario.id].msgs, { from: "npc", text: nextPrompt, at: nowStamp() }],
+              msgs: capMsgs([...prev[scenario.id].msgs, { from: "npc", text: nextPrompt, at: nowStamp() }]),
             },
           }));
         }, 900);
@@ -408,6 +414,9 @@ export function ChatbotTab({
 
   // Detected slang triggers in the current NPC line (for correction-mode guide)
   const npcMemes = scenario.correctionMode ? findAllMemes(currentStage.npc) : [];
+
+  // 500ms 리딩 엣지 스로틀 → 연타로 인한 XP 중복/평가 로직 꼬임 방어
+  const sendDebounced = useDebouncedAction(send, 500);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)] animate-fade-in">
@@ -691,13 +700,13 @@ export function ChatbotTab({
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && send()}
+                onKeyDown={(e) => e.key === "Enter" && sendDebounced()}
                 placeholder={room.done ? "대화가 완료되었어요. 다른 인물과 대화해보세요!" : scenario.correctionMode ? "친구의 유행어를 바른 말로 고쳐 주세요..." : "바른 말로 답장해 보세요..."}
                 disabled={room.done}
                 className="min-w-0 rounded-full bg-[#2a2a2c] text-white placeholder:text-white/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#FEE500]/60 transition"
               />
               <button
-                onClick={send}
+                onClick={sendDebounced}
                 disabled={room.done}
                 aria-label="전송"
                 className="shrink-0 inline-flex items-center justify-center gap-1 rounded-full bg-[#FEE500] text-black px-3 sm:px-4 min-w-[44px] min-h-[44px] text-sm font-bold hover:scale-[1.03] active:scale-95 transition disabled:opacity-40"

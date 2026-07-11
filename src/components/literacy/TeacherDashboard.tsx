@@ -3,8 +3,8 @@ import type { DictEntry, Evaluation, StudentRecord } from "@/lib/literacy-types"
 import { computeTotal, gradeOf, levelOf } from "@/lib/literacy-types";
 import { Pencil, X, Plus, Trash2, Search, BookOpen, Users, ArrowUp, ArrowDown, Download, Upload } from "lucide-react";
 import * as XLSX from "xlsx";
-
-const MASTER_PW = "1234";
+// 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
+// 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
 type UpdatePayload = {
   word?: string;
@@ -53,9 +53,6 @@ export function TeacherDashboard({
   onClose: () => void;
   onReset: () => void;
 }) {
-  const [pw, setPw] = useState("");
-  const [ok, setOk] = useState(false);
-  const [err, setErr] = useState("");
   const [section, setSection] = useState<"words" | "students">("words");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
@@ -68,38 +65,6 @@ export function TeacherDashboard({
   const [groupFilter, setGroupFilter] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-
-  if (!ok) {
-    return (
-      <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (pw === MASTER_PW) setOk(true);
-            else setErr("비밀번호가 올바르지 않아요.");
-          }}
-          className="w-full max-w-sm rounded-3xl bg-card p-6 border-2 border-[color:var(--navy)]"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black text-[color:var(--navy)]">🔐 교사 대시보드</h3>
-            <button type="button" onClick={onClose} className="text-2xl">×</button>
-          </div>
-          <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">마스터 비밀번호</label>
-          <input
-            type="password"
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
-            className="w-full rounded-xl border-2 border-[color:var(--border)] px-3 py-2 outline-none focus:border-[color:var(--mint-deep)]"
-          />
-          {err && <p className="text-sm text-[color:var(--danger)] mt-2">{err}</p>}
-          <p className="text-xs text-muted-foreground mt-2">초기 비밀번호: 1234</p>
-          <button className="mt-4 w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-2 font-bold">
-            입장
-          </button>
-        </form>
-      </div>
-    );
-  }
 
   const pending = dict.filter((d) => d.status === "pending");
   const approved = dict.filter((d) => d.status === "approved");
