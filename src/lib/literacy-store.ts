@@ -39,12 +39,18 @@ export function useHydrated() {
 export function useStudent() {
   const [student, setStudent] = useState<Student | null>(null);
   useEffect(() => {
-    setStudent(safeGet<Student | null>(STUDENT_KEY, null));
+    // Do NOT auto-restore the student from localStorage — always require an
+    // explicit login on each visit. Clear any stale session left by prior versions.
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STUDENT_KEY);
+    }
   }, []);
   const save = useCallback((s: Student | null) => {
     setStudent(s);
-    if (s) safeSet(STUDENT_KEY, s);
-    else if (typeof window !== "undefined") window.localStorage.removeItem(STUDENT_KEY);
+    // Keep the session in memory only — never persist across reloads.
+    if (!s && typeof window !== "undefined") {
+      window.localStorage.removeItem(STUDENT_KEY);
+    }
   }, []);
   return { student, setStudent: save };
 }
