@@ -11,7 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import logoAsset from "../assets/logo.png.asset.json";
+import logoAsset from "../assets/logo-v2.webp.asset.json";
 
 function NotFoundComponent() {
   return (
