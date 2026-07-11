@@ -35,6 +35,7 @@ export type StudentRecord = {
   number: string;
   name: string;
   password?: string;
+  group?: string;
   xp: number;
   joinedAt: string;
   lastActiveAt: string;
