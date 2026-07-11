@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus } from "lucide-react";
+import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus, ArrowDown } from "lucide-react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   SCENARIOS,
   MEME_TRIGGERS,
@@ -164,8 +165,10 @@ export function ChatbotTab({
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
-  // 대화 피드 자동 스크롤 (메시지가 늘어나거나 방을 바꿀 때 항상 최하단)
+  // 대화 피드 자동 스크롤: 사용자가 최하단 근처에 있을 때만 따라 내려간다.
   const feedRef = useRef<HTMLDivElement | null>(null);
+  const atBottomRef = useRef(true);
+  const [showJumpPill, setShowJumpPill] = useState(false);
 
   // 유저 스위칭 또는 잠금 변화 → 활성 방을 잠금 해제된 첫 방(담임)으로 스냅.
   useEffect(() => {
@@ -178,17 +181,67 @@ export function ChatbotTab({
   const scenario = useMemo(() => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0], [activeId]);
   const isLocked = !unlockedIds.includes(scenario.id);
   const room = rooms[scenario.id];
-
-  useEffect(() => {
-    const el = feedRef.current;
-    if (!el) return;
-    // 부드럽게 최하단으로
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [room?.msgs.length, activeId, isLocked]);
-
   const currentStage = scenario.stages[Math.min(room.stage, scenario.stages.length - 1)];
   const guideText = room.done ? "🎉 모든 대화를 완료했어요! 목록에서 다른 인물과 대화해보세요." : currentStage.guide;
   const hintText = room.done ? scenario.completeBadge ?? "예절 배지 획득!" : currentStage.hint;
+
+  // 가상 리스트 아이템: [날짜 구분선, ...메시지들]
+  type FeedItem =
+    | { kind: "divider" }
+    | { kind: "msg"; m: Msg };
+  const items = useMemo<FeedItem[]>(
+    () => [{ kind: "divider" }, ...room.msgs.map((m) => ({ kind: "msg" as const, m }))],
+    [room.msgs],
+  );
+
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => feedRef.current,
+    estimateSize: () => 64,
+    overscan: 10,
+    measureElement: (el) => el.getBoundingClientRect().height,
+  });
+
+  function handleFeedScroll() {
+    const el = feedRef.current;
+    if (!el) return;
+    const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const atBottom = dist < 48;
+    atBottomRef.current = atBottom;
+    if (atBottom && showJumpPill) setShowJumpPill(false);
+  }
+
+  function scrollFeedToBottom(behavior: ScrollBehavior = "smooth") {
+    const el = feedRef.current;
+    if (!el) return;
+    rowVirtualizer.scrollToIndex(items.length - 1, { align: "end", behavior });
+    // 이미지·폰트 리페인트로 인해 높이가 늘어나는 경우까지 안전하게 커버
+    requestAnimationFrame(() => {
+      el.scrollTo({ top: el.scrollHeight, behavior });
+    });
+    atBottomRef.current = true;
+    setShowJumpPill(false);
+  }
+
+  // 방을 바꾸거나 잠금이 풀리면 무조건 최하단
+  useEffect(() => {
+    if (isLocked) return;
+    atBottomRef.current = true;
+    requestAnimationFrame(() => scrollFeedToBottom("auto"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, isLocked]);
+
+  // 새 메시지: 사용자가 최하단일 때만 따라 내려가고, 아니면 "새 메시지" 알림 표시
+  const msgCount = room?.msgs.length ?? 0;
+  useEffect(() => {
+    if (isLocked) return;
+    if (atBottomRef.current) {
+      scrollFeedToBottom("smooth");
+    } else {
+      setShowJumpPill(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [msgCount]);
 
   function openThread(id: string) {
     const s = SCENARIOS.find((x) => x.id === id);
@@ -340,8 +393,10 @@ export function ChatbotTab({
         className={`rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
           mobileView === "chat" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1c1c1e", height: "min(75vh, 720px)", minHeight: 520 }}
+        style={{ background: "#1c1c1e" }}
       >
+        <style>{`.wt-panel{height:calc(100dvh - 168px);min-height:480px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
+        <div className="wt-panel hidden" aria-hidden />
         {/* Top header */}
         <div className="px-5 pt-4 pb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <div className="text-white font-black text-[22px] tracking-tight">채팅</div>
@@ -432,10 +487,10 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
-        className={`rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 ${
+        className={`rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
           mobileView === "list" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1a1a1a", height: "min(75vh, 720px)", minHeight: 520 }}
+        style={{ background: "#1a1a1a" }}
       >
         {/* Top bar */}
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-3 bg-[#111] text-white border-b border-white/5">
