@@ -292,7 +292,7 @@ export function useStudents() {
   const updateStudent = useCallback(
     (
       id: string,
-      patch: { name?: string; password?: string; xp?: number },
+      patch: { name?: string; password?: string; xp?: number; group?: string },
     ): { xpDelta: number; classCode?: string } => {
       const now = new Date().toISOString();
       let xpDelta = 0;
@@ -307,6 +307,7 @@ export function useStudents() {
             ...r,
             name: patch.name?.trim() || r.name,
             password: patch.password !== undefined ? patch.password : r.password,
+            group: patch.group !== undefined ? (patch.group.trim() || undefined) : r.group,
             xp: newXp,
             lastActiveAt: now,
           };
@@ -335,7 +336,105 @@ export function useStudents() {
     return { removedXp, classCode };
   }, []);
 
-  return { students, upsertActive, addStudentXP, updateStudent, removeStudent, write };
+  /**
+   * Import a batch of student records (from Excel/CSV).
+   * mode "merge": update existing (by id) and add new rows; preserve XP unless a row explicitly provides it.
+   * mode "replace": remove all existing and replace with the imported set.
+   * Returns per-class XP deltas so the caller can sync ClassState totals.
+   */
+  const importStudents = useCallback(
+    (
+      rows: Array<{
+        classCode: string;
+        number: string;
+        name: string;
+        password?: string;
+        group?: string;
+        xp?: number;
+      }>,
+      mode: "merge" | "replace" = "merge",
+    ): { added: number; updated: number; removed: number; classXpDeltas: Record<string, number> } => {
+      const now = new Date().toISOString();
+      let added = 0;
+      let updated = 0;
+      let removed = 0;
+      const classXpDeltas: Record<string, number> = {};
+
+      const clean = rows
+        .map((r) => ({
+          classCode: String(r.classCode ?? "").trim(),
+          number: String(r.number ?? "").trim(),
+          name: String(r.name ?? "").trim(),
+          password: r.password != null ? String(r.password) : undefined,
+          group: r.group != null ? String(r.group).trim() || undefined : undefined,
+          xp: r.xp != null && !Number.isNaN(Number(r.xp)) ? Math.max(0, Math.round(Number(r.xp))) : undefined,
+        }))
+        .filter((r) => r.classCode && r.number && r.name);
+
+      setStudents((prev) => {
+        const byId = new Map(prev.map((r) => [r.id, r]));
+        const seen = new Set<string>();
+        const next: StudentRecord[] = [...prev];
+
+        for (const r of clean) {
+          const id = studentId(r.classCode, r.number);
+          seen.add(id);
+          const idx = next.findIndex((x) => x.id === id);
+          if (idx >= 0) {
+            const before = next[idx];
+            const newXp = r.xp != null ? r.xp : before.xp;
+            const delta = newXp - before.xp;
+            if (delta) classXpDeltas[before.classCode] = (classXpDeltas[before.classCode] ?? 0) + delta;
+            next[idx] = {
+              ...before,
+              name: r.name,
+              password: r.password !== undefined ? r.password : before.password,
+              group: r.group !== undefined ? r.group : before.group,
+              xp: newXp,
+              lastActiveAt: now,
+            };
+            updated++;
+          } else {
+            const rec: StudentRecord = {
+              id,
+              classCode: r.classCode,
+              number: r.number,
+              name: r.name,
+              password: r.password,
+              group: r.group,
+              xp: r.xp ?? 0,
+              joinedAt: now,
+              lastActiveAt: now,
+            };
+            next.unshift(rec);
+            if (rec.xp) classXpDeltas[rec.classCode] = (classXpDeltas[rec.classCode] ?? 0) + rec.xp;
+            added++;
+          }
+        }
+
+        let finalList = next;
+        if (mode === "replace") {
+          finalList = next.filter((r) => {
+            if (seen.has(r.id)) return true;
+            const orig = byId.get(r.id);
+            if (orig) {
+              classXpDeltas[orig.classCode] = (classXpDeltas[orig.classCode] ?? 0) - orig.xp;
+              removed++;
+            }
+            return false;
+          });
+        }
+
+        safeSet(STUDENTS_KEY, finalList);
+        return finalList;
+      });
+
+      return { added, updated, removed, classXpDeltas };
+    },
+    [],
+  );
+
+  return { students, upsertActive, addStudentXP, updateStudent, removeStudent, importStudents, write };
 }
 
 export { studentId };

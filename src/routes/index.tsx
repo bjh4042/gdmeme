@@ -67,6 +67,12 @@ function Index() {
         }
         if (id === activeId && student) setStudent(null);
       }}
+      onImportStudents={(rows, mode) => {
+        const res = roster.importStudents(rows, mode);
+        const delta = student ? res.classXpDeltas[student.classCode] ?? 0 : 0;
+        if (delta) setXP(Math.max(0, state.xp + delta), `엑셀 업로드 (${mode})`);
+        return { added: res.added, updated: res.updated, removed: res.removed };
+      }}
       onClose={() => setTeacherOpen(false)}
       onReset={() => {
         if (confirm("사전을 초기 시드 데이터로 되돌릴까요? (학생 제안은 사라집니다)")) resetSeed();

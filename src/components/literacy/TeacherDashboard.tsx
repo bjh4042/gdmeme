@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import type { DictEntry, Evaluation, StudentRecord } from "@/lib/literacy-types";
 import { computeTotal, gradeOf, levelOf } from "@/lib/literacy-types";
-import { Pencil, X, Plus, Trash2, Search, BookOpen, Users } from "lucide-react";
+import { Pencil, X, Plus, Trash2, Search, BookOpen, Users, ArrowUp, ArrowDown, Download, Upload } from "lucide-react";
+import * as XLSX from "xlsx";
 
 const MASTER_PW = "1234";
 
@@ -13,7 +14,19 @@ type UpdatePayload = {
   source?: string;
 };
 
-type StudentPatch = { name?: string; password?: string; xp?: number };
+type StudentPatch = { name?: string; password?: string; xp?: number; group?: string };
+
+export type StudentImportRow = {
+  classCode: string;
+  number: string;
+  name: string;
+  password?: string;
+  group?: string;
+  xp?: number;
+};
+
+type SortKey = "id" | "name" | "xp" | "lastActiveAt" | "group";
+type SortDir = "asc" | "desc";
 
 export function TeacherDashboard({
   dict,
@@ -24,6 +37,7 @@ export function TeacherDashboard({
   onUpdate,
   onUpdateStudent,
   onDeleteStudent,
+  onImportStudents,
   onClose,
   onReset,
 }: {
@@ -35,6 +49,7 @@ export function TeacherDashboard({
   onUpdate: (id: number, patch: UpdatePayload) => void;
   onUpdateStudent: (id: string, patch: StudentPatch) => void;
   onDeleteStudent: (id: string) => void;
+  onImportStudents: (rows: StudentImportRow[], mode: "merge" | "replace") => { added: number; updated: number; removed: number };
   onClose: () => void;
   onReset: () => void;
 }) {
@@ -49,6 +64,10 @@ export function TeacherDashboard({
   const [studentQuery, setStudentQuery] = useState("");
   const [curriculumFilter, setCurriculumFilter] = useState<string>("all");
   const [gradeFilter, setGradeFilter] = useState<string>("all");
+  const [classFilter, setClassFilter] = useState<string>("__mine__");
+  const [groupFilter, setGroupFilter] = useState<string>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("id");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   if (!ok) {
     return (
@@ -102,10 +121,144 @@ export function TeacherDashboard({
   const editing = editingId != null ? dict.find((d) => d.id === editingId) ?? null : null;
 
   const sq = studentQuery.trim().toLowerCase();
+  const classOptions = Array.from(new Set(students.map((s) => s.classCode))).sort();
+  const groupOptions = Array.from(new Set(students.map((s) => s.group).filter((g): g is string => !!g))).sort();
   const studentList = students
-    .filter((s) => (sq ? s.name.toLowerCase().includes(sq) || s.id.toLowerCase().includes(sq) : true))
-    .sort((a, b) => (a.classCode === currentClassCode && b.classCode !== currentClassCode ? -1 : a.classCode === b.classCode ? Number(a.number) - Number(b.number) : a.classCode.localeCompare(b.classCode)));
+    .filter((s) => {
+      if (classFilter === "__mine__") {
+        if (currentClassCode && s.classCode !== currentClassCode) return false;
+      } else if (classFilter !== "all" && s.classCode !== classFilter) {
+        return false;
+      }
+      if (groupFilter === "__none__" ? !!s.group : groupFilter !== "all" && s.group !== groupFilter) return false;
+      if (!sq) return true;
+      return (
+        s.name.toLowerCase().includes(sq) ||
+        s.id.toLowerCase().includes(sq) ||
+        (s.group ?? "").toLowerCase().includes(sq)
+      );
+    })
+    .sort((a, b) => {
+      const dir = sortDir === "asc" ? 1 : -1;
+      switch (sortKey) {
+        case "name":
+          return dir * a.name.localeCompare(b.name, "ko");
+        case "xp":
+          return dir * (a.xp - b.xp);
+        case "lastActiveAt":
+          return dir * a.lastActiveAt.localeCompare(b.lastActiveAt);
+        case "group":
+          return dir * ((a.group ?? "").localeCompare(b.group ?? "", "ko") || a.classCode.localeCompare(b.classCode) || Number(a.number) - Number(b.number));
+        case "id":
+        default:
+          return dir * (a.classCode.localeCompare(b.classCode) || Number(a.number) - Number(b.number));
+      }
+    });
   const editingStudentRec = editingStudent ? students.find((s) => s.id === editingStudent) ?? null : null;
+
+  function toggleSort(k: SortKey) {
+    if (sortKey === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setSortKey(k);
+      setSortDir(k === "xp" || k === "lastActiveAt" ? "desc" : "asc");
+    }
+  }
+
+  function downloadExcel(scope: "filtered" | "all") {
+    const rows = (scope === "filtered" ? studentList : students).map((s) => ({
+      학급코드: s.classCode,
+      번호: s.number,
+      이름: s.name,
+      그룹: s.group ?? "",
+      비밀번호: s.password ?? "",
+      누적XP: s.xp,
+      아이디: s.id,
+      가입일: s.joinedAt,
+      최근접속: s.lastActiveAt,
+    }));
+    if (rows.length === 0) {
+      rows.push({
+        학급코드: "3105",
+        번호: "1",
+        이름: "홍길동",
+        그룹: "모둠A",
+        비밀번호: "1234",
+        누적XP: 0,
+        아이디: "3105_01",
+        가입일: "",
+        최근접속: "",
+      });
+    }
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws["!cols"] = [
+      { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 12 }, { wch: 22 }, { wch: 22 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "학생명단");
+    const stamp = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `학생명단_${stamp}.xlsx`);
+  }
+
+  function downloadTemplate() {
+    const rows = [
+      { 학급코드: "3105", 번호: "1", 이름: "홍길동", 그룹: "모둠A", 비밀번호: "1234", 누적XP: 0 },
+      { 학급코드: "3105", 번호: "2", 이름: "김철수", 그룹: "모둠A", 비밀번호: "", 누적XP: 0 },
+      { 학급코드: "3105", 번호: "3", 이름: "이영희", 그룹: "모둠B", 비밀번호: "", 누적XP: 0 },
+    ];
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws["!cols"] = [{ wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 8 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "학생명단_양식");
+    XLSX.writeFile(wb, "학생명단_업로드양식.xlsx");
+  }
+
+  async function handleUpload(file: File) {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      if (!ws) return alert("시트를 찾을 수 없습니다.");
+      const raw = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
+      const rows: StudentImportRow[] = raw
+        .map((r) => {
+          const pick = (...keys: string[]) => {
+            for (const k of keys) {
+              const v = r[k];
+              if (v !== undefined && v !== null && String(v).trim() !== "") return String(v).trim();
+            }
+            return "";
+          };
+          const classCode = pick("학급코드", "classCode", "반", "class");
+          const number = pick("번호", "number", "no");
+          const name = pick("이름", "name");
+          const password = pick("비밀번호", "password", "pw");
+          const group = pick("그룹", "group", "모둠");
+          const xpStr = pick("누적XP", "xp", "XP", "점수");
+          return {
+            classCode,
+            number,
+            name,
+            password: password || undefined,
+            group: group || undefined,
+            xp: xpStr ? Number(xpStr) : undefined,
+          };
+        })
+        .filter((r) => r.classCode && r.number && r.name);
+      if (rows.length === 0) return alert("유효한 학생 행이 없습니다. (필수: 학급코드·번호·이름)");
+      const mode = confirm(
+        `${rows.length}명의 학생을 불러왔습니다.\n\n[확인] 병합 (기존 유지 + 추가/갱신)\n[취소] 다음 대화상자에서 전체 교체 여부 선택`,
+      )
+        ? "merge"
+        : confirm("⚠️ 전체 교체를 진행하시겠습니까?\n업로드 파일에 없는 기존 학생은 모두 삭제됩니다.")
+        ? "replace"
+        : null;
+      if (!mode) return;
+      const res = onImportStudents(rows, mode as "merge" | "replace");
+      alert(`업로드 완료\n· 추가 ${res.added}명\n· 갱신 ${res.updated}명\n· 삭제 ${res.removed}명`);
+    } catch (e) {
+      alert("파일을 읽는 중 오류가 발생했습니다: " + String(e));
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-3 sm:p-4 scroll-touch">
@@ -235,18 +388,108 @@ export function TeacherDashboard({
               <input
                 value={studentQuery}
                 onChange={(e) => setStudentQuery(e.target.value)}
-                placeholder="🔍 학생 검색 (이름·아이디)"
+                placeholder="🔍 학생 검색 (이름·아이디·그룹)"
                 className="w-full rounded-xl border-2 border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[color:var(--mint-deep)]"
               />
             </div>
 
+            {/* Filters + sort + import/export toolbar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">학급</span>
+                <select
+                  value={classFilter}
+                  onChange={(e) => setClassFilter(e.target.value)}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  {currentClassCode && <option value="__mine__">우리 반 ({currentClassCode})</option>}
+                  <option value="all">전체 학급</option>
+                  {classOptions.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">그룹/모둠</span>
+                <select
+                  value={groupFilter}
+                  onChange={(e) => setGroupFilter(e.target.value)}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  <option value="all">전체</option>
+                  <option value="__none__">그룹 미지정</option>
+                  {groupOptions.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">정렬 기준</span>
+                <select
+                  value={sortKey}
+                  onChange={(e) => setSortKey(e.target.value as SortKey)}
+                  className="rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                >
+                  <option value="id">아이디 (학급·번호)</option>
+                  <option value="name">이름</option>
+                  <option value="xp">누적 XP</option>
+                  <option value="group">그룹</option>
+                  <option value="lastActiveAt">최근 접속</option>
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-muted-foreground">순서</span>
+                <button
+                  type="button"
+                  onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+                  className="inline-flex items-center justify-center gap-1 rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm font-bold bg-white hover:bg-[color:var(--muted)]"
+                >
+                  {sortDir === "asc" ? <><ArrowUp size={14} /> 오름차순</> : <><ArrowDown size={14} /> 내림차순</>}
+                </button>
+              </label>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <button
+                onClick={() => downloadExcel("filtered")}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--mint-deep)] text-white hover:scale-[1.03] transition"
+              >
+                <Download size={13} /> 현재 목록 XLSX 다운로드
+              </button>
+              <button
+                onClick={() => downloadExcel("all")}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+              >
+                <Download size={13} /> 전체 XLSX 다운로드
+              </button>
+              <label className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--safe)] text-white cursor-pointer hover:scale-[1.03] transition">
+                <Upload size={13} /> XLSX 업로드
+                <input
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.currentTarget.value = "";
+                    if (f) handleUpload(f);
+                  }}
+                />
+              </label>
+              <button
+                onClick={downloadTemplate}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--muted)] text-[color:var(--navy)]"
+              >
+                📄 업로드 양식 받기
+              </button>
+            </div>
+
             <div className="text-xs text-muted-foreground mb-2">
-              총 <b className="text-[color:var(--navy)]">{studentList.length}</b>명 등록됨
+              표시 <b className="text-[color:var(--navy)]">{studentList.length}</b>명 / 전체 {students.length}명
             </div>
 
             {studentList.length === 0 ? (
               <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                아직 등록된 학생이 없습니다.
+                {students.length === 0 ? "아직 등록된 학생이 없습니다. XLSX 업로드로 명단을 불러올 수 있어요." : "조건에 맞는 학생이 없습니다."}
               </div>
             ) : (
               <>
@@ -255,9 +498,10 @@ export function TeacherDashboard({
                 <table className="w-full text-sm">
                   <thead className="bg-[color:var(--muted)] text-xs">
                     <tr>
-                      <Th>아이디</Th>
-                      <Th>이름</Th>
-                      <Th className="text-right">누적 XP</Th>
+                      <SortableTh label="아이디" active={sortKey === "id"} dir={sortDir} onClick={() => toggleSort("id")} />
+                      <SortableTh label="이름" active={sortKey === "name"} dir={sortDir} onClick={() => toggleSort("name")} />
+                      <SortableTh label="그룹" active={sortKey === "group"} dir={sortDir} onClick={() => toggleSort("group")} />
+                      <SortableTh label="누적 XP" active={sortKey === "xp"} dir={sortDir} onClick={() => toggleSort("xp")} className="text-right" />
                       <Th>레벨</Th>
                       <Th className="text-right">관리</Th>
                     </tr>
@@ -270,6 +514,15 @@ export function TeacherDashboard({
                         <tr key={s.id} className={`border-t border-[color:var(--border)] ${mine ? "" : "opacity-70"}`}>
                           <Td className="font-mono text-xs">{s.id}</Td>
                           <Td className="font-bold text-[color:var(--navy)]">{s.name}</Td>
+                          <Td>
+                            {s.group ? (
+                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
+                                {s.group}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </Td>
                           <Td className="text-right font-black text-[color:var(--navy)]">{s.xp}</Td>
                           <Td>
                             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
@@ -317,6 +570,11 @@ export function TeacherDashboard({
                         <div className="min-w-0">
                           <div className="font-black text-[color:var(--navy)] truncate">{s.name}</div>
                           <div className="font-mono text-[11px] text-muted-foreground truncate">{s.id}</div>
+                          {s.group && (
+                            <div className="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
+                              {s.group}
+                            </div>
+                          )}
                         </div>
                         <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
                           Lv.{lv.current.lv} · {s.xp}XP
@@ -384,6 +642,32 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>;
+}
+
+function SortableTh({
+  label,
+  active,
+  dir,
+  onClick,
+  className = "",
+}: {
+  label: string;
+  active: boolean;
+  dir: SortDir;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <th className={`text-left font-bold text-[color:var(--navy)] px-3 py-2 ${className}`}>
+      <button
+        onClick={onClick}
+        className={`inline-flex items-center gap-1 ${active ? "text-[color:var(--mint-deep)]" : "text-[color:var(--navy)]"}`}
+      >
+        {label}
+        {active ? (dir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />) : <span className="text-[10px] opacity-40">↕</span>}
+      </button>
+    </th>
+  );
 }
 
 function SubTab({
@@ -675,6 +959,7 @@ function StudentEditModal({
 }) {
   const [name, setName] = useState(student.name);
   const [password, setPassword] = useState(student.password ?? "");
+  const [group, setGroup] = useState(student.group ?? "");
   const [xp, setXp] = useState<number>(student.xp);
   const lv = levelOf(Math.max(0, Math.round(xp)));
 
@@ -683,6 +968,7 @@ function StudentEditModal({
     onSave({
       name: name.trim(),
       password,
+      group,
       xp: Math.max(0, Math.round(xp)),
     });
   }
@@ -695,6 +981,15 @@ function StudentEditModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
+            className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
+          />
+        </Field>
+        <Field label="그룹 / 모둠 (선택)">
+          <input
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            maxLength={20}
+            placeholder="예: 모둠A, 1분단, 도서부…"
             className="w-full rounded-xl bg-white/70 border border-white/70 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--mint-deep)]"
           />
         </Field>
