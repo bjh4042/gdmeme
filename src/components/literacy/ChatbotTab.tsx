@@ -5,7 +5,7 @@ import {
   MEME_TRIGGERS,
   type Scenario,
 } from "@/lib/literacy-seed";
-import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel } from "@/lib/literacy-evaluator";
+import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel, stageHintWords } from "@/lib/literacy-evaluator";
 
 type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
 
@@ -513,6 +513,21 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
                         ⚠︎ {w}
                       </span>
                     ))}
+                  </div>
+                )}
+                {room.wrong >= 3 && !room.done && (
+                  <div className="mt-2">
+                    <div className="text-[11px] text-[#FEE500] font-bold mb-1">🔑 결정적 단어 힌트</div>
+                    <div className="flex flex-wrap gap-1">
+                      {stageHintWords(scenario.id, room.stage).map((w) => (
+                        <span key={w} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FEE500]/25 text-yellow-100 border border-[#FEE500]/40">
+                          #{w}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="text-[10px] text-white/60 mt-1">
+                      위 단어 중 하나 이상을 포함하고, 존댓말 어미(~요/~습니다)로 8자 이상 말해보세요.
+                    </div>
                   </div>
                 )}
               </div>
