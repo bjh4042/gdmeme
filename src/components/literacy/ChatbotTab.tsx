@@ -68,9 +68,23 @@ function initialRoom(s: Scenario): RoomState {
   };
 }
 
-const STORE_KEY = "wtmeme:rooms:v2";
+const STORE_KEY_PREFIX = "wtmeme:rooms:v3:";
 
-export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: string, note?: string) => void; classLevel: number }) {
+function makeDefaultRooms(): Record<string, RoomState> {
+  return Object.fromEntries(SCENARIOS.map((s) => [s.id, initialRoom(s)]));
+}
+
+export function ChatbotTab({
+  onXP,
+  classLevel,
+  studentKey,
+}: {
+  onXP: (delta: number, kind: string, note?: string) => void;
+  classLevel: number;
+  /** Unique per-student id (e.g. `${classCode}_${number}`). Isolates all room state. */
+  studentKey: string;
+}) {
+  const storageKey = `${STORE_KEY_PREFIX}${studentKey}`;
   const [rooms, setRooms] = useState<Record<string, RoomState>>(() =>
     Object.fromEntries(SCENARIOS.map((s) => [s.id, initialRoom(s)])),
   );
@@ -105,30 +119,40 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated]);
 
-  // Hydrate rooms from localStorage after mount
+  // 유저 스위칭 시: 메모리 상태를 즉시 defaults로 리셋 후 해당 유저의 격리 키에서 재하이드레이션.
+  // 저장된 데이터가 없으면 담임 방만 열린 깨끗한 초기 상태로 남는다.
   useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORE_KEY) : null;
-      if (raw) {
-        const parsed = JSON.parse(raw) as Record<string, RoomState>;
-        setRooms((prev) => {
-          const next: Record<string, RoomState> = { ...prev };
+    setHydrated(false);
+    // 1) 메모리 즉시 클린업 (이전 유저 잔상 차단)
+    const fresh = makeDefaultRooms();
+    setRooms(fresh);
+    setInput("");
+    setMobileView("list");
+    // 2) 해당 유저의 격리 키에서 로드
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw) as Record<string, RoomState>;
+          const merged: Record<string, RoomState> = { ...fresh };
           for (const s of SCENARIOS) {
-            if (parsed[s.id]) next[s.id] = parsed[s.id];
+            if (parsed[s.id]) merged[s.id] = parsed[s.id];
           }
-          return next;
-        });
-      }
-    } catch {}
+          setRooms(merged);
+        }
+      } catch {}
+    }
     setHydrated(true);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentKey]);
 
+  // 저장: hydrated 이후 해당 유저 격리 키에 기록
   useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORE_KEY, JSON.stringify(rooms));
+      window.localStorage.setItem(storageKey, JSON.stringify(rooms));
     } catch {}
-  }, [rooms, hydrated]);
+  }, [rooms, hydrated, storageKey]);
 
   const unlockedIds = useMemo(
     () => SCENARIOS.filter((s) => classLevel >= s.unlockLevel).map((s) => s.id),
@@ -140,13 +164,13 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
-  // If active room becomes locked (level drop) → snap back to list.
+  // 유저 스위칭 또는 잠금 변화 → 활성 방을 잠금 해제된 첫 방(담임)으로 스냅.
   useEffect(() => {
     if (!unlockedIds.includes(activeId)) {
       setActiveId(firstUnlocked);
       setMobileView("list");
     }
-  }, [unlockedIds, activeId, firstUnlocked]);
+  }, [unlockedIds, activeId, firstUnlocked, studentKey]);
 
   const scenario = useMemo(() => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0], [activeId]);
   const isLocked = !unlockedIds.includes(scenario.id);
