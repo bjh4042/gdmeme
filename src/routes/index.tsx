@@ -56,7 +56,7 @@ function Index() {
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="text-3xl shrink-0">👑</div>
+            <img src={logoAsset.url} alt="바른말 수호대 로고" className="h-10 w-auto shrink-0 rounded-lg" />
             <div className="min-w-0">
               <div className="font-black text-[color:var(--navy)] truncate">바른말 수호대</div>
               <div className="text-[11px] text-muted-foreground truncate">
