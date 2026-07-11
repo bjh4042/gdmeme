@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus } from "lucide-react";
+import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus, ArrowDown } from "lucide-react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   SCENARIOS,
   MEME_TRIGGERS,
@@ -164,8 +165,10 @@ export function ChatbotTab({
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
-  // 대화 피드 자동 스크롤 (메시지가 늘어나거나 방을 바꿀 때 항상 최하단)
+  // 대화 피드 자동 스크롤: 사용자가 최하단 근처에 있을 때만 따라 내려간다.
   const feedRef = useRef<HTMLDivElement | null>(null);
+  const atBottomRef = useRef(true);
+  const [showJumpPill, setShowJumpPill] = useState(false);
 
   // 유저 스위칭 또는 잠금 변화 → 활성 방을 잠금 해제된 첫 방(담임)으로 스냅.
   useEffect(() => {
@@ -178,17 +181,67 @@ export function ChatbotTab({
   const scenario = useMemo(() => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0], [activeId]);
   const isLocked = !unlockedIds.includes(scenario.id);
   const room = rooms[scenario.id];
-
-  useEffect(() => {
-    const el = feedRef.current;
-    if (!el) return;
-    // 부드럽게 최하단으로
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [room?.msgs.length, activeId, isLocked]);
-
   const currentStage = scenario.stages[Math.min(room.stage, scenario.stages.length - 1)];
   const guideText = room.done ? "🎉 모든 대화를 완료했어요! 목록에서 다른 인물과 대화해보세요." : currentStage.guide;
   const hintText = room.done ? scenario.completeBadge ?? "예절 배지 획득!" : currentStage.hint;
+
+  // 가상 리스트 아이템: [날짜 구분선, ...메시지들]
+  type FeedItem =
+    | { kind: "divider" }
+    | { kind: "msg"; m: Msg };
+  const items = useMemo<FeedItem[]>(
+    () => [{ kind: "divider" }, ...room.msgs.map((m) => ({ kind: "msg" as const, m }))],
+    [room.msgs],
+  );
+
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => feedRef.current,
+    estimateSize: () => 64,
+    overscan: 10,
+    measureElement: (el) => el.getBoundingClientRect().height,
+  });
+
+  function handleFeedScroll() {
+    const el = feedRef.current;
+    if (!el) return;
+    const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const atBottom = dist < 48;
+    atBottomRef.current = atBottom;
+    if (atBottom && showJumpPill) setShowJumpPill(false);
+  }
+
+  function scrollFeedToBottom(behavior: ScrollBehavior = "smooth") {
+    const el = feedRef.current;
+    if (!el) return;
+    rowVirtualizer.scrollToIndex(items.length - 1, { align: "end", behavior });
+    // 이미지·폰트 리페인트로 인해 높이가 늘어나는 경우까지 안전하게 커버
+    requestAnimationFrame(() => {
+      el.scrollTo({ top: el.scrollHeight, behavior });
+    });
+    atBottomRef.current = true;
+    setShowJumpPill(false);
+  }
+
+  // 방을 바꾸거나 잠금이 풀리면 무조건 최하단
+  useEffect(() => {
+    if (isLocked) return;
+    atBottomRef.current = true;
+    requestAnimationFrame(() => scrollFeedToBottom("auto"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, isLocked]);
+
+  // 새 메시지: 사용자가 최하단일 때만 따라 내려가고, 아니면 "새 메시지" 알림 표시
+  const msgCount = room?.msgs.length ?? 0;
+  useEffect(() => {
+    if (isLocked) return;
+    if (atBottomRef.current) {
+      scrollFeedToBottom("smooth");
+    } else {
+      setShowJumpPill(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [msgCount]);
 
   function openThread(id: string) {
     const s = SCENARIOS.find((x) => x.id === id);
@@ -335,12 +388,13 @@ export function ChatbotTab({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)] animate-fade-in">
+      <style>{`.wt-panel{height:calc(100dvh - 168px);min-height:480px}@media (min-width:1024px){.wt-panel{height:min(75vh,720px);min-height:520px}}`}</style>
       {/* KakaoTalk mobile-style dark chat list */}
       <aside
-        className={`rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
+        className={`wt-panel rounded-3xl overflow-hidden shadow-[var(--shadow-soft)] border border-black/40 flex flex-col ${
           mobileView === "chat" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1c1c1e", height: "min(75vh, 720px)", minHeight: 520 }}
+        style={{ background: "#1c1c1e" }}
       >
         {/* Top header */}
         <div className="px-5 pt-4 pb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
@@ -432,10 +486,10 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
-        className={`rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 ${
+        className={`wt-panel rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
           mobileView === "list" ? "hidden lg:flex" : "flex"
         }`}
-        style={{ background: "#1a1a1a", height: "min(75vh, 720px)", minHeight: 520 }}
+        style={{ background: "#1a1a1a" }}
       >
         {/* Top bar */}
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-3 bg-[#111] text-white border-b border-white/5">
@@ -486,53 +540,93 @@ export function ChatbotTab({
           </div>
         ) : (
           <>
-            {/* Chat area */}
-            <div ref={feedRef} className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
-              <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
-                {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
-              </div>
-              {room.msgs.map((m, i) => (
-                <div key={i} className={`flex animate-fade-in ${m.from === "me" ? "justify-end" : "justify-start"}`}>
-                  {m.from === "sys" ? (
-                    <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/10 text-white/80 font-bold">
-                      {m.text}
-                    </div>
-                  ) : m.from === "npc" ? (
-                    <div className="flex items-end gap-1.5 max-w-[80%]">
-                      <div className="w-9 h-9 shrink-0 rounded-2xl bg-[#2a2a2c] grid place-items-center text-lg border border-white/10">
-                        {scenario.emoji}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
-                        <div className="flex items-end gap-1">
-                          <div
-                            className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words ${
-                              m.tone === "danger"
-                                ? "bg-red-500/25 text-white border border-red-400/40"
-                                : m.tone === "warn"
-                                ? "bg-amber-400/25 text-white border border-amber-300/40"
-                                : "bg-white text-[#111]"
-                            }`}
-                          >
-                            {m.text}
-                          </div>
-                          <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+            {/* Chat area (virtualized) */}
+            <div
+              ref={feedRef}
+              onScroll={handleFeedScroll}
+              className="flex-1 min-h-0 overflow-y-auto scroll-touch relative"
+            >
+              <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
+                {rowVirtualizer.getVirtualItems().map((v) => {
+                  const item = items[v.index];
+                  return (
+                    <div
+                      key={v.key}
+                      data-index={v.index}
+                      ref={rowVirtualizer.measureElement}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        transform: `translateY(${v.start}px)`,
+                      }}
+                      className="px-3 py-1"
+                    >
+                      {item.kind === "divider" ? (
+                        <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
+                          {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
                         </div>
-                      </div>
+                      ) : (
+                        (() => {
+                          const m = item.m;
+                          return (
+                            <div className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}>
+                              {m.from === "sys" ? (
+                                <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/10 text-white/80 font-bold">
+                                  {m.text}
+                                </div>
+                              ) : m.from === "npc" ? (
+                                <div className="flex items-end gap-1.5 max-w-[80%]">
+                                  <div className="w-9 h-9 shrink-0 rounded-2xl bg-[#2a2a2c] grid place-items-center text-lg border border-white/10">
+                                    {scenario.emoji}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
+                                    <div className="flex items-end gap-1">
+                                      <div
+                                        className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words ${
+                                          m.tone === "danger"
+                                            ? "bg-red-500/25 text-white border border-red-400/40"
+                                            : m.tone === "warn"
+                                            ? "bg-amber-400/25 text-white border border-amber-300/40"
+                                            : "bg-white text-[#111]"
+                                        }`}
+                                      >
+                                        {m.text}
+                                      </div>
+                                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="flex items-end gap-1 max-w-[80%]">
+                                  <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                  <div
+                                    className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words text-[#111]"
+                                    style={{ background: "#FEE500" }}
+                                  >
+                                    {m.text}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex items-end gap-1 max-w-[80%]">
-                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
-                      <div
-                        className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words text-[#111]"
-                        style={{ background: "#FEE500" }}
-                      >
-                        {m.text}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })}
+              </div>
+              {showJumpPill && (
+                <button
+                  type="button"
+                  onClick={() => scrollFeedToBottom("smooth")}
+                  className="sticky bottom-2 float-right mr-3 inline-flex items-center gap-1 rounded-full bg-[#FEE500] text-black text-[11px] font-bold px-3 py-1.5 shadow-lg hover:scale-[1.03] active:scale-95 transition"
+                >
+                  <ArrowDown size={12} /> 새 메시지
+                </button>
+              )}
             </div>
 
             {/* Guide */}
