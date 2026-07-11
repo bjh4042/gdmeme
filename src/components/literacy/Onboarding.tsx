@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Student, StudentRecord } from "@/lib/literacy-types";
-import logoAsset from "@/assets/logo.png.asset.json";
+import logoAsset from "@/assets/logo-v2.png.asset.json";
 
 export function Onboarding({
   onSubmit,
@@ -17,6 +17,11 @@ export function Onboarding({
   const [err, setErr] = useState("");
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const [kstTime, setKstTime] = useState(() => formatKST());
+  useEffect(() => {
+    const t = window.setInterval(() => setKstTime(formatKST()), 15_000);
+    return () => window.clearInterval(t);
+  }, []);
   useEffect(() => {
     // If the image was already cached (e.g. via <link rel=preload>), onLoad
     // may fire before React attaches the listener — sync from the DOM.
@@ -58,8 +63,7 @@ export function Onboarding({
       )}
       {/* Smartphone frame */}
       <div
-        className="relative w-full max-w-[380px] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
-        style={{ aspectRatio: "9 / 19.5" }}
+        className="relative w-full max-w-[360px] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
       >
         {/* Side buttons */}
         <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
@@ -72,7 +76,7 @@ export function Onboarding({
           <div aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20" />
           {/* Status bar */}
           <div className="relative z-10 flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-slate-700">
-            <span>9:41</span>
+            <span>{kstTime}</span>
             <span className="flex items-center gap-1">
               <span aria-hidden>📶</span>
               <span aria-hidden>🔋</span>
@@ -80,11 +84,11 @@ export function Onboarding({
           </div>
 
           {/* Scrollable screen content */}
-          <div className="flex-1 overflow-y-auto px-5 pt-4 pb-6">
-            <div className="text-center mb-5">
+          <div className="px-5 pt-3 pb-4">
+            <div className="text-center mb-3">
               <div
-                className="relative w-full mb-3 rounded-2xl overflow-hidden bg-slate-100"
-                style={{ aspectRatio: "1428 / 798" }}
+                className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
+                style={{ aspectRatio: "1024 / 559" }}
               >
                 {!logoLoaded && (
                   <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
@@ -93,16 +97,14 @@ export function Onboarding({
                   ref={imgRef}
                   src={logoAsset.url}
                   alt="바른말 수호대 로고"
-                  width={1428}
-                  height={798}
+                  width={1024}
+                  height={559}
                   fetchPriority="high"
                   decoding="async"
                   onLoad={() => setLogoLoaded(true)}
                   className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
                 />
               </div>
-              <h1 className="text-xl sm:text-2xl font-black text-[color:var(--navy)]">바른말 수호대</h1>
-              <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">우리 반 고운 말 지키기 프로젝트</p>
             </div>
             <form onSubmit={submit} className="space-y-3">
               <div>
@@ -157,4 +159,16 @@ export function Onboarding({
       </div>
     </div>
   );
+}
+
+function formatKST(): string {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Seoul",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const h = parts.find((p) => p.type === "hour")?.value ?? "00";
+  const m = parts.find((p) => p.type === "minute")?.value ?? "00";
+  return `${parseInt(h, 10)}:${m}`;
 }
