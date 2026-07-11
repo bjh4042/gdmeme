@@ -1,6 +1,13 @@
 import { useMemo } from "react";
 import type { DictEntry, ClassState } from "@/lib/literacy-types";
 import { weatherOf, levelOf, LEVELS } from "@/lib/literacy-types";
+import level1 from "@/assets/level1.webp.asset.json";
+import level2 from "@/assets/level2.webp.asset.json";
+import level3 from "@/assets/level3.webp.asset.json";
+import level4 from "@/assets/level4.webp.asset.json";
+import level5 from "@/assets/level5.webp.asset.json";
+
+const LEVEL_IMAGES = [level1.url, level2.url, level3.url, level4.url, level5.url];
 
 export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassState }) {
   const approved = dict.filter((d) => d.status === "approved");
@@ -18,9 +25,7 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
       ? "linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.72 0.14 60))"
       : "linear-gradient(135deg, oklch(0.55 0.18 260), oklch(0.42 0.22 25))";
 
-  // Sejong pixel character sizing
-  const kingSize = 60 + lv.current.lv * 18;
-  const treeSize = 40 + lv.current.lv * 20;
+  const levelImg = LEVEL_IMAGES[Math.min(Math.max(lv.current.lv, 1), 5) - 1];
 
   return (
     <div className="space-y-5">
@@ -47,10 +52,16 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
           <div className="text-2xl font-black text-[color:var(--navy)] mt-1">
             Lv.{lv.current.lv} {lv.current.name}
           </div>
-          <div className="mt-3 flex items-end justify-center gap-6 h-48 bg-[color:var(--muted)] rounded-2xl relative overflow-hidden">
-            <div className="absolute inset-x-0 bottom-0 h-8 bg-[color:var(--mint)]" />
-            <PixelKing size={kingSize} level={lv.current.lv} />
-            <PixelTree size={treeSize} level={lv.current.lv} />
+          <div className="mt-3 rounded-2xl overflow-hidden bg-[color:var(--muted)]">
+            <img
+              src={levelImg}
+              alt={`레벨 ${lv.current.lv} ${lv.current.name}`}
+              width={720}
+              height={402}
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-auto block"
+            />
           </div>
           <div className="mt-4">
             <div className="flex justify-between text-sm font-bold">
