@@ -641,13 +641,13 @@ export function ChatbotTab({
                   );
                 })}
               </div>
-              {showJumpPill && (
+              {unreadNew > 0 && (
                 <button
                   type="button"
                   onClick={() => scrollFeedToBottom("smooth")}
                   className="sticky bottom-2 float-right mr-3 inline-flex items-center gap-1 rounded-full bg-[#FEE500] text-black text-[11px] font-bold px-3 py-1.5 shadow-lg hover:scale-[1.03] active:scale-95 transition"
                 >
-                  <ArrowDown size={12} /> 새 메시지
+                  <ArrowDown size={12} /> 새 메시지 {unreadNew}
                 </button>
               )}
             </div>
