@@ -203,13 +203,17 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
       },
     }));
 
-    const meme = containsMeme(text);
-    const short = text.length < 6;
-    const polite = isPolite(text);
+    // 3중 시맨틱 예절 평가 매트릭스 통과 여부
+    const result = evaluateReply({
+      text,
+      scenarioId: scenario.id,
+      stageIdx: room.stage,
+      correctionMode: !!scenario.correctionMode,
+    });
 
-    // Correction mode: reward correcting a slang-heavy line; a polite, slang-free
-    // response of adequate length counts as a successful correction.
-    if (polite && !meme) {
+    if (result.pass) {
+      const wrongBefore = room.wrong;
+      const xp = xpForStageClear(wrongBefore);
       const nextStageIdx = room.stage + 1;
       const isFinal = nextStageIdx >= scenario.stages.length;
       setRooms((prev) => ({
@@ -234,44 +238,48 @@ export function ChatbotTab({ onXP, classLevel }: { onXP: (delta: number, kind: s
             },
           }));
         }, 900);
-        const xp = scenario.correctionMode ? 25 : 15;
-        pushSys(`✅ ${nextStageIdx}단계 통과! +${xp} XP`);
-        onXP(xp, "roleplay", `${scenario.id} · Stg${nextStageIdx}`);
+        pushSys(`✅ ${nextStageIdx}단계 통과! +${xp} XP${wrongBefore > 0 ? ` (반려 ${wrongBefore}회 후 통과)` : ""}`);
+        onXP(xp, "roleplay", `${scenario.id} · Stg${nextStageIdx} · 반려${wrongBefore}회`);
       } else {
-        const xp = scenario.correctionMode ? 80 : 30;
-        pushSys(`🎖️ ${scenario.completeBadge ?? "완료 배지 획득"} · +${xp} XP`);
-        onXP(xp, "roleplay", `${scenario.id} · 완료`);
+        const bonus = scenario.correctionMode ? 40 : 20;
+        const totalXp = xp + bonus;
+        pushSys(`🎖️ ${scenario.completeBadge ?? "완료 배지 획득"} · +${totalXp} XP`);
+        onXP(totalXp, "roleplay", `${scenario.id} · 완료 · 반려${wrongBefore}회`);
       }
       return;
     }
 
-    const idx = Math.min(room.wrong, 2);
-    let tpl: string;
-    let delta = 0;
-    let cause = "부적절";
-    if (meme) {
-      tpl = MEME_FEEDBACK[idx];
-      delta = scenario.correctionMode ? -10 : -25;
-      cause = `밈/비속어(${meme})`;
-    } else if (short) {
-      tpl = SHORT_FEEDBACK[idx];
-      delta = -8;
-      cause = "너무 짧음";
-    } else {
-      tpl = IMPOLITE_FEEDBACK[idx];
-      delta = -12;
-      cause = "예절 미흡";
-    }
+    // 실패: stage 고정, wrong 증가, NPC 반려 대사 렌더
+    const nextWrong = room.wrong + 1;
+    const delta =
+      result.reason === "slang"
+        ? scenario.correctionMode ? -10 : -25
+        : result.reason === "sarcastic-mockery"
+        ? -20
+        : result.reason === "evasive-question"
+        ? -12
+        : result.reason === "low-effort" || result.reason === "too-short"
+        ? -8
+        : -10;
     setRooms((prev) => ({
       ...prev,
       [scenario.id]: {
         ...prev[scenario.id],
-        wrong: prev[scenario.id].wrong + 1,
+        wrong: nextWrong,
         mood: Math.max(0, prev[scenario.id].mood + delta),
       },
     }));
-    pushNpc(fill(tpl, meme ?? text, currentStage.hint), meme ? "danger" : "warn");
-    onXP(0, "chat", `[${scenario.npc}] "${text}" · ${cause} · 오답 ${room.wrong + 1}회`);
+    const line = rejectionLine(scenario.id, nextWrong);
+    const tone: "warn" | "danger" =
+      result.reason === "slang" || result.reason === "sarcastic-mockery" ? "danger" : "warn";
+    pushNpc(line, tone);
+    onXP(
+      0,
+      "chat",
+      `[${scenario.npc}] "${text}" · ${reasonLabel(result.reason)}${
+        result.detail ? `(${result.detail})` : ""
+      } · 반려 ${nextWrong}회`,
+    );
   }
 
   const moodEmoji = room.mood >= 70 ? "😊" : room.mood >= 40 ? "😐" : room.mood >= 20 ? "😢" : "😠";
