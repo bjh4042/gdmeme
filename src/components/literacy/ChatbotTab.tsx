@@ -540,53 +540,93 @@ export function ChatbotTab({
           </div>
         ) : (
           <>
-            {/* Chat area */}
-            <div ref={feedRef} className="flex-1 min-h-0 p-3 space-y-2 overflow-y-auto scroll-touch">
-              <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
-                {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
-              </div>
-              {room.msgs.map((m, i) => (
-                <div key={i} className={`flex animate-fade-in ${m.from === "me" ? "justify-end" : "justify-start"}`}>
-                  {m.from === "sys" ? (
-                    <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/10 text-white/80 font-bold">
-                      {m.text}
-                    </div>
-                  ) : m.from === "npc" ? (
-                    <div className="flex items-end gap-1.5 max-w-[80%]">
-                      <div className="w-9 h-9 shrink-0 rounded-2xl bg-[#2a2a2c] grid place-items-center text-lg border border-white/10">
-                        {scenario.emoji}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
-                        <div className="flex items-end gap-1">
-                          <div
-                            className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words ${
-                              m.tone === "danger"
-                                ? "bg-red-500/25 text-white border border-red-400/40"
-                                : m.tone === "warn"
-                                ? "bg-amber-400/25 text-white border border-amber-300/40"
-                                : "bg-white text-[#111]"
-                            }`}
-                          >
-                            {m.text}
-                          </div>
-                          <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+            {/* Chat area (virtualized) */}
+            <div
+              ref={feedRef}
+              onScroll={handleFeedScroll}
+              className="flex-1 min-h-0 overflow-y-auto scroll-touch relative"
+            >
+              <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
+                {rowVirtualizer.getVirtualItems().map((v) => {
+                  const item = items[v.index];
+                  return (
+                    <div
+                      key={v.key}
+                      data-index={v.index}
+                      ref={rowVirtualizer.measureElement}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        transform: `translateY(${v.start}px)`,
+                      }}
+                      className="px-3 py-1"
+                    >
+                      {item.kind === "divider" ? (
+                        <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
+                          {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
                         </div>
-                      </div>
+                      ) : (
+                        (() => {
+                          const m = item.m;
+                          return (
+                            <div className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}>
+                              {m.from === "sys" ? (
+                                <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/10 text-white/80 font-bold">
+                                  {m.text}
+                                </div>
+                              ) : m.from === "npc" ? (
+                                <div className="flex items-end gap-1.5 max-w-[80%]">
+                                  <div className="w-9 h-9 shrink-0 rounded-2xl bg-[#2a2a2c] grid place-items-center text-lg border border-white/10">
+                                    {scenario.emoji}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
+                                    <div className="flex items-end gap-1">
+                                      <div
+                                        className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words ${
+                                          m.tone === "danger"
+                                            ? "bg-red-500/25 text-white border border-red-400/40"
+                                            : m.tone === "warn"
+                                            ? "bg-amber-400/25 text-white border border-amber-300/40"
+                                            : "bg-white text-[#111]"
+                                        }`}
+                                      >
+                                        {m.text}
+                                      </div>
+                                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="flex items-end gap-1 max-w-[80%]">
+                                  <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                  <div
+                                    className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words text-[#111]"
+                                    style={{ background: "#FEE500" }}
+                                  >
+                                    {m.text}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex items-end gap-1 max-w-[80%]">
-                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
-                      <div
-                        className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words text-[#111]"
-                        style={{ background: "#FEE500" }}
-                      >
-                        {m.text}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })}
+              </div>
+              {showJumpPill && (
+                <button
+                  type="button"
+                  onClick={() => scrollFeedToBottom("smooth")}
+                  className="sticky bottom-2 float-right mr-3 inline-flex items-center gap-1 rounded-full bg-[#FEE500] text-black text-[11px] font-bold px-3 py-1.5 shadow-lg hover:scale-[1.03] active:scale-95 transition"
+                >
+                  <ArrowDown size={12} /> 새 메시지
+                </button>
+              )}
             </div>
 
             {/* Guide */}
