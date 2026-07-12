@@ -3,10 +3,23 @@ import { CheckCircle2, XCircle, RefreshCw, Sparkles, Zap, Timer, Trophy, Play } 
 import { QUIZZES, type QuizItem } from "@/lib/literacy-seed";
 import type { DictEntry } from "@/lib/literacy-types";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
+import QUIZ_BANK_50 from "@/lib/quiz-bank-50.json";
 
-type Question =
-  | ({ kind: "mc" } & QuizItem)
-  | { kind: "fill"; q: string; answers: string[]; explain: string };
+type BankItem = {
+  id: number;
+  question: string;
+  options: string[];
+  answer: string;
+  explanation: string;
+};
+
+type Question = {
+  kind: "mc";
+  q: string;
+  choices: string[];
+  answerText: string;
+  explain: string;
+};
 
 const TIME_LIMIT = 15; // seconds per question
 
@@ -19,18 +32,17 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function buildDeck(dict: DictEntry[]): Question[] {
-  const approved = dict.filter((d) => d.status === "approved" && d.alternatives.length > 0);
-  const dictQs: Question[] = shuffle(approved)
-    .slice(0, 8)
-    .map((d) => ({
-      kind: "fill" as const,
-      q: `"${d.word}"의 바른 우리말 순화어를 하나 입력해 보세요.`,
-      answers: d.alternatives,
-      explain: `승인된 대안: ${d.alternatives.join(" · ")}`,
-    }));
-  const mcQs: Question[] = QUIZZES.map((q) => ({ kind: "mc" as const, ...q }));
-  return shuffle([...mcQs, ...dictQs]);
+function buildDeck(_dict: DictEntry[]): Question[] {
+  // Fisher-Yates shuffle 전체 50문항 마스터 풀 → 상위 10개 추출
+  const picked = shuffle(QUIZ_BANK_50 as BankItem[]).slice(0, 10);
+  return picked.map((item) => ({
+    kind: "mc" as const,
+    q: item.question,
+    // 렌더링 직전에도 셔플되지만, 사전에 한 번 더 섞어서 배열 순서 자체를 무작위화
+    choices: shuffle(item.options),
+    answerText: item.answer,
+    explain: item.explanation,
+  }));
 }
 
 export function QuizTab({
@@ -87,7 +99,6 @@ export function QuizTab({
     setTyped("");
     setResult(null);
     setTimeLeft(TIME_LIMIT);
-    if (q?.kind === "fill") setTimeout(() => inputRef.current?.focus(), 100);
   }, [idx, phase, q?.kind]);
 
   function markResult(ok: boolean) {
@@ -111,14 +122,13 @@ export function QuizTab({
   function pickMC(i: number) {
     if (result || q?.kind !== "mc") return;
     setChosen(i);
-    markResult(i === q.answer);
+    // 셔플된 보기여도 텍스트로 정답 매칭 → 안정적 크로스 체크
+    const picked = q.choices[i];
+    markResult(picked === q.answerText);
   }
   function submitFill() {
-    if (result || q?.kind !== "fill") return;
-    const t = typed.trim();
-    if (!t) return;
-    const ok = q.answers.some((a) => a.replace(/\s/g, "") === t.replace(/\s/g, ""));
-    markResult(ok);
+    // 50-bank는 전 문항이 4지선다이므로 단답형 경로는 사용하지 않음
+    return;
   }
 
   // 500ms 리딩 엣지 스로틀 → 연타 시 XP 중복/이중 채점 방어
@@ -227,8 +237,8 @@ export function QuizTab({
         {q.kind === "mc" ? (
           <div className="grid gap-2">
             {q.choices.map((c, i) => {
-              const isRight = result && i === q.answer;
-              const isWrong = chosen === i && i !== q.answer;
+              const isRight = result && c === q.answerText;
+              const isWrong = chosen === i && c !== q.answerText;
               return (
                 <button
                   key={i}
