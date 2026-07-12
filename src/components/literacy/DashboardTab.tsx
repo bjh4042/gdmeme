@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { DictEntry, ClassState } from "@/lib/literacy-types";
-import { weatherOf, levelOf, LEVELS } from "@/lib/literacy-types";
+import { weatherOf, levelOf, LEVELS, WEATHER_MATRIX } from "@/lib/literacy-types";
 import level1 from "@/assets/level1.webp.asset.json";
 import level2 from "@/assets/level2.webp.asset.json";
 import level3 from "@/assets/level3.webp.asset.json";
@@ -17,6 +17,7 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
   }, [approved]);
   const weather = weatherOf(avg);
   const lv = levelOf(state.xp);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const wbg =
     weather.tone === "safe"
@@ -32,7 +33,17 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
       <div className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]" style={{ background: wbg }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
-            <div className="text-sm opacity-90 font-bold">우리 반 언어 기상도</div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="text-sm opacity-90 font-bold">우리 반 언어 기상도</div>
+              <button
+                type="button"
+                onClick={() => setInfoOpen(true)}
+                className="text-xs px-2 py-0.5 rounded-full bg-white/20 hover:bg-white/30 hover:-translate-y-0.5 hover:underline transition-all duration-200 cursor-pointer text-white font-bold whitespace-nowrap"
+                aria-label="우리 반 언어 기상도 안내 열기"
+              >
+                ❓ 우리 반 언어 기상도란?
+              </button>
+            </div>
             <div className="text-3xl sm:text-4xl font-black mt-1">
               {weather.icon} {weather.label}
             </div>
@@ -45,6 +56,8 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
           </div>
         </div>
       </div>
+
+      {infoOpen && <WeatherInfoModal avg={avg} onClose={() => setInfoOpen(false)} />}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6">
@@ -133,6 +146,89 @@ function kindLabel(k: string) {
   if (k === "approved") return "사전 승인";
   if (k === "chat") return "챗봇 대화";
   return k;
+}
+
+function WeatherInfoModal({ avg, onClose }: { avg: number; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="우리 반 언어 기상도 안내"
+    >
+      <div
+        className="w-full max-w-lg min-w-0 rounded-2xl bg-white/80 backdrop-blur-md shadow-2xl border border-white/60 animate-scale-in flex flex-col max-h-[85vh]"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3 p-5 border-b border-white/60">
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-black text-[color:var(--navy)]">🌈 우리 반 언어 기상도란?</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              현재 평균 유해 점수 <span className="font-mono font-bold text-[color:var(--navy)]">{avg}</span>점 · 7단계 자동 판정
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 w-10 h-10 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-xl font-black text-[color:var(--navy)] shadow"
+            aria-label="닫기"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="px-5 py-4 overflow-y-auto pr-2 max-h-[75vh]" style={{ WebkitOverflowScrolling: "touch" }}>
+          <p className="text-sm text-[color:var(--navy)] leading-relaxed mb-3">
+            학급의 <b>평균 유해 점수(0~100)</b>를 실시간으로 계산해 오늘의 교실 언어 날씨를 알려줘요.
+            점수가 낮을수록 맑고, 높을수록 험악해집니다.
+          </p>
+          <div className="space-y-2">
+            {WEATHER_MATRIX.map((t, i) => {
+              const active = avg >= t.min && avg <= t.max;
+              return (
+                <div
+                  key={i}
+                  className={`grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3 rounded-xl p-3 ${t.accent} ${
+                    active ? "ring-2 ring-[color:var(--navy)] shadow" : "opacity-90"
+                  }`}
+                >
+                  <div className="text-2xl leading-none">{t.icon}</div>
+                  <div className="font-mono text-xs font-bold bg-white/60 rounded px-2 py-1 whitespace-nowrap">
+                    {t.min}~{t.max}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-black">
+                      {i + 1}단계 · {t.label}
+                      {active && <span className="ml-1 text-[10px] align-middle">🎯 현재</span>}
+                    </div>
+                    <div className="text-xs mt-0.5 leading-snug break-words">{t.desc}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 rounded-xl bg-white/70 border border-white/80 p-3 text-xs leading-relaxed text-[color:var(--navy)]">
+            💡 <b>우리 반 날씨가 맑아지는 비법</b>: 친구들이 사전에 유해 점수가 높은 단어 대신 '바른 대안 표현'을 사용하고,
+            고운 말 카드에 <b>[👍 바른말 최고야]</b> 공감을 누를 때마다 우리 반의 평균 유해 점수가 소수점 단위로
+            쏙쏙 내려가며 날씨가 실시간으로 환하게 개어납니다!
+          </div>
+        </div>
+
+        <div className="p-4 border-t border-white/60">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full py-3 rounded-xl bg-[color:var(--navy)] text-white font-black text-base shadow-lg hover:opacity-90 active:scale-[0.99] transition"
+          >
+            확인했어요
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function PixelKing({ size, level }: { size: number; level: number }) {
