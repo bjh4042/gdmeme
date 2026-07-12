@@ -226,7 +226,10 @@ export function TeacherDashboard({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-2 sm:p-4 scroll-touch">
+    <div
+      className="fixed inset-0 z-50 bg-black/60 overflow-y-auto p-2 sm:p-4 scroll-touch pl-safe pr-safe"
+      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 8px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+    >
       <div className="w-[94%] sm:w-full max-w-4xl mx-auto my-2 sm:my-6 rounded-3xl bg-card p-4 sm:p-6 border-2 border-[color:var(--navy)]"
            style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
@@ -1031,7 +1034,10 @@ function GlassModal({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-2 sm:p-4 flex items-center justify-center animate-fade-in">
+    <div
+      className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-2 sm:p-4 flex items-center justify-center animate-fade-in pl-safe pr-safe"
+      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 8px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+    >
       <div
         className="w-[94%] sm:w-full max-w-2xl max-h-[calc(100dvh-16px)] sm:max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
         style={{
