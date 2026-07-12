@@ -1,75 +1,96 @@
+# 4대 신규 기능 통합 구현안
 
-## 목표
-LocalStorage 직접 접근을 걷어내고 Zustand로 전역 상태를 재편, 교사 인증을 SHA-256 해시로 강화 + 관리자 대시보드를 lazy 청크로 분리, 4개 탭을 keep-alive로 유지, 주요 액션 버튼에 500ms 디바운스를 적용합니다.
+기존 4탭/Zustand/classCode 격리 구조는 그대로 두고, **단일 신규 스토어 `engagement`** 와 **프로필 모달** 하나를 축으로 4가지 기능을 얹습니다.
 
-## 1. 상태 아키텍처 (Zustand)
+## 1. 신규 상태 — `src/stores/engagement.ts` (Zustand + persist)
 
-`bun add zustand` 후 `src/stores/` 아래에 4개 스토어로 분리 — 각각 좁은 selector로만 구독시켜 리렌더를 최소화합니다.
-
-- `authStore` — `currentUser`(id/이름/학급/번호/역할), 로그인·로그아웃 액션. `persist`로 저장.
-- `classStore` — 학급별 `{ xp, activityLog }`. 키 = `classCode`. `persist`(부분).
-  - `addXp(classCode, delta)`, `pushActivity(classCode, entry)` 액션.
-  - **가비지 컬렉션**: `pushActivity` 안에서 `activityLog.length > 100` 이면 `slice(-100)`으로 큐 트리밍.
-- `roleplayStore` — 학생별 `rooms: Record<studentKey, Record<scenarioId, RoomState>>`. `persist`(부분).
-  - `appendMsg(studentKey, scenarioId, msg)` 안에서 방별 `msgs.length > 100` 이면 오래된 것부터 shift.
-- `dictionaryStore` — 승인 대기/승인 완료 단어. `persist`.
-
-공통 규칙:
-- `persist` 미들웨어 + `partialize`로 저장 대상만 골라 저장 (휘발 필드는 제외).
-- 컴포넌트는 반드시 `useStore(s => s.slice)` 형태의 selector로만 구독. 객체를 통째로 뽑지 않음.
-- 기존 `src/lib/literacy-store.ts`의 read/write 함수는 스토어 액션으로 이관하고, 첫 로드 시 legacy 키를 한 번 마이그레이션한 뒤 삭제.
-
-## 2. 교사 인증 보안 강화 + 코드 스플리팅
-
-- `TeacherGate` 컴포넌트 신설: 비밀번호 입력 → Web Crypto `crypto.subtle.digest("SHA-256", ...)`로 해시 → 사전 정의된 상수 해시(`TEACHER_PW_SHA256`)와 상수시간 비교.
-  - 기존 평문 `'1234'` 제거. 기본 비밀번호는 유지하되 파일에는 해시만 저장.
-- 인증 성공 시 `sessionStorage`에 임시 토큰(랜덤 UUID + 만료 시각) 저장. 창을 닫으면 자연 소멸.
-- `TeacherDashboard`는 `React.lazy(() => import("@/components/literacy/TeacherDashboard"))` + `<Suspense fallback>`으로 감싸 인증 성공 후에만 청크 로드.
-
-## 3. 탭 Keep-alive
-
-`src/routes/index.tsx`의 4개 탭 렌더를 조건부 `null` 대신 항상 마운트 + `hidden` 토글로 변경:
-
-```tsx
-<div hidden={tab !== "analyzer"}><AnalyzerTab .../></div>
-<div hidden={tab !== "chatbot"}><ChatbotTab .../></div>
-<div hidden={tab !== "assistant"}><AssistantTab .../></div>
-<div hidden={tab !== "dictionary"}><DictionaryTab .../></div>
-```
-
-- 각 탭 컴포넌트를 `React.memo`로 감싸 props가 안 바뀌면 리렌더 스킵.
-- 상위에서 내려주는 콜백들은 `useCallback`, 파생 객체는 `useMemo`로 안정화.
-- 결과: 탭 전환 시 스크롤 위치, 입력 중인 텍스트, 챗 스크롤 상태가 그대로 유지.
-
-## 4. 액션 버튼 디바운스
-
-`src/lib/use-debounced-action.ts` 신설:
+한 개 스토어에 학생 단위(`studentId = classCode_number`)로 격리된 데이터를 담습니다.
 
 ```ts
-export function useDebouncedAction<T extends (...a: any[]) => void>(fn: T, ms = 500) {
-  const lockRef = useRef(0);
-  return useCallback((...args) => {
-    const now = Date.now();
-    if (now - lockRef.current < ms) return;
-    lockRef.current = now;
-    fn(...args);
-  }, [fn, ms]) as T;
-}
+type StudentEngagement = {
+  likesGiven: Record<number /*entryId*/, ("bravo"|"learned"|"cheer")[]>; // 이 학생이 눌러본 반응
+  likesReceivedCount: number;   // 뱃지 조건용
+  journals: { date: string /*YYYY-MM-DD*/; text: string }[]; // 하루 1개
+  streak: number;               // 연속일수(어제 작성 여부로 계산)
+  lastJournalDate?: string;
+  unlockedBadges: string[];     // ["empathy","recorder","lexicographer","etiquette"]
+  quizAllClearRoleplay: boolean;// 5스테이지 올클리어 플래그
+};
+
+byStudent: Record<string, StudentEngagement>
+likesByEntry: Record<number, Record<string /*studentId*/, ("bravo"|"learned"|"cheer")[]>>; // 어뷰징 방지 소스오브트루스
 ```
 
-적용 대상 (모두 500ms 리딩 엣지 스로틀):
-- `ChatbotTab`의 `send()` 및 힌트 칩 클릭
-- `QuizTab`의 정답 버튼
-- `AssistantTab`의 질문 칩/전송
-- `DictionaryTab`의 신청/승인 버튼
-- 교사 대시보드의 [승인] 버튼
+액션:
+- `react(entryId, reactorId, authorId, reactorClass, authorClass, kind)` — 이미 눌렀는지 확인 → 신규면 저장 + `roster.addStudentXP(reactorId,+1)` + `roster.addStudentXP(authorId,+1)` + `class.addXP(reactorClass,+1)` + `class.addXP(authorClass,+1)`. 어뷰징 방지 = **학생 1명이 단어 1개당 kind별 1회**.
+- `writeJournal(studentId, text)` — 오늘 이미 있으면 no-op 반환. XP +2, `streak` 계산 후 3연속이면 +10 보너스와 폭죽 이벤트 리턴.
+- `checkBadges(studentId, ctx)` — 조건 만족 시 unlock 반환(신규 획득만).
+- `markLexicographer(authorId)` — 사전 승인 훅에서 호출.
+- `markEtiquetteMaster(studentId)` — 역할극 5스테이지 클리어 훅.
 
-## 5. 마이그레이션 & 검증
+가비지 컬렉션: `journals` 90개 초과 시 앞에서 slice, `likesByEntry`는 승인 엔트리 삭제 시 정리(추후 hook).
 
-- 스토어 도입 후 기존 `literacy-store.ts` 훅 사용처를 스토어 selector로 교체. 옛 훅은 얇은 어댑터로 남겼다가 정리.
-- `bunx tsgo --noEmit`로 타입 확인, 초기 로드 후 콘솔 에러/네트워크 확인.
-- 시크릿: 교사 비밀번호 기본값은 코드에 해시로만 존재하므로 시크릿 저장 불필요. 사용자가 다른 비밀번호를 원하면 이후 별도 요청 시 처리.
+## 2. UI 통합
 
-## 확인이 필요한 한 가지
+### (A) `DictionaryTab.EntryCard` — 공감 버튼
+카드 하단에 3개 버튼(👍/💡/👏). 각 버튼:
+- 클릭 = `useDebouncedAction`으로 400ms 잠금.
+- 이미 눌렀으면 `disabled` + 활성 스타일(pressed).
+- 카운트 표시(`likesByEntry[entryId]` 집계).
+- 클릭 → 스토어 `react()` 호출 → 폭죽 없는 소형 sonner toast + 카드 살짝 흔들림.
 
-교사 기본 비밀번호를 현재의 `1234`에서 그대로 두고 해시화만 할지, 아니면 다른 문자열로 바꾸시겠어요? 기본값을 알려주시면 그 값으로 해시를 박아두겠습니다. (별도 언급이 없으면 `1234`의 SHA-256 해시를 그대로 사용하겠습니다.)
+props로 `currentStudent`, `onReact(entryId, authorId, authorClass, kind)`를 위쪽에서 주입. 상위 `routes/index.tsx`에서 학급/작성자 정보 매핑.
+
+### (B) 프로필 모달 — `src/components/literacy/ProfileModal.tsx` (신규)
+헤더의 학생 뱃지 영역을 클릭하거나 새로 만든 👤 버튼으로 열림. 내부 섹션:
+1. **오늘의 우리말 성찰**: textarea + "저장(+2 XP)". 오늘 이미 작성했으면 잠금 표시. streak 3 달성 시 canvas-confetti 폭죽 + toast(+10 XP).
+2. **뱃지 도감**: 4칸 grid. 미획득은 grayscale+blur+🔒. 획득은 컬러 도트 아이콘.
+   - `empathy` 공감의 기사: likesGiven 총 5회.
+   - `recorder` 기록의 달인: streak≥3.
+   - `lexicographer` 사전 편찬자: 승인된 자신의 단어≥1.
+   - `etiquette` 예절 마스터: roleplay 5스테이지 올 클리어.
+3. **📄 나의 언어 수호 리포트 보기** 버튼 → `ReportModal` 오픈.
+
+### (C) 리포트 모달 — `src/components/literacy/ReportModal.tsx` (신규)
+Glassmorphism 상장 카드. 내부 `ref` 요소를 `html2canvas`로 png export.
+내용: 학생명·소속, 개인 누적 XP, 획득 뱃지 표시, 사전 기여도(승인/제안 수), 역할극 통과율(스토어에서 유도, 없으면 unlock 플래그 기반), 학급 언어 기상도 요약.
+버튼: 💾 부모님께 자랑하기 → `html2canvas(node).then(c => c.toBlob(download))`.
+
+**Prop 기반 재사용**: `ReportModal`은 `studentId`를 받아 스토어에서 데이터 조회 → 교사 대시보드에서도 같은 컴포넌트 사용.
+
+### (D) 교사 대시보드 통합
+학생 목록 각 행에 "📄 리포트" 액션 버튼 추가 → `<ReportModal studentId={r.id} viewerIsTeacher />` 열림. 학부모 배포용으로 PNG 저장 가능.
+
+## 3. 훅 연결 (기존 로직 최소 침습)
+
+- `routes/index.tsx` `onApprove` 이후: `engagement.markLexicographer(applicantId)`.
+- `QuizTab` / `ChatbotTab`에서 역할극 스테이지 완료 시 `awardXP` 옆에 `engagement.reportRoleplayClear(studentId, stageId)` 훅 추가. 스테이지 세트(5)를 모두 클리어하면 `markEtiquetteMaster` 발동.
+- 공감/저널의 XP 지급은 스토어 내부에서 `useRosterStore.getState()`, `useClassStore.getState()`를 직접 호출 → 전역 상태가 즉시 갱신되어 헤더 XP 인디케이터·타임라인이 자동 리렌더(기존 selector 그대로 동작).
+
+## 4. 의존성
+
+- `bun add zustand`(이미 있음), **`bun add html2canvas canvas-confetti`** (2종 신규).
+- 폭죽은 canvas-confetti의 `fire()` 한 방(리포트/저널 스트릭).
+
+## 5. 안전장치
+
+- `classCode` 격리: 공감 XP는 `reactor`와 `author`의 홈 학급 각각에만 가산 → 다른 학급 XP는 절대 오염되지 않음.
+- 어뷰징 방지: `likesByEntry[entryId][studentId]` 배열에 kind가 이미 있으면 액션 무시(스토어 레벨) + 버튼 `disabled`(UI 레벨) 2중 방어.
+- 저널: `lastJournalDate === today`면 저장 버튼 잠금.
+- 뱃지 해금은 조건 재계산 시 신규만 unlock 배열에 push(중복 방지).
+
+## 6. 파일 변경 요약
+
+신규:
+- `src/stores/engagement.ts`
+- `src/components/literacy/ProfileModal.tsx`
+- `src/components/literacy/ReportModal.tsx`
+
+수정:
+- `src/components/literacy/DictionaryTab.tsx` — EntryCard 공감 버튼
+- `src/components/literacy/TeacherDashboard.tsx` — 학생 행 리포트 버튼
+- `src/routes/index.tsx` — Profile/Report 모달 오픈, engagement 훅 연결
+- `src/lib/literacy-store.ts` — 얇은 `useEngagement` 어댑터 노출
+- `src/components/literacy/QuizTab.tsx`, `ChatbotTab.tsx` — 역할극 클리어 시 `reportRoleplayClear`
+
+전 과정 후 `tsgo` 타입체크. 진행할까요?

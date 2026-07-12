@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
+import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
+import { useDebouncedAction } from "@/lib/use-debounced-action";
+import { toast } from "sonner";
 
 export function DictionaryTab({
   dict,
@@ -52,6 +55,7 @@ export function DictionaryTab({
   }, [approved, filter, query, risk, field]);
 
   const filters = ["전체", ...KOREAN_INITIALS, ...ALPHABET];
+  const currentStudentId = `${student.classCode}_${student.number.padStart(2, "0")}`;
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -158,7 +162,7 @@ export function DictionaryTab({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((d) => (
-            <EntryCard key={d.id} entry={d} />
+            <EntryCard key={d.id} entry={d} currentStudentId={currentStudentId} currentClassCode={student.classCode} />
           ))}
         </div>
       )}
@@ -181,10 +185,43 @@ export function DictionaryTab({
   );
 }
 
-function EntryCard({ entry }: { entry: DictEntry }) {
+function EntryCard({
+  entry,
+  currentStudentId,
+  currentClassCode,
+}: {
+  entry: DictEntry;
+  currentStudentId: string;
+  currentClassCode: string;
+}) {
   const g = gradeOf(entry.total_harmful_score);
   const bg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
   const Icon = g.tone === "safe" ? ShieldCheck : g.tone === "warn" ? ShieldQuestion : ShieldAlert;
+  const likesByEntry = useEngagementStore((s) => s.likesByEntry);
+  const react = useEngagementStore((s) => s.react);
+  const counts = reactionCountsFor(entry.id, likesByEntry);
+  const mine = myReactionsFor(entry.id, currentStudentId, likesByEntry);
+  // suggested_by format: `${classCode}_${number}`
+  const authorId = entry.suggested_by;
+  const authorClass = authorId?.includes("_") ? authorId.split("_")[0] : currentClassCode;
+  const doReact = useDebouncedAction((kind: ReactionKind) => {
+    if (!currentStudentId) return;
+    if (mine.includes(kind)) return;
+    const ok = react({
+      entryId: entry.id,
+      reactorId: currentStudentId,
+      reactorClass: currentClassCode,
+      authorId: authorId ?? "",
+      authorClass: authorClass ?? currentClassCode,
+      authorName: authorId ?? "",
+      word: entry.word,
+      kind,
+    });
+    if (ok) {
+      const r = REACTIONS.find((x) => x.key === kind);
+      toast.success(`${r?.icon} ${r?.label} · +1 XP`, { duration: 1400 });
+    }
+  }, 400);
   return (
     <div className="glass-card p-5 hover:-translate-y-1 transition-all duration-300">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 mb-2">
@@ -222,6 +259,32 @@ function EntryCard({ entry }: { entry: DictEntry }) {
       <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex justify-between">
         <span>제안 {entry.suggested_by}</span>
         <span>투표 {entry.vote_count ?? 1}</span>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-1.5">
+        {REACTIONS.map((r) => {
+          const on = mine.includes(r.key);
+          return (
+            <button
+              key={r.key}
+              type="button"
+              onClick={() => doReact(r.key)}
+              disabled={on}
+              aria-pressed={on}
+              aria-label={`${r.label} 공감 (누적 ${counts[r.key]}회)`}
+              title={r.label}
+              className={`flex flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1.5 text-[10px] font-black leading-tight transition wt-text ${
+                on
+                  ? "text-white shadow-inner cursor-default"
+                  : "bg-white/70 text-[color:var(--navy)] hover:bg-white hover:-translate-y-0.5 active:scale-95"
+              }`}
+              style={on ? { background: r.color } : undefined}
+            >
+              <span className="text-base leading-none">{r.icon}</span>
+              <span className="truncate max-w-full">{r.label}</span>
+              <span className="font-mono text-[10px] opacity-90">{counts[r.key]}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
