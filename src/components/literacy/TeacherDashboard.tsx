@@ -455,6 +455,44 @@ export function TeacherDashboard({
 
         {section === "words" ? (
           <>
+            {/* 📊 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용) */}
+            <div className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-sm font-black text-[color:var(--navy)]">📊 사전 데이터셋 일괄 관리</div>
+                  <div className="text-[11px] text-muted-foreground">
+                    CSV로 내려받아 엑셀에서 편집 → 다시 업로드하면 ID 기준으로 Upsert 반영돼요.
+                  </div>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={downloadDictCSV}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-3 py-2 text-xs font-bold hover:scale-[1.03] transition"
+                  >
+                    <Download size={14} /> 사전 데이터 엑셀 다운로드
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => dictFileRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border-2 border-[color:var(--navy)] text-[color:var(--navy)] px-3 py-2 text-xs font-bold hover:bg-[color:var(--mint)] transition"
+                  >
+                    <Upload size={14} /> 엑셀 파일 선택
+                  </button>
+                  <input
+                    ref={dictFileRef}
+                    type="file"
+                    accept=".csv,.xlsx,.xls,text/csv"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) void handleDictUpload(f);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Search bar */}
             <div className="relative mb-4">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
