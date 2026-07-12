@@ -11,20 +11,10 @@ export const REACTIONS: { key: ReactionKind; icon: string; label: string; color:
   { key: "cheer", icon: "👏", label: "실천을 응원해", color: "#ec4899" },
 ];
 
-export type BadgeKey = "empathy" | "recorder" | "lexicographer" | "etiquette";
-
-export const BADGES: {
-  key: BadgeKey;
-  icon: string;
-  name: string;
-  desc: string;
-  color: string;
-}[] = [
-  { key: "empathy", icon: "🛡️", name: "공감의 기사", desc: "선플 공감 5회 누적", color: "#ec4899" },
-  { key: "recorder", icon: "📔", name: "기록의 달인", desc: "성찰 저널 3일 연속", color: "#f59e0b" },
-  { key: "lexicographer", icon: "📖", name: "사전 편찬자", desc: "우리말 사전 최초 등재 승인", color: "#10b981" },
-  { key: "etiquette", icon: "🎖️", name: "예절 마스터", desc: "역할극 5스테이지 올클리어", color: "#6366f1" },
-];
+// 뱃지 키는 문자열(신규 12트랙 · 구 키는 하위 호환용으로만 허용)
+export type BadgeKey = string;
+// 레거시 재수출 — 구 컴포넌트가 참조해도 빈 배열로 안전 분해.
+export const BADGES: { key: BadgeKey; icon: string; name: string; desc: string; color: string }[] = [];
 
 export type JournalEntry = { date: string; text: string };
 
@@ -69,6 +59,7 @@ type EngagementState = {
   ) => { ok: boolean; reason?: "empty" | "already"; streakBonus: boolean; streak: number };
   markLexicographer: (authorId: string) => void;
   reportRoleplayClear: (studentId: string, scenarioId: string, total: number) => boolean;
+  syncBadges: (studentId: string, keys: string[]) => void;
 };
 
 function today() {
@@ -81,6 +72,11 @@ function yesterday() {
 }
 function unlockOnce(cur: BadgeKey[], key: BadgeKey): BadgeKey[] {
   return cur.includes(key) ? cur : [...cur, key];
+}
+function ratchetKeys(cur: BadgeKey[], keys: string[]): BadgeKey[] {
+  let out = cur;
+  for (const k of keys) if (!out.includes(k)) out = [...out, k];
+  return out;
 }
 
 export const useEngagementStore = create<EngagementState>()(
@@ -101,13 +97,17 @@ export const useEngagementStore = create<EngagementState>()(
 
         const reactorCur = st.byStudent[reactorId] ?? EMPTY_ENGAGEMENT;
         // 뱃지는 회수하지 않음 (하위 등급 강제 재잠금 금지)
+        const nextGiven = Math.max(0, reactorCur.likesGivenCount + delta);
+        const reactionUnlocks: string[] = [];
+        if (!isToggleOff) {
+          if (reactorCur.likesGivenCount + 1 >= 5) reactionUnlocks.push("reactions_1");
+          if (reactorCur.likesGivenCount + 1 >= 20) reactionUnlocks.push("reactions_2");
+          if (reactorCur.likesGivenCount + 1 >= 50) reactionUnlocks.push("reactions_3");
+        }
         const reactorNext: StudentEngagement = {
           ...reactorCur,
-          likesGivenCount: Math.max(0, reactorCur.likesGivenCount + delta),
-          unlockedBadges:
-            !isToggleOff && reactorCur.likesGivenCount + 1 >= 5
-              ? unlockOnce(reactorCur.unlockedBadges, "empathy")
-              : reactorCur.unlockedBadges,
+          likesGivenCount: nextGiven,
+          unlockedBadges: ratchetKeys(reactorCur.unlockedBadges, reactionUnlocks),
         };
         const byStudent = { ...st.byStudent, [reactorId]: reactorNext };
         if (authorId && authorId !== reactorId) {
@@ -151,7 +151,11 @@ export const useEngagementStore = create<EngagementState>()(
         const streak = cur.lastJournalDate === yd ? cur.streak + 1 : 1;
         const journals = [...cur.journals, { date: td, text: t.slice(0, 300) }].slice(-90);
         let unlockedBadges = cur.unlockedBadges;
-        if (streak >= 3) unlockedBadges = unlockOnce(unlockedBadges, "recorder");
+        const journalUnlocks: string[] = [];
+        if (streak >= 3) journalUnlocks.push("journal_1");
+        if (streak >= 7) journalUnlocks.push("journal_2");
+        if (streak >= 14) journalUnlocks.push("journal_3");
+        unlockedBadges = ratchetKeys(unlockedBadges, journalUnlocks);
         const next: StudentEngagement = {
           ...cur,
           journals,
@@ -176,11 +180,11 @@ export const useEngagementStore = create<EngagementState>()(
         if (!authorId) return;
         set((s) => {
           const cur = s.byStudent[authorId] ?? EMPTY_ENGAGEMENT;
-          if (cur.unlockedBadges.includes("lexicographer")) return s;
+          if (cur.unlockedBadges.includes("dictionary_1")) return s;
           return {
             byStudent: {
               ...s.byStudent,
-              [authorId]: { ...cur, unlockedBadges: unlockOnce(cur.unlockedBadges, "lexicographer") },
+              [authorId]: { ...cur, unlockedBadges: unlockOnce(cur.unlockedBadges, "dictionary_1") },
             },
           };
         });
@@ -192,11 +196,8 @@ export const useEngagementStore = create<EngagementState>()(
           const cur = s.byStudent[studentId] ?? EMPTY_ENGAGEMENT;
           if (cur.roleplayCleared.includes(scenarioId)) return s;
           const cleared = [...cur.roleplayCleared, scenarioId];
-          let unlocked = cur.unlockedBadges;
-          if (cleared.length >= total && !unlocked.includes("etiquette")) {
-            unlocked = [...unlocked, "etiquette"];
-            newlyMaster = true;
-          }
+          const unlocked = cur.unlockedBadges;
+          if (cleared.length >= total) newlyMaster = true;
           return {
             byStudent: {
               ...s.byStudent,
@@ -205,6 +206,15 @@ export const useEngagementStore = create<EngagementState>()(
           };
         });
         return newlyMaster;
+      },
+      syncBadges: (studentId, keys) => {
+        if (!studentId || !keys?.length) return;
+        set((s) => {
+          const cur = s.byStudent[studentId] ?? EMPTY_ENGAGEMENT;
+          const merged = ratchetKeys(cur.unlockedBadges, keys);
+          if (merged.length === cur.unlockedBadges.length) return s;
+          return { byStudent: { ...s.byStudent, [studentId]: { ...cur, unlockedBadges: merged } } };
+        });
       },
     }),
     {
