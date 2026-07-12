@@ -279,6 +279,12 @@ export function ChatbotTab({
     setActiveId(id);
     setMobileView("chat");
     setRooms((prev) => ({ ...prev, [id]: { ...prev[id], unread: 0 } }));
+    // 뒤로가기(하드웨어/제스처) 로 목록으로 돌아올 수 있도록 히스토리에 마커 push.
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
+      try {
+        window.history.pushState({ wtChat: true, id }, "");
+      } catch {}
+    }
   }
 
   function resetRoom() {
@@ -525,7 +531,17 @@ export function ChatbotTab({
       >
         {/* Top bar */}
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-3 bg-[#111] text-white border-b border-white/5">
-          <button onClick={() => setMobileView("list")} className="p-1 rounded hover:bg-white/5 lg:opacity-70" aria-label="목록으로">
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined" && window.history.state?.wtChat) {
+                window.history.back(); // popstate 리스너가 mobileView 를 list 로 복귀
+              } else {
+                setMobileView("list");
+              }
+            }}
+            className="p-1 rounded hover:bg-white/5 lg:opacity-70"
+            aria-label="목록으로"
+          >
             <ChevronLeft size={20} />
           </button>
           <div className="min-w-0 text-center">
