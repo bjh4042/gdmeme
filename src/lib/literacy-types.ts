@@ -56,10 +56,30 @@ export function gradeOf(score: number): { label: string; tone: "safe" | "warn" |
   return { label: "위험/사용 금지", tone: "danger", emoji: "🔴" };
 }
 
+export type WeatherTier = {
+  min: number;
+  max: number;
+  icon: string;
+  label: string;
+  desc: string;
+  tone: "safe" | "warn" | "danger";
+  accent: string; // pastel bg class for matrix rows
+};
+
+export const WEATHER_MATRIX: WeatherTier[] = [
+  { min: 0, max: 15, icon: "☀️", label: "아주 맑음(쾌청)", desc: "최고의 청정 교실! 우리 반은 비속어가 전혀 없는 바른말 수호 구역입니다.", tone: "safe", accent: "bg-sky-100 text-sky-900" },
+  { min: 16, max: 30, icon: "🌤️", label: "구름 조금(맑음)", desc: "아주 양호해요. 서로를 존중하며 고운 말 약속을 훌륭하게 실천하고 있습니다.", tone: "safe", accent: "bg-cyan-100 text-cyan-900" },
+  { min: 31, max: 45, icon: "⛅", label: "구름 사이 햇살(개임)", desc: "무난한 상태입니다. 유행어가 가끔 들리지만 금방 바른말로 자정하고 있어요.", tone: "safe", accent: "bg-emerald-100 text-emerald-900" },
+  { min: 46, max: 60, icon: "☁️", label: "구름 많음(흐림)", desc: "주의가 필요해요! 무분별한 밈과 신조어가 교실에 번지기 시작했습니다.", tone: "warn", accent: "bg-amber-100 text-amber-900" },
+  { min: 61, max: 75, icon: "🌦️", label: "한때 비(소나기)", desc: "경고 단계입니다! 거친 말투와 은어가 섞여 나와 친구들 사이에 다툼이 생길 수 있어요.", tone: "warn", accent: "bg-orange-100 text-orange-900" },
+  { min: 76, max: 90, icon: "🌧️", label: "장마비(비바람)", desc: "위험해요! 교실 언어가 오염되어 어두운 구름이 가득합니다. 예절 역할극을 점검하세요.", tone: "danger", accent: "bg-rose-100 text-rose-900" },
+  { min: 91, max: 100, icon: "⚡", label: "천둥번개(폭풍우)", desc: "비상사태! 유해한 비속어가 가득합니다. 당장 바른말 수호 대책이 시급합니다.", tone: "danger", accent: "bg-purple-100 text-purple-900" },
+];
+
 export function weatherOf(avg: number) {
-  if (avg <= 30) return { icon: "☀️", label: "맑음", desc: "고운 말이 가득한 교실입니다", tone: "safe" as const };
-  if (avg <= 60) return { icon: "⛅", label: "구름 조금", desc: "유행어가 퍼지기 시작하니 주의하세요", tone: "warn" as const };
-  return { icon: "🌧️", label: "비/천둥 번개", desc: "바른 우리말 정화 활동이 시급한 위험 상태입니다", tone: "danger" as const };
+  const clamped = Math.max(0, Math.min(100, Math.round(avg)));
+  const tier = WEATHER_MATRIX.find((t) => clamped >= t.min && clamped <= t.max) ?? WEATHER_MATRIX[0];
+  return { icon: tier.icon, label: tier.label, desc: tier.desc, tone: tier.tone };
 }
 
 export const LEVELS = [
