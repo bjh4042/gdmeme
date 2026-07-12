@@ -157,16 +157,6 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
               )}
               <div className="max-w-[78%]">
                 {showAvatar && <div className="text-[11px] text-white/70 mb-0.5 ml-1">AI 수호비서</div>}
-                {m.pattern && (
-                  <div className="flex items-center gap-1 mb-1 ml-1">
-                    <span className={`text-[10px] font-bold text-white px-2 py-0.5 rounded-full ${patternBadge[m.pattern].bg}`}>
-                      {patternBadge[m.pattern].label}
-                    </span>
-                    {m.category && (
-                      <span className="text-[10px] text-white/50 font-mono">{m.category}</span>
-                    )}
-                  </div>
-                )}
                 <div className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                   {m.text}
                 </div>
