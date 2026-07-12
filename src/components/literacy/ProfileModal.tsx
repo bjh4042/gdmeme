@@ -1,9 +1,20 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { X, BookHeart, Sparkles, FileText } from "lucide-react";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import type { DictEntry, StudentRecord, ClassState } from "@/lib/literacy-types";
-import { BADGES, useEngagementStore } from "@/stores/engagement";
+import { useEngagementStore } from "@/stores/engagement";
+import {
+  BADGES_SORTED,
+  TIER_LABEL,
+  TRACK_LABEL,
+  TRACK_ORDER,
+  progressFor,
+  representativeBadge,
+  derivedUnlocked,
+  type BadgeDef,
+  type BadgeStats,
+} from "@/lib/badges";
 import { ReportModal } from "./ReportModal";
 
 export function ProfileModal({
@@ -21,15 +32,36 @@ export function ProfileModal({
 }) {
   const engagement = useEngagementStore((s) => s.byStudent[student.id]);
   const writeJournal = useEngagementStore((s) => s.writeJournal);
+  const syncBadges = useEngagementStore((s) => s.syncBadges);
   const today = new Date().toISOString().slice(0, 10);
   const wroteToday = engagement?.lastJournalDate === today;
   const [text, setText] = useState("");
   const [showReport, setShowReport] = useState(false);
-  const unlocked = engagement?.unlockedBadges ?? [];
+  const approvedWords = useMemo(
+    () => dict.filter((d) => d.suggested_by === student.id && d.status === "approved").length,
+    [dict, student.id],
+  );
+  const stats: BadgeStats = {
+    approvedWords,
+    totalXP: student.xp,
+    votedCount: engagement?.likesGivenCount ?? 0,
+    journalStreak: engagement?.streak ?? 0,
+  };
+  const auto = useMemo(() => derivedUnlocked(stats), [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak]);
+  useEffect(() => {
+    if (auto.length) syncBadges(student.id, auto);
+  }, [auto, student.id, syncBadges]);
+  const unlocked = useMemo(() => {
+    const persisted = engagement?.unlockedBadges ?? [];
+    const merged = new Set<string>([...persisted, ...auto]);
+    return Array.from(merged);
+  }, [engagement?.unlockedBadges, auto]);
+  const rep = representativeBadge(unlocked);
   const recentJournals = useMemo(
     () => (engagement?.journals ?? []).slice(-5).reverse(),
     [engagement?.journals],
   );
+  const [openBadge, setOpenBadge] = useState<string | null>(null);
 
   function submit() {
     const res = writeJournal(student.id, student.classCode, text);
@@ -53,9 +85,22 @@ export function ProfileModal({
     <div className="fixed inset-0 z-50 bg-[color:var(--navy)]/50 backdrop-blur-sm flex items-center justify-center p-3 pl-safe pr-safe overflow-y-auto animate-fade-in">
       <div className="w-full max-w-lg my-4 glass-card p-5 sm:p-6 animate-scale-in">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-black text-[color:var(--navy)] flex items-center gap-2">
-            👤 내 프로필 · {student.name}
-          </h3>
+          <div className="min-w-0">
+            <h3 className="text-lg font-black text-[color:var(--navy)] flex items-center gap-2 truncate">
+              👤 내 프로필 · {student.name}
+            </h3>
+            {rep && (
+              <div
+                className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-black text-white shadow-sm"
+                style={{ background: rep.color }}
+                title={`대표 칭호 · ${TIER_LABEL[rep.tier]}`}
+              >
+                <span className="text-sm leading-none">{rep.icon}</span>
+                {rep.name}
+                <span className="opacity-80 font-mono">Lv.{rep.tier}</span>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             onClick={onClose}
@@ -115,42 +160,38 @@ export function ProfileModal({
 
         {/* Badges */}
         <section className="mt-4 rounded-2xl bg-white/60 p-4">
-          <div className="font-black text-[color:var(--navy)] mb-2">🎖️ 뱃지 도감</div>
-          <div className="grid grid-cols-4 gap-2">
-            {BADGES.map((b) => {
-              const on = unlocked.includes(b.key);
+          <div className="flex items-center justify-between mb-2">
+            <div className="font-black text-[color:var(--navy)]">🎖️ 뱃지 도감 · 12대 칭호</div>
+            <span className="text-[10px] font-bold text-muted-foreground">
+              {unlocked.filter((k) => BADGES_SORTED.some((b) => b.key === k)).length} / 12 획득
+            </span>
+          </div>
+          <div className="space-y-3">
+            {TRACK_ORDER.map((track) => {
+              const items = BADGES_SORTED.filter((b) => b.track === track);
               return (
-                <div
-                  key={b.key}
-                  className={`rounded-xl p-2 text-center border-2 transition ${
-                    on ? "border-white bg-white/90 hover:-translate-y-0.5" : "border-dashed border-white/60 bg-white/40"
-                  }`}
-                  style={on ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
-                  title={b.desc}
-                >
-                  <div
-                    className="text-2xl leading-none"
-                    style={{
-                      imageRendering: "pixelated",
-                      filter: on ? undefined : "grayscale(1) blur(0.6px)",
-                      opacity: on ? 1 : 0.55,
-                    }}
-                  >
-                    {on ? b.icon : "🔒"}
+                <div key={track}>
+                  <div className="text-[10px] font-bold text-[color:var(--mint-deep)] mb-1 uppercase tracking-wider">
+                    {TRACK_LABEL[track]}
                   </div>
-                  <div
-                    className={`mt-1 text-[10px] font-black truncate ${
-                      on ? "text-[color:var(--navy)]" : "text-muted-foreground"
-                    }`}
-                  >
-                    {b.name}
+                  <div className="grid grid-cols-3 gap-2">
+                    {items.map((b) => (
+                      <BadgeTile
+                        key={b.key}
+                        b={b}
+                        stats={stats}
+                        unlocked={unlocked.includes(b.key)}
+                        open={openBadge === b.key}
+                        onToggle={() => setOpenBadge((k) => (k === b.key ? null : b.key))}
+                      />
+                    ))}
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="mt-2 text-[10px] text-muted-foreground">
-            조건: 공감 5회 / 저널 3일 연속 / 사전 1회 승인 / 역할극 {totalRoleplayScenarios}스테이지 올클리어
+          <div className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
+            💡 뱃지 아이콘을 눌러 미션 조건과 진척도를 확인해요. 한 번 얻은 칭호는 XP가 줄어도 유지됩니다.
           </div>
         </section>
 
