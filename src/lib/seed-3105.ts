@@ -9,7 +9,7 @@ import { useDictStore } from "@/stores/dict";
 import { derivedUnlocked, type BadgeStats } from "@/lib/badges";
 import type { DictEntry, StudentRecord } from "@/lib/literacy-types";
 
-const SEED_FLAG = "wtmeme:seed:3105:v4";
+const SEED_FLAG = "wtmeme:seed:3105:v5";
 const CLASS_CODE = "3105";
 
 type Row = {
@@ -56,19 +56,20 @@ const ROLEPLAY_MAP: Record<keyof Row["roleplay"], string> = {
 
 // 학생별 사전 기여를 실체화(진척도 · 리포트 통계 일치용).
 // 기존 SEED_DICT id 는 1~100 범위, Date.now() 도 큰 값이므로 200000 대역 사용해 충돌 방지.
+// 20인 학급 사전 카드용 다양성 확보 풀 — 초등 눈높이 밈/신조어와 1:1 대응하는 뜻·대안 표현
 const APPROVED_SAMPLES: { word: string; def: string; alt: string[]; source: string; score: number }[] = [
-  { word: "하울", def: "가지고 온 물건을 자랑스럽게 소개하는 신조어", alt: ["소개", "구매 후기"], source: "유튜브 쇼츠", score: 24 },
-  { word: "TMI", def: "굳이 말 안 해도 될 정보라는 뜻의 줄임말", alt: ["너무 자세한 정보"], source: "학교 대화", score: 28 },
+  { word: "어쩔티비", def: "'어쩌라고, 저리 가'라는 뜻으로 상대를 무시할 때 쓰는 유행어", alt: ["그렇구나", "네 생각을 존중해"], source: "유튜브 쇼츠", score: 42 },
+  { word: "누칼협", def: "'누가 칼 들고 협박했냐'의 줄임말로 상대의 상황을 비꼬는 말", alt: ["네가 선택한 일이잖아", "스스로 정한 거지"], source: "인터넷 커뮤니티", score: 46 },
+  { word: "핑프", def: "'핑거 프린세스/프린스'의 줄임말로 검색 안 하고 물어보는 사람을 비꼼", alt: ["먼저 찾아보고 물어봐 줘", "같이 검색해 볼까"], source: "카카오톡 단톡방", score: 38 },
+  { word: "킹받네", def: "매우 화가 난다는 뜻을 재미있게 표현한 유행어", alt: ["정말 속상해", "많이 답답해"], source: "인스타 릴스", score: 34 },
+  { word: "뇌절", def: "같은 말이나 행동을 계속 반복해서 질리게 한다는 뜻", alt: ["같은 이야기 그만", "한 번이면 충분해"], source: "유튜브 댓글", score: 30 },
+  { word: "중꺾마", def: "'중요한 건 꺾이지 않는 마음'의 줄임말로 포기하지 않는 태도", alt: ["끝까지 해보는 마음", "포기하지 않는 용기"], source: "e스포츠 중계", score: 18 },
+  { word: "알잘딱깔센", def: "'알아서 잘 딱 깔끔하고 센스 있게'의 줄임말", alt: ["스스로 잘 정리해서", "센스 있게 알아서"], source: "숏폼", score: 26 },
+  { word: "점메추", def: "'점심 메뉴 추천'의 줄임말", alt: ["점심 뭐 먹을지 골라줘"], source: "학교 대화", score: 20 },
+  { word: "오운완", def: "'오늘 운동 완료'의 줄임말로 운동을 마쳤다는 자랑", alt: ["오늘 운동 다 했어요"], source: "인스타 스토리", score: 16 },
+  { word: "쿠쿠루삥뽕", def: "상대를 놀리듯 약 올릴 때 쓰는 유행어", alt: ["그만 놀리자", "친구가 속상해할 수 있어"], source: "틱톡", score: 44 },
+  { word: "킹리적갓심", def: "'합리적 의심'을 과장한 유행어", alt: ["합리적인 의심", "그럴듯한 추측"], source: "유튜브 예능", score: 24 },
   { word: "갓생", def: "부지런하고 성실하게 살아가는 삶", alt: ["성실한 생활", "부지런한 삶"], source: "인스타 릴스", score: 20 },
-  { word: "핵인싸", def: "인기가 아주 많은 사람", alt: ["인기인", "친구가 많은 사람"], source: "학교 운동장", score: 32 },
-  { word: "짤", def: "짧고 재미있는 이미지", alt: ["재미난 사진", "이미지"], source: "카카오톡", score: 22 },
-  { word: "머쓱타드", def: "머쓱한 상황을 재미있게 표현한 말", alt: ["부끄러워"], source: "친구와 대화", score: 26 },
-  { word: "웃프다", def: "웃기면서도 슬픈 감정", alt: ["웃기지만 슬프다"], source: "인터넷 방송", score: 30 },
-  { word: "완내스", def: "완전 내 스타일의 줄임말", alt: ["딱 내 취향이야"], source: "숏폼", score: 28 },
-  { word: "케바케", def: "케이스 바이 케이스 · 상황에 따라 다름", alt: ["상황에 따라 달라"], source: "커뮤니티", score: 30 },
-  { word: "노잼", def: "재미가 없다는 뜻의 신조어", alt: ["재미없다"], source: "학교 대화", score: 26 },
-  { word: "존버", def: "끝까지 참고 버틴다는 뜻", alt: ["끝까지 버티기", "인내"], source: "커뮤니티", score: 40 },
-  { word: "라방", def: "라이브 방송의 줄임말", alt: ["실시간 방송"], source: "유튜브", score: 24 },
 ];
 
 function todayIso() { return new Date().toISOString(); }
@@ -112,11 +113,13 @@ export function seedClass3105IfNeeded() {
     }
 
     // 2) 사전 기여: 학생별 approvedWords 만큼 승인된 항목 생성.
+    // 학생 번호(row.number)를 오프셋으로 사용해 학생별로 서로 다른 단어가 배정되도록 보장
+    const offset = parseInt(row.number, 10) || 0;
     for (let i = 0; i < row.approvedWords; i++) {
-      const s = APPROVED_SAMPLES[(dictId + i) % APPROVED_SAMPLES.length];
+      const s = APPROVED_SAMPLES[(offset + i) % APPROVED_SAMPLES.length];
       newDictEntries.push({
         id: dictId++,
-        word: `${s.word} #${row.number}-${i + 1}`,
+        word: s.word,
         student_definition: s.def,
         suggested_by: id,
         source: s.source,
