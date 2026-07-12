@@ -617,7 +617,7 @@ export function ChatbotTab({
                                     <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
                                     <div className="flex items-end gap-1">
                                       <div
-                                        className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words whitespace-pre-wrap ${
+                                        className={`wt-text px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm ${
                                           m.tone === "danger"
                                             ? "bg-red-500/25 text-white border border-red-400/40"
                                             : m.tone === "warn"
@@ -635,7 +635,7 @@ export function ChatbotTab({
                                 <div className="flex items-end gap-1 max-w-[80%]">
                                   <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
                                   <div
-                                    className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words whitespace-pre-wrap text-[#111]"
+                                    className="wt-text px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm text-[#111]"
                                     style={{ background: "#FEE500" }}
                                   >
                                     {m.text}
