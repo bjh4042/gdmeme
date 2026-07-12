@@ -9,10 +9,14 @@ import { DictionaryTab } from "@/components/literacy/DictionaryTab";
 import { DashboardTab } from "@/components/literacy/DashboardTab";
 import { AssistantTab } from "@/components/literacy/AssistantTab";
 import { TeacherGate } from "@/components/literacy/TeacherGate";
+import { ProfileModal } from "@/components/literacy/ProfileModal";
+import { ReportModal } from "@/components/literacy/ReportModal";
 import { useEffect } from "react";
 import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId, addClassXPFor } from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
 import { toast } from "sonner";
+import { useEngagementStore } from "@/stores/engagement";
+import { SCENARIOS } from "@/lib/literacy-seed";
 
 
 export const Route = createFileRoute("/")({
@@ -31,6 +35,11 @@ function Index() {
   const [teacherOpen, setTeacherOpen] = useState(false);
   const [prefillWord, setPrefillWord] = useState<string | undefined>();
   const [openModalKey, setOpenModalKey] = useState<number | undefined>();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [reportForId, setReportForId] = useState<string | null>(null);
+  const markLexicographer = useEngagementStore((s) => s.markLexicographer);
+  const reportRoleplayClear = useEngagementStore((s) => s.reportRoleplayClear);
+  const totalScenarios = SCENARIOS.length;
 
   // Register the active student into the roster on every session start / name change.
   useEffect(() => {
@@ -60,6 +69,8 @@ function Index() {
         } else if (applicantClass) {
           addClassXPFor(applicantClass, 5, `승인 · ${applicant?.name ?? applicantId}`, "word-approved", w.word);
         }
+        // 3) 뱃지 · 사전 편찬자 해금
+        markLexicographer(applicantId);
         toast.success("교사 승인 완료! 신청 학생에게 수호 경험치 5 XP가 지급되었습니다.", {
           description: `단어: ${w.word} · 신청자: ${applicant?.name ?? applicantId}`,
         });
@@ -93,8 +104,14 @@ function Index() {
       onReset={() => {
         if (confirm("사전을 초기 시드 데이터로 되돌릴까요? (학생 제안은 사라집니다)")) resetSeed();
       }}
+      onOpenReport={(id) => setReportForId(id)}
     />
   ) : null;
+
+  const teacherReportStudent = reportForId ? roster.students.find((r) => r.id === reportForId) : null;
+  const teacherReportClassState = teacherReportStudent
+    ? useClassStore_getStateFor(teacherReportStudent.classCode)
+    : null;
 
   if (!student) {
     return (
@@ -148,8 +165,18 @@ function Index() {
     [dict, onRegisterNew],
   );
   const chatbotNode = useMemo(
-    () => <ChatbotTab classLevel={classLv} studentKey={activeId} onXP={awardXP} />,
-    [classLv, activeId, awardXP],
+    () => (
+      <ChatbotTab
+        classLevel={classLv}
+        studentKey={activeId}
+        onXP={awardXP}
+        onRoleplayClear={(scenarioId, total) => {
+          const master = reportRoleplayClear(activeId, scenarioId, total);
+          if (master) toast.success("🎖️ 예절 마스터 뱃지 획득!", { description: "역할극 전 시나리오 클리어" });
+        }}
+      />
+    ),
+    [classLv, activeId, awardXP, reportRoleplayClear],
   );
   const assistNode = useMemo(
     () => <AssistantTab onXP={awardXP} />,
@@ -192,6 +219,13 @@ function Index() {
             </div>
           </div>
           <div className="shrink-0 flex items-center gap-1">
+            <button
+              onClick={() => setProfileOpen(true)}
+              title="내 프로필"
+              className="w-9 h-9 grid place-items-center rounded-lg bg-[color:var(--muted)] hover:bg-[color:var(--mint)] text-lg"
+            >
+              👤
+            </button>
             <button
               onClick={() => setTeacherOpen(true)}
               title="교사 대시보드"
@@ -248,6 +282,30 @@ function Index() {
       </nav>
 
       {teacherView}
+
+      {profileOpen && (() => {
+        const rec = roster.students.find((r) => r.id === activeId);
+        if (!rec) return null;
+        return (
+          <ProfileModal
+            student={rec}
+            dict={dict}
+            classState={state}
+            totalRoleplayScenarios={totalScenarios}
+            onClose={() => setProfileOpen(false)}
+          />
+        );
+      })()}
+
+      {reportForId && teacherReportStudent && teacherReportClassState && (
+        <ReportModal
+          student={teacherReportStudent}
+          dict={dict}
+          classState={teacherReportClassState}
+          totalRoleplayScenarios={totalScenarios}
+          onClose={() => setReportForId(null)}
+        />
+      )}
     </div>
   );
 }
