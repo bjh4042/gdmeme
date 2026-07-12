@@ -1,9 +1,18 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { X, Download, Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import type { DictEntry, StudentRecord, ClassState } from "@/lib/literacy-types";
 import { levelOf, weatherOf } from "@/lib/literacy-types";
-import { BADGES, useEngagementStore, type BadgeKey } from "@/stores/engagement";
+import { useEngagementStore } from "@/stores/engagement";
+import {
+  BADGES_SORTED,
+  TIER_LABEL,
+  progressFor,
+  representativeBadge,
+  derivedUnlocked,
+  type BadgeDef,
+  type BadgeStats,
+} from "@/lib/badges";
 
 export function ReportModal({
   student,
@@ -19,6 +28,7 @@ export function ReportModal({
   onClose: () => void;
 }) {
   const engagement = useEngagementStore((s) => s.byStudent[student.id]);
+  const syncBadges = useEngagementStore((s) => s.syncBadges);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -34,7 +44,21 @@ export function ReportModal({
   }, [dict]);
   const weather = weatherOf(avgClass);
   const lv = levelOf(student.xp);
-  const unlocked = engagement?.unlockedBadges ?? [];
+  const stats: BadgeStats = {
+    approvedWords: approvedCount,
+    totalXP: student.xp,
+    votedCount: engagement?.likesGivenCount ?? 0,
+    journalStreak: engagement?.streak ?? 0,
+  };
+  const auto = useMemo(() => derivedUnlocked(stats), [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak]);
+  useEffect(() => {
+    if (auto.length) syncBadges(student.id, auto);
+  }, [auto, student.id, syncBadges]);
+  const unlocked = useMemo(() => {
+    const persisted = engagement?.unlockedBadges ?? [];
+    return Array.from(new Set<string>([...persisted, ...auto]));
+  }, [engagement?.unlockedBadges, auto]);
+  const rep = representativeBadge(unlocked);
 
   async function download() {
     if (!cardRef.current) return;
@@ -98,6 +122,15 @@ export function ReportModal({
               <div className="text-xs text-muted-foreground font-mono">
                 {student.classCode}반 · {student.number}번
               </div>
+              {rep && (
+                <div
+                  className="mt-1 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full text-white shadow-sm"
+                  style={{ background: rep.color }}
+                  title={`대표 칭호 · Lv.${rep.tier} ${TIER_LABEL[rep.tier]}`}
+                >
+                  <span className="text-xs leading-none">{rep.icon}</span> {rep.name} · Lv.{rep.tier}
+                </div>
+              )}
               {student.group && (
                 <div className="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
                   {student.group}조
@@ -120,10 +153,15 @@ export function ReportModal({
           </div>
 
           <div className="mt-4 rounded-2xl bg-white/60 p-4 border border-white/80">
-            <div className="text-[11px] text-muted-foreground font-bold mb-2">획득 뱃지 도감</div>
-            <div className="grid grid-cols-4 gap-2">
-              {BADGES.map((b) => (
-                <BadgeCell key={b.key} b={b} unlocked={unlocked.includes(b.key)} />
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[11px] text-muted-foreground font-bold">획득 뱃지 도감 · 12대 칭호</div>
+              <div className="text-[10px] font-bold text-[color:var(--mint-deep)]">
+                {unlocked.filter((k) => BADGES_SORTED.some((b) => b.key === k)).length} / 12
+              </div>
+            </div>
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+              {BADGES_SORTED.map((b) => (
+                <BadgeCell key={b.key} b={b} stats={stats} unlocked={unlocked.includes(b.key)} />
               ))}
             </div>
           </div>
@@ -186,29 +224,32 @@ function MetricCard({ label, value, sub }: { label: string; value: string; sub: 
   );
 }
 
-function BadgeCell({
-  b,
-  unlocked,
-}: {
-  b: { key: BadgeKey; icon: string; name: string; desc: string; color: string };
-  unlocked: boolean;
-}) {
+function BadgeCell({ b, stats, unlocked }: { b: BadgeDef; stats: BadgeStats; unlocked: boolean }) {
+  const p = progressFor(b, stats);
+  const done = unlocked || p.done;
   return (
     <div
       className={`rounded-xl p-2 text-center border-2 transition ${
-        unlocked ? "border-white bg-white/90" : "border-dashed border-white/60 bg-white/40 grayscale opacity-60"
+        done ? "border-white bg-white/95" : "border-dashed border-white/60 bg-white/40"
       }`}
-      style={unlocked ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
-      title={b.desc}
+      style={done ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
+      title={`${b.name} · Lv.${b.tier} ${TIER_LABEL[b.tier]}\n${b.desc}\n진척도 ${p.current}/${p.target}${b.unit}`}
     >
       <div
-        className="text-2xl leading-none"
-        style={{ imageRendering: "pixelated", filter: unlocked ? undefined : "grayscale(1) blur(0.5px)" }}
+        className="text-xl leading-none"
+        style={{ filter: done ? undefined : "grayscale(1) blur(0.4px)", opacity: done ? 1 : 0.55 }}
       >
-        {unlocked ? b.icon : "🔒"}
+        {done ? b.icon : "🔒"}
       </div>
-      <div className={`mt-1 text-[10px] font-black truncate ${unlocked ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}>
+      <div className={`mt-0.5 text-[9px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}>
         {b.name}
+      </div>
+      <div className="text-[8px] font-bold text-muted-foreground">Lv.{b.tier}</div>
+      <div className="mt-1 h-1 rounded-full bg-white/70 overflow-hidden">
+        <div className="h-full" style={{ width: `${p.pct}%`, background: done ? b.color : "#94a3b8" }} />
+      </div>
+      <div className="mt-0.5 text-[8px] font-mono" style={{ color: done ? b.color : "#64748b" }}>
+        {p.current}/{p.target}
       </div>
     </div>
   );
