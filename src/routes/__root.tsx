@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" },
       { title: "바른말 수호대 — 초등 국어 매체 리터러시" },
       { name: "description", content: "초등학생과 함께 만드는 바른 우리말 사전과 대화 예절 시뮬레이터" },
       { name: "author", content: "바른말 수호대" },
