@@ -91,17 +91,21 @@ export const useEngagementStore = create<EngagementState>()(
       react: ({ entryId, reactorId, reactorClass, authorId, authorClass, authorName, word, kind }) => {
         const st = get();
         const already = st.likesByEntry[entryId]?.[reactorId] ?? [];
-        if (already.includes(kind)) return false;
+        const isToggleOff = already.includes(kind);
+        const delta = isToggleOff ? -1 : 1;
 
         const entryMap = { ...(st.likesByEntry[entryId] ?? {}) };
-        entryMap[reactorId] = [...already, kind];
+        const nextList = isToggleOff ? already.filter((k) => k !== kind) : [...already, kind];
+        if (nextList.length === 0) delete entryMap[reactorId];
+        else entryMap[reactorId] = nextList;
 
         const reactorCur = st.byStudent[reactorId] ?? EMPTY_ENGAGEMENT;
+        // 뱃지는 회수하지 않음 (하위 등급 강제 재잠금 금지)
         const reactorNext: StudentEngagement = {
           ...reactorCur,
-          likesGivenCount: reactorCur.likesGivenCount + 1,
+          likesGivenCount: Math.max(0, reactorCur.likesGivenCount + delta),
           unlockedBadges:
-            reactorCur.likesGivenCount + 1 >= 5
+            !isToggleOff && reactorCur.likesGivenCount + 1 >= 5
               ? unlockOnce(reactorCur.unlockedBadges, "empathy")
               : reactorCur.unlockedBadges,
         };
@@ -110,10 +114,10 @@ export const useEngagementStore = create<EngagementState>()(
           const authorCur = st.byStudent[authorId] ?? EMPTY_ENGAGEMENT;
           byStudent[authorId] = {
             ...authorCur,
-            likesReceivedCount: authorCur.likesReceivedCount + 1,
+            likesReceivedCount: Math.max(0, authorCur.likesReceivedCount + delta),
           };
         } else if (authorId === reactorId) {
-          reactorNext.likesReceivedCount = reactorNext.likesReceivedCount + 1;
+          reactorNext.likesReceivedCount = Math.max(0, reactorNext.likesReceivedCount + delta);
         }
 
         set({
@@ -121,14 +125,17 @@ export const useEngagementStore = create<EngagementState>()(
           byStudent,
         });
 
-        // XP side-effects — classCode 격리 유지: 각자의 홈 학급에만 가산.
+        // XP side-effects — classCode 격리 유지: 각자의 홈 학급에만 가감.
         const roster = useRosterStore.getState();
         const cls = useClassStore.getState();
-        roster.addStudentXP(reactorId, 1);
-        if (reactorClass) cls.addXP(reactorClass, 1, "선플 공감", "reaction", `${word} · ${kind}`);
+        const noteSuffix = isToggleOff ? "취소" : "";
+        roster.addStudentXP(reactorId, delta);
+        if (reactorClass)
+          cls.addXP(reactorClass, delta, isToggleOff ? "선플 공감 취소" : "선플 공감", "reaction", `${word} · ${kind}${noteSuffix ? " · " + noteSuffix : ""}`);
         if (authorId && authorId !== reactorId) {
-          roster.addStudentXP(authorId, 1);
-          if (authorClass) cls.addXP(authorClass, 1, `공감받음 · ${authorName}`, "reaction", word);
+          roster.addStudentXP(authorId, delta);
+          if (authorClass)
+            cls.addXP(authorClass, delta, isToggleOff ? `공감취소 · ${authorName}` : `공감받음 · ${authorName}`, "reaction", word);
         }
         return true;
       },

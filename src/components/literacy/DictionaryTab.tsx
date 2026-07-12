@@ -206,7 +206,7 @@ function EntryCard({
   const authorClass = authorId?.includes("_") ? authorId.split("_")[0] : currentClassCode;
   const doReact = useDebouncedAction((kind: ReactionKind) => {
     if (!currentStudentId) return;
-    if (mine.includes(kind)) return;
+    const willToggleOff = mine.includes(kind);
     const ok = react({
       entryId: entry.id,
       reactorId: currentStudentId,
@@ -219,7 +219,11 @@ function EntryCard({
     });
     if (ok) {
       const r = REACTIONS.find((x) => x.key === kind);
-      toast.success(`${r?.icon} ${r?.label} · +1 XP`, { duration: 1400 });
+      if (willToggleOff) {
+        toast(`${r?.icon} ${r?.label} 취소 · -1 XP`, { duration: 1400 });
+      } else {
+        toast.success(`${r?.icon} ${r?.label} · +1 XP`, { duration: 1400 });
+      }
     }
   }, 400);
   return (
@@ -268,13 +272,12 @@ function EntryCard({
               key={r.key}
               type="button"
               onClick={() => doReact(r.key)}
-              disabled={on}
               aria-pressed={on}
-              aria-label={`${r.label} 공감 (누적 ${counts[r.key]}회)`}
-              title={r.label}
-              className={`flex flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1.5 text-[10px] font-black leading-tight transition wt-text ${
+              aria-label={`${r.label} 공감 ${on ? "취소" : "누르기"} (누적 ${counts[r.key]}회)`}
+              title={on ? `${r.label} · 다시 눌러 취소` : r.label}
+              className={`flex flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1.5 text-[10px] font-black leading-tight transition-all duration-200 wt-text ${
                 on
-                  ? "text-white shadow-inner cursor-default"
+                  ? "text-white shadow-[0_0_0_2px_rgba(255,255,255,0.6)_inset,0_4px_14px_-2px_rgba(0,0,0,0.25)] ring-2 ring-white/70 scale-[1.02]"
                   : "bg-white/70 text-[color:var(--navy)] hover:bg-white hover:-translate-y-0.5 active:scale-95"
               }`}
               style={on ? { background: r.color } : undefined}
