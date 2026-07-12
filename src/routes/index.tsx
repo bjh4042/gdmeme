@@ -17,6 +17,7 @@ import { levelOf } from "@/lib/literacy-types";
 import { toast } from "sonner";
 import { useEngagementStore } from "@/stores/engagement";
 import { SCENARIOS } from "@/lib/literacy-seed";
+import { useClassStore, EMPTY_CLASS } from "@/stores/class";
 
 
 export const Route = createFileRoute("/")({
@@ -109,9 +110,9 @@ function Index() {
   ) : null;
 
   const teacherReportStudent = reportForId ? roster.students.find((r) => r.id === reportForId) : null;
-  const teacherReportClassState = teacherReportStudent
-    ? useClassStore_getStateFor(teacherReportStudent.classCode)
-    : null;
+  const teacherReportClassState = useClassStore(
+    (s) => (teacherReportStudent ? s.byClass[teacherReportStudent.classCode] ?? EMPTY_CLASS : EMPTY_CLASS),
+  );
 
   if (!student) {
     return (
