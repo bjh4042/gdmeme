@@ -144,12 +144,24 @@ export function TeacherDashboard({
     return s;
   }
 
+  // 5대 유해성 점수 정규화: 1.0~5.0, 0.5 단위 반올림. 빈 값/NaN → 1.0
+  function normalizeScore5(v: unknown): number {
+    const n = typeof v === "number" ? v : Number(String(v ?? "").trim());
+    if (!Number.isFinite(n)) return 1.0;
+    const clamped = Math.max(1, Math.min(5, n));
+    return Math.round(clamped * 2) / 2;
+  }
+
   function downloadDictCSV() {
     const header = [
       "ID",
       "단어명",
       "출처",
-      "유해점수",
+      "점수_공격성",
+      "점수_따돌림",
+      "점수_혐오성",
+      "점수_폭력성",
+      "점수_문법파괴",
       "상태",
       "바른 대안 표현 1",
       "바른 대안 표현 2",
@@ -157,12 +169,17 @@ export function TeacherDashboard({
     ];
     const lines = [header.join(",")];
     for (const d of dict) {
+      const e = d.evaluations;
       lines.push(
         [
           d.id,
           d.word,
           d.source ?? "",
-          d.total_harmful_score,
+          normalizeScore5(e?.aggression).toFixed(1),
+          normalizeScore5(e?.bullying).toFixed(1),
+          normalizeScore5(e?.discrimination).toFixed(1),
+          normalizeScore5(e?.violence).toFixed(1),
+          normalizeScore5(e?.grammar_destruction).toFixed(1),
           d.grade,
           d.alternatives?.[0] ?? "",
           d.alternatives?.[1] ?? "",
