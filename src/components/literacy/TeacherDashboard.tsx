@@ -40,6 +40,7 @@ export function TeacherDashboard({
   onImportStudents,
   onClose,
   onReset,
+  onOpenReport,
 }: {
   dict: DictEntry[];
   students: StudentRecord[];
@@ -52,6 +53,7 @@ export function TeacherDashboard({
   onImportStudents: (rows: StudentImportRow[], mode: "merge" | "replace") => { added: number; updated: number; removed: number };
   onClose: () => void;
   onReset: () => void;
+  onOpenReport?: (studentId: string) => void;
 }) {
   const [section, setSection] = useState<"words" | "students">("words");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -505,6 +507,15 @@ export function TeacherDashboard({
                               >
                                 <Pencil size={11} /> 정보 수정
                               </button>
+                              {onOpenReport && (
+                                <button
+                                  onClick={() => onOpenReport(s.id)}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)] hover:scale-[1.03] transition"
+                                  title="언어 수호 리포트 보기"
+                                >
+                                  📄 리포트
+                                </button>
+                              )}
                               <button
                                 onClick={() => {
                                   if (
@@ -555,6 +566,14 @@ export function TeacherDashboard({
                         >
                           <Pencil size={12} /> 정보 수정
                         </button>
+                        {onOpenReport && (
+                          <button
+                            onClick={() => onOpenReport(s.id)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)]"
+                          >
+                            📄 리포트
+                          </button>
+                        )}
                         <button
                           onClick={() => {
                             if (
