@@ -1031,9 +1031,9 @@ function GlassModal({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-3 sm:p-4 flex items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm p-2 sm:p-4 flex items-center justify-center animate-fade-in">
       <div
-        className="w-[92%] sm:w-full max-w-2xl max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
+        className="w-[94%] sm:w-full max-w-2xl max-h-[calc(100dvh-16px)] sm:max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
         style={{
           background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
           backdropFilter: "blur(24px) saturate(160%)",
