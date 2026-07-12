@@ -32,13 +32,6 @@ function makeId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-const patternBadge: Record<AssistantPatternTag, { label: string; bg: string }> = {
-  패턴C: { label: "AI윤리", bg: "bg-red-500/80" },
-  패턴A: { label: "어원/비속어", bg: "bg-amber-500/80" },
-  패턴B: { label: "사이버괴롭힘", bg: "bg-indigo-500/80" },
-  일반: { label: "일반", bg: "bg-slate-500/80" },
-};
-
 export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, note?: string) => void }) {
   const initialGreeting = useMemo<ChatMsg>(
     () => ({ id: "greet", from: "bot", text: ASSISTANT_GREETING, at: stamp() }),
@@ -157,16 +150,6 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
               )}
               <div className="max-w-[78%]">
                 {showAvatar && <div className="text-[11px] text-white/70 mb-0.5 ml-1">AI 수호비서</div>}
-                {m.pattern && (
-                  <div className="flex items-center gap-1 mb-1 ml-1">
-                    <span className={`text-[10px] font-bold text-white px-2 py-0.5 rounded-full ${patternBadge[m.pattern].bg}`}>
-                      {patternBadge[m.pattern].label}
-                    </span>
-                    {m.category && (
-                      <span className="text-[10px] text-white/50 font-mono">{m.category}</span>
-                    )}
-                  </div>
-                )}
                 <div className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                   {m.text}
                 </div>
