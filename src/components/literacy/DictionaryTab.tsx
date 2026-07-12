@@ -35,15 +35,16 @@ export function DictionaryTab({
   }, [openModalKey]);
 
   const approved = useMemo(() => {
-    // 동일 단어(word) 중복 카드는 첫 항목만 남겨 렌더 — 학생 번호가 다른 중복 등록을 정리
+    // 렌더 방어선: `#02-06` 형태의 잔여 꼬리표는 제거하고, 동일 단어 카드는 첫 항목만 유지.
+    const stripTag = (w: string) => w.replace(/\s*#\d+[-–]?\d*\s*$/g, "").trim();
     const seen = new Set<string>();
     const unique: DictEntry[] = [];
     for (const d of dict) {
       if (d.status !== "approved") continue;
-      const key = d.word.trim();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      unique.push(d);
+      const cleanWord = stripTag(d.word);
+      if (!cleanWord || seen.has(cleanWord)) continue;
+      seen.add(cleanWord);
+      unique.push(cleanWord === d.word ? d : { ...d, word: cleanWord });
     }
     return unique.sort((a, b) => sortByInitial(a.word, b.word));
   }, [dict]);
