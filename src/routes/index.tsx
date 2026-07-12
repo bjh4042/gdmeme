@@ -114,31 +114,16 @@ function Index() {
     (s) => (teacherReportStudent ? s.byClass[teacherReportStudent.classCode] ?? EMPTY_CLASS : EMPTY_CLASS),
   );
 
-  if (!student) {
-    return (
-      <>
-        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
-        {teacherView}
-      </>
-    );
-  }
-  if (!hydrated) {
-    return (
-      <>
-        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
-        {teacherView}
-      </>
-    );
-  }
-
-  const who = `${student.classCode}_${student.number.padStart(2, "0")} ${student.name}`;
+  const who = student
+    ? `${student.classCode}_${student.number.padStart(2, "0")} ${student.name}`
+    : "";
   const lv = levelOf(state.xp);
 
   // useCallback으로 자식 탭에 넘기는 콜백을 안정화(memo 회피 방지).
   const awardXP = useCallback(
     (delta: number, kind: string, note?: string) => {
       addXP(delta, who, kind, note);
-      if (delta) roster.addStudentXP(activeId, delta);
+      if (delta && activeId) roster.addStudentXP(activeId, delta);
     },
     [addXP, who, activeId, roster],
   );
@@ -191,17 +176,28 @@ function Index() {
     () => (
       <div className="space-y-6">
         <DashboardTab dict={dict} state={state} />
-        <DictionaryTab
-          dict={dict}
-          student={student}
-          prefillWord={prefillWord}
-          openModalKey={openModalKey}
-          onSubmit={onDictSubmit}
-        />
+        {student && (
+          <DictionaryTab
+            dict={dict}
+            student={student}
+            prefillWord={prefillWord}
+            openModalKey={openModalKey}
+            onSubmit={onDictSubmit}
+          />
+        )}
       </div>
     ),
     [dict, state, student, prefillWord, openModalKey, onDictSubmit],
   );
+
+  if (!student || !hydrated) {
+    return (
+      <>
+        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
+        {teacherView}
+      </>
+    );
+  }
 
   return (
     <div
