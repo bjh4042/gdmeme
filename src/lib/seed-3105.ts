@@ -9,7 +9,7 @@ import { useDictStore } from "@/stores/dict";
 import { derivedUnlocked, type BadgeStats } from "@/lib/badges";
 import type { DictEntry, StudentRecord } from "@/lib/literacy-types";
 
-const SEED_FLAG = "wtmeme:seed:3105:v5";
+const SEED_FLAG = "wtmeme:seed:3105:v6";
 const CLASS_CODE = "3105";
 
 type Row = {
@@ -89,13 +89,37 @@ export function seedClass3105IfNeeded() {
 
   const now = todayIso();
 
+  // 0) 기존 사전 데이터 정제: `#02-06`, `#13-2` 형태의 임시 꼬리표 제거 후
+  //    동일 단어(word) 중복 항목은 내용이 가장 풍부한 1개만 남기고 하드 삭제.
+  //    이후 절대 중복되지 않도록 순차 ID 재부여.
+  const stripTag = (w: string) => w.replace(/\s*#\d+[-–]?\d*\s*$/g, "").trim();
+  const beforeClean = dictStore.entries.map((d) => ({ ...d, word: stripTag(d.word) }));
+  const richness = (d: DictEntry) =>
+    (d.student_definition?.length ?? 0) +
+    (d.alternatives?.join("").length ?? 0) +
+    (d.source?.length ?? 0);
+  const bestByWord = new Map<string, DictEntry>();
+  for (const d of beforeClean) {
+    const key = d.word;
+    if (!key) continue;
+    const prev = bestByWord.get(key);
+    if (!prev || richness(d) > richness(prev)) bestByWord.set(key, d);
+  }
+  let reindex = 1;
+  const cleanedExisting: DictEntry[] = Array.from(bestByWord.values()).map((d) => ({
+    ...d,
+    id: reindex++,
+  }));
+
   // 1) 로스터: 이미 존재하면 덮어쓰지 않음(현재 접속 학생 데이터 보호).
   const existing = new Set(roster.students.map((r) => r.id));
   const nextRoster: StudentRecord[] = [...roster.students];
   const newDictEntries: DictEntry[] = [];
   const engagementUpdates: Record<string, ReturnType<typeof buildEngagement>> = {};
   let classXpSum = 0;
-  let dictId = 200000;
+  // 신규 학생 기여 카드도 기존 재부여 ID 이후로 계속 이어지도록 오프셋 지정.
+  let dictId = 100000;
+  const takenWords = new Set(cleanedExisting.map((d) => d.word));
 
   for (const row of ROWS) {
     const id = `${CLASS_CODE}_${row.number}`;
@@ -113,10 +137,15 @@ export function seedClass3105IfNeeded() {
     }
 
     // 2) 사전 기여: 학생별 approvedWords 만큼 승인된 항목 생성.
-    // 학생 번호(row.number)를 오프셋으로 사용해 학생별로 서로 다른 단어가 배정되도록 보장
+    //    이미 원본 프리셋 또는 앞선 학생이 등록한 단어와 중복되면 스킵하여
+    //    데이터셋 전체에 동일 word 카드가 두 번 이상 등장하지 않도록 보장.
     const offset = parseInt(row.number, 10) || 0;
-    for (let i = 0; i < row.approvedWords; i++) {
+    let added = 0;
+    for (let i = 0; added < row.approvedWords && i < APPROVED_SAMPLES.length; i++) {
       const s = APPROVED_SAMPLES[(offset + i) % APPROVED_SAMPLES.length];
+      if (takenWords.has(s.word)) continue;
+      takenWords.add(s.word);
+      added++;
       newDictEntries.push({
         id: dictId++,
         word: s.word,
@@ -141,8 +170,8 @@ export function seedClass3105IfNeeded() {
   // 로스터 커밋
   roster.write(nextRoster);
 
-  // 사전 병합: 기존 seed + 신규 학생 기여
-  const mergedDict = [...dictStore.entries, ...newDictEntries];
+  // 사전 병합: 정제된 기존 프리셋 + 신규 학생 기여 (모든 word 유일 보장)
+  const mergedDict = [...cleanedExisting, ...newDictEntries];
   dictStore.persist(mergedDict);
 
   // 참여도 병합
