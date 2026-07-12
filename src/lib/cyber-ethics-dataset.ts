@@ -25,17 +25,15 @@ export function matchCyberEthics(userText: string): {
   matched: string[];
 } | null {
   const haystack = userText.toLowerCase().replace(/\s+/g, "");
-  let best: { entry: CyberEthicsEntry; matched: string[]; order: number } | null = null;
-
+  type Hit = { entry: CyberEthicsEntry; matched: string[]; order: number };
+  const hits: Hit[] = [];
   CYBER_ETHICS_DATASET.forEach((entry, order) => {
     const matched = entry.keywords.filter((k) =>
       haystack.includes(k.toLowerCase().replace(/\s+/g, "")),
     );
-    if (matched.length === 0) return;
-    if (!best || matched.length > best.matched.length) {
-      best = { entry, matched, order };
-    }
+    if (matched.length > 0) hits.push({ entry, matched, order });
   });
-
-  return best ? { entry: best.entry, matched: best.matched } : null;
+  if (hits.length === 0) return null;
+  hits.sort((a, b) => b.matched.length - a.matched.length || a.order - b.order);
+  return { entry: hits[0].entry, matched: hits[0].matched };
 }
