@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Send, ChevronLeft, Menu, Search } from "lucide-react";
 import {
   AI_KNOWLEDGE,
+  ASSISTANT_FALLBACK,
   ASSISTANT_GREETING,
   QUICK_REPLIES,
-  assistantReplyFor,
   type AssistantPatternTag,
 } from "@/lib/ai-assistant-dataset";
-import { matchCyberEthics, type CyberEthicsSolution } from "@/lib/cyber-ethics-dataset";
+import { type CyberEthicsSolution } from "@/lib/cyber-ethics-dataset";
+import { searchAssistant } from "@/lib/assistant-search";
 
 type ChatMsg = {
   id: string;
@@ -81,38 +82,41 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
     setInput("");
     setTyping(true);
 
-    // Trigger the data-driven inference engine (with a brief natural delay)
+    // 전역 다중 스코어링 검색 엔진 (사이버 윤리 + 밈/어원 통합)
     window.setTimeout(() => {
-      // 1) 사이버 행동 윤리 데이터셋 우선 매칭 (솔루션 카드 렌더)
-      const cyber = matchCyberEthics(text);
-      if (cyber) {
-        const bot: ChatMsg = {
+      const hit = searchAssistant(text, 1);
+      let bot: ChatMsg;
+      if (hit && hit.kind === "cyber") {
+        bot = {
           id: makeId(),
           from: "bot",
-          text: cyber.entry.bot_response.title,
+          text: hit.entry.bot_response.title,
           at: stamp(),
-          solution: cyber.entry.bot_response,
-          category: cyber.entry.category,
+          solution: hit.entry.bot_response,
+          category: hit.category,
         };
-        setMsgs((prev) => [...prev, bot]);
-        setTyping(false);
-        if (onXP) onXP(2, "assistant-cyber", cyber.entry.category);
-        inputRef.current?.focus();
-        return;
+        if (onXP) onXP(2, "assistant-cyber", hit.category);
+      } else if (hit && hit.kind === "meme") {
+        bot = {
+          id: makeId(),
+          from: "bot",
+          text: hit.entry.bot_reply,
+          at: stamp(),
+          pattern: hit.pattern,
+          category: hit.category,
+        };
+        if (onXP) onXP(2, "assistant-hit", hit.category);
+      } else {
+        bot = {
+          id: makeId(),
+          from: "bot",
+          text: ASSISTANT_FALLBACK,
+          at: stamp(),
+          pattern: null,
+        };
       }
-      // 2) 일반 유행어/어원 챗봇 지식 매칭
-      const { reply, match } = assistantReplyFor(text, AI_KNOWLEDGE);
-      const bot: ChatMsg = {
-        id: makeId(),
-        from: "bot",
-        text: reply,
-        at: stamp(),
-        pattern: match?.pattern ?? null,
-        category: match?.entry.category,
-      };
       setMsgs((prev) => [...prev, bot]);
       setTyping(false);
-      if (match && onXP) onXP(2, "assistant-hit", match.entry.category);
       inputRef.current?.focus();
     }, 480);
   }
