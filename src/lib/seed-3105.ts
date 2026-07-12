@@ -9,7 +9,7 @@ import { useDictStore } from "@/stores/dict";
 import { derivedUnlocked, type BadgeStats } from "@/lib/badges";
 import type { DictEntry, StudentRecord } from "@/lib/literacy-types";
 
-const SEED_FLAG = "wtmeme:seed:3105:v3";
+const SEED_FLAG = "wtmeme:seed:3105:v4";
 const CLASS_CODE = "3105";
 
 type Row = {
@@ -25,25 +25,25 @@ type Row = {
 
 const ROWS: Row[] = [
   { number: "01", name: "강민준", xp: 340, approvedWords: 3, voted: 8, streak: 4, roleplay: { damim: 3, mom: 3, friend: 2, librarian: 0, jinwoo: 0 }, recent: "우리말 사전 공감 획득" },
-  { number: "02", name: "김서연", xp: 720, approvedWords: 11, voted: 55, streak: 14, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 3 }, recent: "예절 역할극 최종 마스터 달성" },
-  { number: "03", name: "박도현", xp: 45, approvedWords: 0, voted: 1, streak: 1, roleplay: { damim: 1, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "오늘의 성찰 저널 최초 작성" },
-  { number: "04", name: "이하은", xp: 490, approvedWords: 6, voted: 22, streak: 8, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 2, jinwoo: 0 }, recent: "도서관 선생님 역할극 2단계 통과" },
-  { number: "05", name: "최우진", xp: 185, approvedWords: 1, voted: 4, streak: 2, roleplay: { damim: 3, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "담임 선생님 역할극 최종 통과" },
-  { number: "06", name: "정지우", xp: 310, approvedWords: 2, voted: 7, streak: 3, roleplay: { damim: 3, mom: 2, friend: 1, librarian: 0, jinwoo: 0 }, recent: "처음 본 친구 역할극 1단계 통과" },
-  { number: "07", name: "한준우", xp: 520, approvedWords: 4, voted: 24, streak: 5, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 1 }, recent: "유행어 마스터 진우 역할극 진입" },
-  { number: "08", name: "윤아인", xp: 210, approvedWords: 2, voted: 6, streak: 0, roleplay: { damim: 2, mom: 2, friend: 0, librarian: 0, jinwoo: 0 }, recent: "엄마 역할극 2단계 통과" },
-  { number: "09", name: "임지훈", xp: 95, approvedWords: 0, voted: 3, streak: 2, roleplay: { damim: 2, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "오늘의 성찰 저널 2일 연속 작성" },
-  { number: "10", name: "오유나", xp: 615, approvedWords: 7, voted: 35, streak: 9, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 2 }, recent: "우리말 사전 신규 단어 승인 대기" },
-  { number: "11", name: "신재희", xp: 385, approvedWords: 3, voted: 12, streak: 4, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 0, jinwoo: 0 }, recent: "처음 본 친구 역할극 최종 통과" },
-  { number: "12", name: "서진우", xp: 140, approvedWords: 1, voted: 5, streak: 1, roleplay: { damim: 2, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "친구 글에 선플 공감 참여" },
-  { number: "13", name: "황주원", xp: 475, approvedWords: 5, voted: 21, streak: 7, roleplay: { damim: 3, mom: 3, friend: 2, librarian: 2, jinwoo: 0 }, recent: "성찰 저널 7일 스트레이트 달성" },
-  { number: "14", name: "안소율", xp: 290, approvedWords: 2, voted: 6, streak: 3, roleplay: { damim: 3, mom: 1, friend: 1, librarian: 1, jinwoo: 0 }, recent: "도서관 선생님 역할극 1단계 통과" },
-  { number: "15", name: "양현우", xp: 60, approvedWords: 0, voted: 2, streak: 0, roleplay: { damim: 1, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "엄마 역할극 1단계 진입" },
-  { number: "16", name: "백시은", xp: 540, approvedWords: 4, voted: 28, streak: 6, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 1 }, recent: "칭호 변경 적용 완료" },
-  { number: "17", name: "송민성", xp: 225, approvedWords: 2, voted: 9, streak: 3, roleplay: { damim: 3, mom: 2, friend: 0, librarian: 0, jinwoo: 0 }, recent: "성찰 저널 3일 연속 달성" },
-  { number: "18", name: "조윤서", xp: 365, approvedWords: 3, voted: 14, streak: 5, roleplay: { damim: 3, mom: 3, friend: 1, librarian: 0, jinwoo: 0 }, recent: "우리말 사전 뱃지 도감 해금 완료" },
-  { number: "19", name: "고태양", xp: 30, approvedWords: 0, voted: 0, streak: 1, roleplay: { damim: 1, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "시스템 회원 가입 및 최초 로그인" },
-  { number: "20", name: "문채원", xp: 780, approvedWords: 12, voted: 52, streak: 15, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 3 }, recent: "학부모 공유용 최종 성장 리포트 이미지 저장" },
+  { number: "02", name: "고태양", xp: 720, approvedWords: 11, voted: 55, streak: 14, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 3 }, recent: "예절 역할극 최종 마스터 달성" },
+  { number: "03", name: "김서연", xp: 45, approvedWords: 0, voted: 1, streak: 1, roleplay: { damim: 1, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "오늘의 성찰 저널 최초 작성" },
+  { number: "04", name: "문채원", xp: 490, approvedWords: 6, voted: 22, streak: 8, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 2, jinwoo: 0 }, recent: "도서관 선생님 역할극 2단계 통과" },
+  { number: "05", name: "박도현", xp: 185, approvedWords: 1, voted: 4, streak: 2, roleplay: { damim: 3, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "담임 선생님 역할극 최종 통과" },
+  { number: "06", name: "백시은", xp: 310, approvedWords: 2, voted: 7, streak: 3, roleplay: { damim: 3, mom: 2, friend: 1, librarian: 0, jinwoo: 0 }, recent: "처음 본 친구 역할극 1단계 통과" },
+  { number: "07", name: "서진우", xp: 520, approvedWords: 4, voted: 24, streak: 5, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 1 }, recent: "유행어 마스터 진우 역할극 진입" },
+  { number: "08", name: "송민성", xp: 210, approvedWords: 2, voted: 6, streak: 0, roleplay: { damim: 2, mom: 2, friend: 0, librarian: 0, jinwoo: 0 }, recent: "엄마 역할극 2단계 통과" },
+  { number: "09", name: "신재희", xp: 95, approvedWords: 0, voted: 3, streak: 2, roleplay: { damim: 2, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "오늘의 성찰 저널 2일 연속 작성" },
+  { number: "10", name: "안소율", xp: 615, approvedWords: 7, voted: 35, streak: 9, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 2 }, recent: "우리말 사전 신규 단어 승인 대기" },
+  { number: "11", name: "양현우", xp: 385, approvedWords: 3, voted: 12, streak: 4, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 0, jinwoo: 0 }, recent: "처음 본 친구 역할극 최종 통과" },
+  { number: "12", name: "오유나", xp: 140, approvedWords: 1, voted: 5, streak: 1, roleplay: { damim: 2, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "친구 글에 선플 공감 참여" },
+  { number: "13", name: "윤아인", xp: 475, approvedWords: 5, voted: 21, streak: 7, roleplay: { damim: 3, mom: 3, friend: 2, librarian: 2, jinwoo: 0 }, recent: "성찰 저널 7일 스트레이트 달성" },
+  { number: "14", name: "이하은", xp: 290, approvedWords: 2, voted: 6, streak: 3, roleplay: { damim: 3, mom: 1, friend: 1, librarian: 1, jinwoo: 0 }, recent: "도서관 선생님 역할극 1단계 통과" },
+  { number: "15", name: "임지훈", xp: 60, approvedWords: 0, voted: 2, streak: 0, roleplay: { damim: 1, mom: 1, friend: 0, librarian: 0, jinwoo: 0 }, recent: "엄마 역할극 1단계 진입" },
+  { number: "16", name: "정지우", xp: 540, approvedWords: 4, voted: 28, streak: 6, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 1 }, recent: "칭호 변경 적용 완료" },
+  { number: "17", name: "조윤서", xp: 225, approvedWords: 2, voted: 9, streak: 3, roleplay: { damim: 3, mom: 2, friend: 0, librarian: 0, jinwoo: 0 }, recent: "성찰 저널 3일 연속 달성" },
+  { number: "18", name: "최우진", xp: 365, approvedWords: 3, voted: 14, streak: 5, roleplay: { damim: 3, mom: 3, friend: 1, librarian: 0, jinwoo: 0 }, recent: "우리말 사전 뱃지 도감 해금 완료" },
+  { number: "19", name: "한준우", xp: 30, approvedWords: 0, voted: 0, streak: 1, roleplay: { damim: 1, mom: 0, friend: 0, librarian: 0, jinwoo: 0 }, recent: "시스템 회원 가입 및 최초 로그인" },
+  { number: "20", name: "황주원", xp: 780, approvedWords: 12, voted: 52, streak: 15, roleplay: { damim: 3, mom: 3, friend: 3, librarian: 3, jinwoo: 3 }, recent: "학부모 공유용 최종 성장 리포트 이미지 저장" },
 ];
 
 const ROLEPLAY_MAP: Record<keyof Row["roleplay"], string> = {
