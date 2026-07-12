@@ -104,3 +104,89 @@ export function searchAssistant(userQuery: string, minScore = 1): UnifiedHit | n
     pattern: detectPattern(item.category),
   };
 }
+
+/** 카테고리 텍스트로부터 대표 이모지 추출 (없으면 기본 아이콘) */
+function iconForCategory(category: string): string {
+  if (/따돌림|왕따|은따/.test(category)) return "🚪";
+  if (/명예|저격|험담/.test(category)) return "🤫";
+  if (/개인정보|계정|비밀번호|프라이버시/.test(category)) return "🔑";
+  if (/초상|딥페이크|사진|합성/.test(category)) return "📸";
+  if (/스토킹|디엠|DM/.test(category)) return "🛑";
+  if (/게임|트롤/.test(category)) return "🎮";
+  if (/AI|인공지능|챗봇|사물/.test(category)) return "🤖";
+  if (/과의존|알림|새벽|중독/.test(category)) return "⏰";
+  if (/조작|허위|주작|가짜/.test(category)) return "⚖️";
+  if (/좌표|셔틀|패드립|욕설|비속어|어원|매체/.test(category)) return "🔥";
+  return "💬";
+}
+
+export type GuideChip = { icon: string; label: string; prompt: string };
+
+/**
+ * 방금 매칭된 항목과 카테고리 또는 키워드가 겹치는 다른 데이터를 추려
+ * 최대 4개의 컴팩트 가이드 칩을 생성한다.
+ */
+export function getRelatedGuides(hit: UnifiedHit, max = 4): GuideChip[] {
+  const chips: GuideChip[] = [];
+  const seenPrompts = new Set<string>();
+
+  if (hit.kind === "cyber") {
+    const anchor = hit.entry;
+    const anchorKw = new Set(anchor.keywords.map((k) => k.toLowerCase()));
+    const scored = CYBER_ETHICS_DATASET.filter((e) => e !== anchor).map((e) => {
+      const overlap = e.keywords.filter((k) => anchorKw.has(k.toLowerCase())).length;
+      const sameCat = e.category === anchor.category ? 1 : 0;
+      return { e, score: sameCat * 3 + overlap };
+    });
+    scored
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, max * 2)
+      .forEach(({ e }) => {
+        if (chips.length >= max) return;
+        const label = shortenCategory(e.category, e.keywords);
+        if (seenPrompts.has(e.student_question)) return;
+        seenPrompts.add(e.student_question);
+        chips.push({
+          icon: iconForCategory(e.category),
+          label,
+          prompt: e.student_question,
+        });
+      });
+  } else {
+    const anchor = hit.entry;
+    const anchorKw = new Set(anchor.keywords.map((k) => k.toLowerCase()));
+    const scored = AI_KNOWLEDGE.filter((e) => e !== anchor).map((e) => {
+      const overlap = e.keywords.filter((k) => anchorKw.has(k.toLowerCase())).length;
+      const sameCat = e.category === anchor.category ? 1 : 0;
+      return { e, score: sameCat * 3 + overlap };
+    });
+    scored
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, max * 2)
+      .forEach(({ e }) => {
+        if (chips.length >= max) return;
+        const kw = e.keywords[0] ?? "";
+        const prompt = `'${kw}'의 뜻과 어원이 궁금해요.`;
+        if (seenPrompts.has(prompt)) return;
+        seenPrompts.add(prompt);
+        chips.push({
+          icon: "🔍",
+          label: `'${kw}' 어원 분석`,
+          prompt,
+        });
+      });
+  }
+
+  return chips.slice(0, max);
+}
+
+function shortenCategory(category: string, keywords: string[]): string {
+  // "사이버 따돌림 (떼카/카톡 감옥)" → "떼카/카톡 감옥" 부분 우선
+  const paren = category.match(/\(([^)]+)\)/);
+  if (paren) return paren[1].length <= 14 ? paren[1] : paren[1].slice(0, 13) + "…";
+  const base = category.replace(/\(.*\)/, "").trim();
+  if (base.length <= 14) return base;
+  return (keywords[0] ?? base).slice(0, 14);
+}
