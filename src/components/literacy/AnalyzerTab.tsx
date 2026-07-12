@@ -1,17 +1,66 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Sparkles, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, ArrowRight, BookOpen } from "lucide-react";
 import type { DictEntry } from "@/lib/literacy-types";
 import { gradeOf } from "@/lib/literacy-types";
 
+const DEFAULT_TRENDS: Record<string, number> = {
+  "어쩔티비": 10,
+  "누칼협": 8,
+  "핑프": 6,
+  "킹받네": 4,
+  "뇌절": 2,
+};
+
+function storageKey(classCode: string) {
+  return `class_search_keywords_count_${classCode || "guest"}`;
+}
+
+function readCounts(classCode: string): Record<string, number> {
+  if (typeof window === "undefined") return { ...DEFAULT_TRENDS };
+  try {
+    const raw = window.localStorage.getItem(storageKey(classCode));
+    if (!raw) {
+      window.localStorage.setItem(storageKey(classCode), JSON.stringify(DEFAULT_TRENDS));
+      return { ...DEFAULT_TRENDS };
+    }
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") return parsed as Record<string, number>;
+  } catch {}
+  return { ...DEFAULT_TRENDS };
+}
+
+function writeCounts(classCode: string, next: Record<string, number>) {
+  try {
+    window.localStorage.setItem(storageKey(classCode), JSON.stringify(next));
+  } catch {}
+}
+
 export function AnalyzerTab({
   dict,
   onRegisterNew,
+  classCode,
 }: {
   dict: DictEntry[];
   onRegisterNew: (word: string) => void;
+  classCode: string;
 }) {
   const [q, setQ] = useState("");
   const [submitted, setSubmitted] = useState<string | null>(null);
+  const [counts, setCounts] = useState<Record<string, number>>(() => ({ ...DEFAULT_TRENDS }));
+
+  useEffect(() => {
+    setCounts(readCounts(classCode));
+  }, [classCode]);
+
+  const topKeywords = useMemo(
+    () =>
+      Object.entries(counts)
+        .filter(([w]) => w.trim().length > 0)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([w]) => w),
+    [counts],
+  );
 
   const approved = dict.filter((d) => d.status === "approved");
   const results = submitted
@@ -25,11 +74,23 @@ export function AnalyzerTab({
       })
     : [];
 
+  const runSearch = useCallback(
+    (raw: string) => {
+      const t = raw.trim();
+      if (!t) return;
+      setSubmitted(t);
+      setCounts((prev) => {
+        const next = { ...prev, [t]: (prev[t] ?? 0) + 1 };
+        writeCounts(classCode, next);
+        return next;
+      });
+    },
+    [classCode],
+  );
+
   function search(e?: React.FormEvent) {
     e?.preventDefault();
-    const t = q.trim();
-    if (!t) return;
-    setSubmitted(t);
+    runSearch(q);
   }
 
   return (
@@ -64,20 +125,20 @@ export function AnalyzerTab({
               분석하기
             </button>
           </div>
-          {!submitted && (
-            <div className="mt-4 flex flex-wrap gap-2 justify-center">
-              <span className="text-xs text-muted-foreground mr-1 self-center">추천 검색어:</span>
-              {["어쩔티비", "누칼협", "핑프"].map((w) => (
+          {!submitted && topKeywords.length > 0 && (
+            <div className="mt-4 flex flex-row flex-wrap gap-2 justify-center items-center">
+              <span className="text-xs text-muted-foreground mr-1 self-center">🔥 실시간 인기 검색어:</span>
+              {topKeywords.map((w, i) => (
                 <button
                   key={w}
                   type="button"
                   onClick={() => {
                     setQ(w);
-                    setSubmitted(w);
+                    runSearch(w);
                   }}
                   className="text-xs font-bold px-3 py-1.5 rounded-full bg-white/70 hover:bg-white text-[color:var(--navy)] border border-white transition"
                 >
-                  #{w}
+                  <span className="text-[color:var(--mint-deep)] mr-1">{i + 1}</span>#{w}
                 </button>
               ))}
             </div>
