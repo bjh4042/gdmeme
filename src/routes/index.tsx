@@ -153,8 +153,14 @@ function Index() {
   // 4개 탭을 항상 마운트하고 hidden 토글로만 전환 → 탭 이동해도
   // 스크롤/입력/챗 상태가 그대로 살아있는 keep-alive.
   const analyzerNode = useMemo(
-    () => <AnalyzerTab dict={dict} onRegisterNew={onRegisterNew} />,
-    [dict, onRegisterNew],
+    () => (
+      <AnalyzerTab
+        dict={dict}
+        onRegisterNew={onRegisterNew}
+        classCode={student?.classCode ?? ""}
+      />
+    ),
+    [dict, onRegisterNew, student?.classCode],
   );
   const chatbotNode = useMemo(
     () => (
