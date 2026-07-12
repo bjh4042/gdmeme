@@ -109,24 +109,26 @@ export function Onboarding({
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="min-h-full flex flex-col justify-center gap-8">
               <div className="text-center">
-                <div
-                  className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
-                  style={{ aspectRatio: "720 / 393" }}
-                >
-                  {!logoLoaded && (
-                    <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
-                  )}
-                  <img
-                    ref={imgRef}
-                    src={logoAsset.url}
-                    alt="바른말 수호대 로고"
-                    width={720}
-                    height={393}
-                    fetchPriority="high"
-                    decoding="async"
-                    onLoad={() => setLogoLoaded(true)}
-                    className={`w-full h-full object-cover transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
-                  />
+                <div className="mx-auto max-w-[240px] sm:max-w-[320px] lg:max-w-[360px] mb-4">
+                  <div
+                    className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
+                    style={{ aspectRatio: "720 / 393" }}
+                  >
+                    {!logoLoaded && (
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
+                    )}
+                    <img
+                      ref={imgRef}
+                      src={logoAsset.url}
+                      alt="바른말 수호대 로고"
+                      width={720}
+                      height={393}
+                      fetchPriority="high"
+                      decoding="async"
+                      onLoad={() => setLogoLoaded(true)}
+                      className={`w-full h-auto object-contain transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+                    />
+                  </div>
                 </div>
               </div>
               <form onSubmit={submit} className="space-y-4">

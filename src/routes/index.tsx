@@ -255,7 +255,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 py-4 sm:px-4 sm:py-6">
+      <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
         <div hidden={tab !== "analyze"}>{analyzerNode}</div>
         <div hidden={tab !== "chat"}>{chatbotNode}</div>
         <div hidden={tab !== "assist"}>{assistNode}</div>

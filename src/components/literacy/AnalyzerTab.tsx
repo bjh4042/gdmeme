@@ -33,13 +33,13 @@ export function AnalyzerTab({
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className={`transition-all ${submitted ? "pt-6" : "pt-16 sm:pt-24"}`}>
-        <div className="text-center mb-6 space-y-2">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
+      <div className={`transition-all ${submitted ? "pt-4 sm:pt-6" : "pt-6 sm:pt-8"}`}>
+        <div className="text-center mb-4 sm:mb-6 space-y-1.5 sm:space-y-2">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[color:var(--mint-deep)] bg-white/70 px-3 py-1.5 rounded-full backdrop-blur">
             <Sparkles size={14} /> 초등 국어 매체 리터러시 · 밈 분석기
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-[color:var(--navy)] tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black text-[color:var(--navy)] tracking-tight">
             바른말 <span className="text-[color:var(--mint-deep)]">수호대</span>
           </h1>
           <p className="text-sm text-muted-foreground">
