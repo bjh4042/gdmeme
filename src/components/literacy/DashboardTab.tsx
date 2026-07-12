@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { DictEntry, ClassState } from "@/lib/literacy-types";
-import { weatherOf, levelOf, LEVELS } from "@/lib/literacy-types";
+import { weatherOf, levelOf, LEVELS, WEATHER_MATRIX } from "@/lib/literacy-types";
 import level1 from "@/assets/level1.webp.asset.json";
 import level2 from "@/assets/level2.webp.asset.json";
 import level3 from "@/assets/level3.webp.asset.json";
@@ -17,6 +17,7 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
   }, [approved]);
   const weather = weatherOf(avg);
   const lv = levelOf(state.xp);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const wbg =
     weather.tone === "safe"
@@ -32,7 +33,17 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
       <div className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]" style={{ background: wbg }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
-            <div className="text-sm opacity-90 font-bold">우리 반 언어 기상도</div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="text-sm opacity-90 font-bold">우리 반 언어 기상도</div>
+              <button
+                type="button"
+                onClick={() => setInfoOpen(true)}
+                className="text-xs px-2 py-0.5 rounded-full bg-white/20 hover:bg-white/30 hover:-translate-y-0.5 hover:underline transition-all duration-200 cursor-pointer text-white font-bold whitespace-nowrap"
+                aria-label="우리 반 언어 기상도 안내 열기"
+              >
+                ❓ 우리 반 언어 기상도란?
+              </button>
+            </div>
             <div className="text-3xl sm:text-4xl font-black mt-1">
               {weather.icon} {weather.label}
             </div>
@@ -45,6 +56,8 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
           </div>
         </div>
       </div>
+
+      {infoOpen && <WeatherInfoModal avg={avg} onClose={() => setInfoOpen(false)} />}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6">
