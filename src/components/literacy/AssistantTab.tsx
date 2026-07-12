@@ -8,7 +8,7 @@ import {
   type AssistantPatternTag,
 } from "@/lib/ai-assistant-dataset";
 import { type CyberEthicsSolution } from "@/lib/cyber-ethics-dataset";
-import { searchAssistant } from "@/lib/assistant-search";
+import { searchAssistant, getRelatedGuides, type GuideChip } from "@/lib/assistant-search";
 
 type ChatMsg = {
   id: string;
@@ -43,6 +43,7 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
   const [msgs, setMsgs] = useState<ChatMsg[]>([initialGreeting]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [dynamicChips, setDynamicChips] = useState<GuideChip[] | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -117,6 +118,11 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
       }
       setMsgs((prev) => [...prev, bot]);
       setTyping(false);
+      // 대화 맥락 연동형 가이드 칩 실시간 갱신
+      if (hit) {
+        const related = getRelatedGuides(hit, 4);
+        setDynamicChips(related.length > 0 ? related : null);
+      }
       inputRef.current?.focus();
     }, 480);
   }
@@ -124,6 +130,7 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
   function reset() {
     if (!confirm("대화 내용을 모두 지우고 다시 시작할까요?")) return;
     setMsgs([{ ...initialGreeting, id: makeId(), at: stamp() }]);
+    setDynamicChips(null);
   }
 
   return (
@@ -223,13 +230,16 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
         )}
       </div>
 
-      {/* Quick-reply guide chips (horizontal scroll) */}
+      {/* 대화 맥락 연동형 가이드 칩 (첫 대화 전: 기본 4종, 이후: 실시간 추천) */}
       <div className="bg-[#232325] border-t border-black/40 px-2 py-2">
+        <div className="text-[10px] text-white/50 font-bold mb-1 ml-1">
+          {dynamicChips ? "💡 이 주제와 관련된 추천 질문" : "💡 가이드 질문"}
+        </div>
         <div className="flex flex-nowrap overflow-x-auto gap-2 pb-1" style={{ scrollbarWidth: "none" }}>
           <style>{`.assistant-chips::-webkit-scrollbar{display:none}`}</style>
-          {QUICK_REPLIES.map((q) => (
+          {(dynamicChips ?? QUICK_REPLIES).map((q, i) => (
             <button
-              key={q.label}
+              key={`${q.label}-${i}`}
               onClick={() => send(q.prompt)}
               disabled={typing}
               className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white text-[12px] font-bold border border-white/15 hover:bg-white/20 transition disabled:opacity-50"
