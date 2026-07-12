@@ -9,7 +9,7 @@ import { useDictStore } from "@/stores/dict";
 import { derivedUnlocked, type BadgeStats } from "@/lib/badges";
 import type { DictEntry, StudentRecord } from "@/lib/literacy-types";
 
-const SEED_FLAG = "wtmeme:seed:3105:v2";
+const SEED_FLAG = "wtmeme:seed:3105:v3";
 const CLASS_CODE = "3105";
 
 type Row = {
