@@ -85,11 +85,13 @@ export function ChatbotTab({
   onXP,
   classLevel,
   studentKey,
+  onRoleplayClear,
 }: {
   onXP: (delta: number, kind: string, note?: string) => void;
   classLevel: number;
   /** Unique per-student id (e.g. `${classCode}_${number}`). Isolates all room state. */
   studentKey: string;
+  onRoleplayClear?: (scenarioId: string, totalScenarios: number) => void;
 }) {
   const storageKey = `${STORE_KEY_PREFIX}${studentKey}`;
   const [rooms, setRooms] = useState<Record<string, RoomState>>(() =>
@@ -376,6 +378,7 @@ export function ChatbotTab({
         const totalXp = xp + bonus;
         pushSys(`🎖️ ${scenario.completeBadge ?? "완료 배지 획득"} · +${totalXp} XP`);
         onXP(totalXp, "roleplay", `${scenario.id} · 완료 · 반려${wrongBefore}회`);
+        onRoleplayClear?.(scenario.id, SCENARIOS.length);
       }
       return;
     }
