@@ -191,6 +191,18 @@ function Index() {
   );
 
   if (!student || !hydrated) {
+    // hydrated 가 false 인 동안(SSR + 첫 클라 렌더)에는 스플래시를 보여
+    // 자동 로그인 복원 중 폼이 잠깐 깜빡이는 현상을 방지.
+    if (!hydrated) {
+      return (
+        <div className="min-h-screen w-full max-w-full overflow-x-hidden grid place-items-center bg-white">
+          <div className="flex flex-col items-center gap-3 text-[color:var(--navy)]">
+            <img src={logoAsset.url} alt="바른말 수호대" className="h-14 w-auto rounded-xl" />
+            <div className="text-sm font-bold opacity-70">불러오는 중…</div>
+          </div>
+        </div>
+      );
+    }
     return (
       <>
         <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />

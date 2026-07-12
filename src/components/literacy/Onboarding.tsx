@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Student, StudentRecord } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
 
@@ -15,6 +15,11 @@ export function Onboarding({
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   const [err, setErr] = useState("");
+  const [touched, setTouched] = useState<{ classCode: boolean; number: boolean; name: boolean }>({
+    classCode: false,
+    number: false,
+    name: false,
+  });
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [kstTime, setKstTime] = useState("");
@@ -31,13 +36,29 @@ export function Onboarding({
     }
   }, []);
 
+  // 필드별 실시간 유효성 — 사용자가 한 번이라도 입력한 필드에만 오류 노출.
+  const trimmedNumber = number.trim();
+  const trimmedName = name.trim();
+  const errors = useMemo(() => {
+    const e: { classCode?: string; number?: string; name?: string } = {};
+    if (classCode.length > 0 && !/^\d{4}$/.test(classCode))
+      e.classCode = "학급 코드는 숫자 4자리여야 해요.";
+    if (trimmedNumber.length > 0 && !/^\d{1,3}$/.test(trimmedNumber))
+      e.number = "번호는 숫자만 입력해요. (1~3자리)";
+    if (trimmedName.length > 0 && trimmedName.length > 20)
+      e.name = "이름은 20자 이하로 적어주세요.";
+    return e;
+  }, [classCode, trimmedNumber, trimmedName]);
+
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!/^\d{4}$/.test(classCode)) return setErr("학급 코드는 4자리 숫자여야 해요.");
-    if (!number.trim()) return setErr("학생 번호를 입력해 주세요.");
-    if (!name.trim()) return setErr("이름을 입력해 주세요.");
-    const trimmedNumber = number.trim();
-    const trimmedName = name.trim();
+    setTouched({ classCode: true, number: true, name: true });
+    if (!/^\d{4}$/.test(classCode)) return setErr("학급 코드는 숫자 4자리를 입력해 주세요.");
+    if (!trimmedNumber) return setErr("학생 번호를 입력해 주세요.");
+    if (!/^\d{1,3}$/.test(trimmedNumber)) return setErr("번호는 숫자만 입력해요.");
+    if (!trimmedName) return setErr("이름을 입력해 주세요.");
+    if (trimmedName.length > 20) return setErr("이름은 20자 이하로 적어주세요.");
+    setErr("");
     const dup = roster.find(
       (r) => r.classCode === classCode && r.number === trimmedNumber,
     );
@@ -51,7 +72,7 @@ export function Onboarding({
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-3 sm:p-6 bg-white">
+    <div className="relative min-h-screen w-full max-w-full overflow-x-hidden flex items-center justify-center p-3 sm:p-6 bg-white">
       {onAdmin && (
         <button
           type="button"
@@ -64,7 +85,7 @@ export function Onboarding({
       )}
       {/* Smartphone frame */}
       <div
-        className="relative w-full max-w-[360px] h-[min(92dvh,760px)] sm:h-[min(760px,90dvh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
+        className="relative w-full max-w-[360px] min-w-0 h-[min(92dvh,760px)] sm:h-[min(760px,90dvh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
       >
         {/* Side buttons */}
         <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
@@ -116,28 +137,58 @@ export function Onboarding({
                     maxLength={4}
                     value={classCode}
                     onChange={(e) => setClassCode(e.target.value.replace(/\D/g, ""))}
+                    onBlur={() => setTouched((t) => ({ ...t, classCode: true }))}
                     placeholder="예: 3105"
-                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 text-base font-mono tracking-widest focus:border-[color:var(--navy)] outline-none"
+                    aria-invalid={touched.classCode && !!errors.classCode}
+                    className={`w-full rounded-xl border-2 bg-white px-3 py-3 text-base font-mono tracking-widest outline-none transition ${
+                      touched.classCode && errors.classCode
+                        ? "border-[color:var(--danger)] focus:border-[color:var(--danger)]"
+                        : "border-slate-200 focus:border-[color:var(--navy)]"
+                    }`}
                   />
+                  {touched.classCode && errors.classCode && (
+                    <p className="mt-1 text-[11px] text-[color:var(--danger)]">{errors.classCode}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">번호</label>
                     <input
+                      inputMode="numeric"
+                      maxLength={3}
                       value={number}
-                      onChange={(e) => setNumber(e.target.value)}
+                      onChange={(e) => setNumber(e.target.value.replace(/\D/g, ""))}
+                      onBlur={() => setTouched((t) => ({ ...t, number: true }))}
                       placeholder="14"
-                      className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 focus:border-[color:var(--navy)] outline-none"
+                      aria-invalid={touched.number && !!errors.number}
+                      className={`w-full rounded-xl border-2 bg-white px-3 py-3 outline-none transition ${
+                        touched.number && errors.number
+                          ? "border-[color:var(--danger)] focus:border-[color:var(--danger)]"
+                          : "border-slate-200 focus:border-[color:var(--navy)]"
+                      }`}
                     />
+                    {touched.number && errors.number && (
+                      <p className="mt-1 text-[11px] text-[color:var(--danger)]">{errors.number}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">이름</label>
                     <input
                       value={name}
+                      maxLength={20}
                       onChange={(e) => setName(e.target.value)}
+                      onBlur={() => setTouched((t) => ({ ...t, name: true }))}
                       placeholder="홍길동"
-                      className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-3 focus:border-[color:var(--navy)] outline-none"
+                      aria-invalid={touched.name && !!errors.name}
+                      className={`w-full rounded-xl border-2 bg-white px-3 py-3 outline-none transition ${
+                        touched.name && errors.name
+                          ? "border-[color:var(--danger)] focus:border-[color:var(--danger)]"
+                          : "border-slate-200 focus:border-[color:var(--navy)]"
+                      }`}
                     />
+                    {touched.name && errors.name && (
+                      <p className="mt-1 text-[11px] text-[color:var(--danger)]">{errors.name}</p>
+                    )}
                   </div>
                 </div>
                 {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
