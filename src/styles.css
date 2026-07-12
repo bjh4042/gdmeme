@@ -152,6 +152,23 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  html, body {
+    height: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    overscroll-behavior-y: contain;
+  }
+
+  /* 미디어/임베드 요소가 컨테이너 밖으로 튀어나가지 못하게 잠금.
+     @layer base 안에 넣어 Tailwind 유틸리티(h-10 등)가 덮어쓸 수 있도록. */
+  img, video, canvas, svg, iframe {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 /* Pastel + glassmorphism helpers */
@@ -193,20 +210,6 @@
 @utility touch-tap {
   min-width: 44px;
   min-height: 44px;
-}
-
-html, body { height: 100%; }
-/* 어떤 자식 요소도 화면 너비를 넘지 못하도록 최외곽 가드. */
-html, body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-body { overscroll-behavior-y: contain; }
-
-/* 미디어/임베드 요소가 컨테이너 밖으로 튀어나가지 못하게 잠금. */
-img, video, canvas, svg, iframe {
-  max-width: 100%;
-  height: auto;
 }
 
 /* 문자열이 너무 긴 URL·닉네임 등을 만나도 가로 스크롤이 생기지 않게. */
