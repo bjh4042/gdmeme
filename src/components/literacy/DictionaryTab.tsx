@@ -22,7 +22,7 @@ export function DictionaryTab({
   const [filter, setFilter] = useState<string>("전체");
   const [openModal, setOpenModal] = useState(false);
   const [query, setQuery] = useState("");
-  const [risk, setRisk] = useState<"all" | "safe" | "warn" | "danger">("all");
+  const [risk, setRisk] = useState<"all" | "safe" | "mild" | "danger">("all");
   const [field, setField] = useState<"all" | "word" | "source">("all");
   const [initialWord, setInitialWord] = useState<string | undefined>(undefined);
 
@@ -50,9 +50,30 @@ export function DictionaryTab({
   }, [dict]);
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
+    // 위험도 탭 4분기 엄격 매칭 명세:
+    //  · 전체   → 조건 없이 통과
+    //  · 안전   → 점수 ≤ 20 이고 grade 가 "안전/순화 필요"
+    //  · 순화   → 점수 21~40 이고 grade 가 "안전/순화 필요"
+    //  · 위험   → grade 가 "주의/경고" 또는 "위험/사용 금지", 혹은 점수 ≥ 41
+    const passRisk = (d: DictEntry) => {
+      if (risk === "all") return true;
+      const score = d.total_harmful_score ?? 0;
+      const g = (d.grade ?? "").trim();
+      const isSafeGrade = g === "안전/순화 필요";
+      const isWarnGrade = g === "주의/경고";
+      const isDangerGrade = g === "위험/사용 금지";
+      if (risk === "safe") return isSafeGrade && score <= 20;
+      if (risk === "mild") return isSafeGrade && score > 20 && score <= 40;
+      // danger 탭: 안전·순화 필드는 절대 포함되지 않도록 이중 차단
+      if (risk === "danger") {
+        if (isSafeGrade) return false;
+        return isWarnGrade || isDangerGrade || score >= 41;
+      }
+      return true;
+    };
     return approved.filter((d) => {
       if (filter !== "전체" && firstInitial(d.word) !== filter) return false;
-      if (risk !== "all" && gradeOf(d.total_harmful_score).tone !== risk) return false;
+      if (!passRisk(d)) return false;
       if (q) {
         const inWord = d.word.toLowerCase().includes(q);
         const inSource = (d.source ?? "").toLowerCase().includes(q);
@@ -125,7 +146,7 @@ export function DictionaryTab({
             {[
               { id: "all", label: "🌐 전체", tone: "" },
               { id: "safe", label: "🟢 안전", tone: "var(--safe)" },
-              { id: "warn", label: "🟡 주의", tone: "var(--warn)" },
+              { id: "mild", label: "🟡 순화 필요", tone: "var(--warn)" },
               { id: "danger", label: "🔴 위험", tone: "var(--danger)" },
             ].map((r) => (
               <button
