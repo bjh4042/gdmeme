@@ -215,6 +215,30 @@ p, span, div, li, td, th, a, button {
   overflow-wrap: anywhere;
 }
 
+/* 공통: 말풍선/카드/설명 텍스트 영역에 붙이는 안전 줄바꿈 유틸리티.
+   기존에 break-words / whitespace-pre-wrap / overflow-wrap 을 개별로 붙이던 것을
+   한 클래스(`wt-text`)로 통일. */
+@utility wt-text {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* iPhone 노치/홈 인디케이터 대응: 하단 고정 요소용 safe padding.
+   `pb-safe`를 붙이면 홈바 위로 자동으로 여백 확보. */
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+@utility pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 0px);
+}
+@utility pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+@utility pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
 /* Compact tab bar on small phones — 5개 버튼이 한 줄에 딱 맞게. */
 @media (max-width: 480px) {
   .tabbar-label { font-size: 10px; line-height: 1.1; }

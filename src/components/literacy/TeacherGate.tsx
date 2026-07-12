@@ -37,7 +37,10 @@ export function TeacherGate(props: DashboardProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div
+      className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 pl-safe pr-safe"
+      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 16px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 16px)" }}
+    >
       <form
         onSubmit={async (e) => {
           e.preventDefault();

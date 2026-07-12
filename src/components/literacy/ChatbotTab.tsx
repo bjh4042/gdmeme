@@ -171,6 +171,14 @@ export function ChatbotTab({
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
+  // 브라우저 뒤로가기 → 대화창에서 목록으로 복귀.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onPop = () => setMobileView("list");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   // 대화 피드 자동 스크롤: 사용자가 최하단 근처에 있을 때만 따라 내려간다.
   const feedRef = useRef<HTMLDivElement | null>(null);
   const atBottomRef = useRef(true);
@@ -279,6 +287,12 @@ export function ChatbotTab({
     setActiveId(id);
     setMobileView("chat");
     setRooms((prev) => ({ ...prev, [id]: { ...prev[id], unread: 0 } }));
+    // 뒤로가기(하드웨어/제스처) 로 목록으로 돌아올 수 있도록 히스토리에 마커 push.
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
+      try {
+        window.history.pushState({ wtChat: true, id }, "");
+      } catch {}
+    }
   }
 
   function resetRoom() {
@@ -518,14 +532,25 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
+        key={`chat-${mobileView}-${scenario.id}`}
         className={`wt-panel rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
-          mobileView === "list" ? "hidden lg:flex" : "flex"
+          mobileView === "list" ? "hidden lg:flex" : "flex animate-slide-in-right lg:animate-none"
         }`}
         style={{ background: "#1a1a1a" }}
       >
         {/* Top bar */}
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-3 py-3 bg-[#111] text-white border-b border-white/5">
-          <button onClick={() => setMobileView("list")} className="p-1 rounded hover:bg-white/5 lg:opacity-70" aria-label="목록으로">
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined" && window.history.state?.wtChat) {
+                window.history.back(); // popstate 리스너가 mobileView 를 list 로 복귀
+              } else {
+                setMobileView("list");
+              }
+            }}
+            className="p-1 rounded hover:bg-white/5 lg:opacity-70"
+            aria-label="목록으로"
+          >
             <ChevronLeft size={20} />
           </button>
           <div className="min-w-0 text-center">
@@ -617,7 +642,7 @@ export function ChatbotTab({
                                     <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
                                     <div className="flex items-end gap-1">
                                       <div
-                                        className={`px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm break-words whitespace-pre-wrap ${
+                                        className={`wt-text px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm ${
                                           m.tone === "danger"
                                             ? "bg-red-500/25 text-white border border-red-400/40"
                                             : m.tone === "warn"
@@ -635,7 +660,7 @@ export function ChatbotTab({
                                 <div className="flex items-end gap-1 max-w-[80%]">
                                   <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
                                   <div
-                                    className="px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm break-words whitespace-pre-wrap text-[#111]"
+                                    className="wt-text px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm text-[#111]"
                                     style={{ background: "#FEE500" }}
                                   >
                                     {m.text}
