@@ -3,6 +3,10 @@ import type { DictEntry, Evaluation, StudentRecord } from "@/lib/literacy-types"
 import { computeTotal, gradeOf, levelOf } from "@/lib/literacy-types";
 import { Pencil, X, Plus, Trash2, Search, BookOpen, Users, ArrowUp, ArrowDown, Download, Upload } from "lucide-react";
 import * as XLSX from "xlsx";
+import { useRef } from "react";
+import { toast } from "sonner";
+import { useDictStore } from "@/stores/dict";
+import { gradeOf as gradeFor } from "@/lib/literacy-types";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
