@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useEngagementStore } from "@/stores/engagement";
 import { SCENARIOS } from "@/lib/literacy-seed";
 import { useClassStore, EMPTY_CLASS } from "@/stores/class";
+import { seedClass3105IfNeeded } from "@/lib/seed-3105";
 
 
 export const Route = createFileRoute("/")({
@@ -47,6 +48,11 @@ function Index() {
     if (student) roster.upsertActive(student);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student?.classCode, student?.number, student?.name]);
+
+  // 20인 더미데이터 시드 · 최초 진입 1회만 실행
+  useEffect(() => {
+    if (hydrated) seedClass3105IfNeeded();
+  }, [hydrated]);
 
   const activeId = student ? studentId(student.classCode, student.number) : "";
 
