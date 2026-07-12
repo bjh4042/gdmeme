@@ -216,3 +216,87 @@ export function ProfileModal({
     </div>
   );
 }
+
+function BadgeTile({
+  b,
+  stats,
+  unlocked,
+  open,
+  onToggle,
+}: {
+  b: BadgeDef;
+  stats: BadgeStats;
+  unlocked: boolean;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const p = progressFor(b, stats);
+  const done = unlocked || p.done;
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-label={`${b.name} · ${TIER_LABEL[b.tier]} · ${p.current}/${p.target}${b.unit}`}
+        className={`w-full rounded-xl p-2 text-center border-2 transition-all duration-200 ${
+          done
+            ? "border-white bg-white/95 hover:-translate-y-0.5 hover:shadow-md"
+            : "border-dashed border-white/60 bg-white/40 hover:bg-white/60"
+        } ${open ? "ring-2 ring-[color:var(--mint-deep)]" : ""}`}
+        style={done ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
+      >
+        <div
+          className="text-2xl leading-none"
+          style={{
+            filter: done ? undefined : "grayscale(1) blur(0.4px)",
+            opacity: done ? 1 : 0.55,
+          }}
+        >
+          {done ? b.icon : "🔒"}
+        </div>
+        <div className={`mt-1 text-[10px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}>
+          {b.name}
+        </div>
+        <div className="mt-1 text-[9px] font-bold text-muted-foreground">
+          Lv.{b.tier} · {TIER_LABEL[b.tier]}
+        </div>
+        {/* progress */}
+        <div className="mt-1.5 h-1.5 rounded-full bg-white/70 overflow-hidden">
+          <div
+            className="h-full transition-all duration-500"
+            style={{ width: `${p.pct}%`, background: done ? b.color : "#94a3b8" }}
+          />
+        </div>
+        <div className="mt-1 text-[9px] font-mono font-bold" style={{ color: done ? b.color : "#64748b" }}>
+          {p.current}/{p.target}{b.unit}
+        </div>
+      </button>
+      {open && (
+        <div
+          role="tooltip"
+          className="absolute z-20 left-1/2 -translate-x-1/2 mt-2 w-56 max-w-[80vw] rounded-2xl bg-[color:var(--navy)] text-white p-3 shadow-xl text-left animate-scale-in"
+        >
+          <div className="text-[11px] font-bold opacity-80">{TRACK_LABEL[b.track]} · {TIER_LABEL[b.tier]}</div>
+          <div className="text-sm font-black flex items-center gap-1.5">
+            <span className="text-lg leading-none">{b.icon}</span> {b.name}
+          </div>
+          <div className="mt-1 text-[11px] opacity-90 leading-snug">{b.desc}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] font-bold">
+            <span>진척도</span>
+            <span className="font-mono">{p.current} / {p.target} {b.unit}</span>
+          </div>
+          <div className="mt-1 h-2 rounded-full bg-white/20 overflow-hidden">
+            <div
+              className="h-full transition-all duration-500"
+              style={{ width: `${p.pct}%`, background: done ? b.color : "#fbbf24" }}
+            />
+          </div>
+          <div className="mt-1.5 text-[10px] opacity-80">
+            {done ? "✅ 미션 완수! 대표 칭호 후보로 자동 반영돼요." : `앞으로 ${Math.max(0, p.target - p.current)}${b.unit} 더 하면 해금!`}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
