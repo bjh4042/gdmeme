@@ -177,7 +177,7 @@ function Index() {
 
   return (
     <div
-      className="min-h-screen pastel-bg"
+      className="min-h-screen w-full max-w-full overflow-x-hidden pastel-bg"
       style={{ paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))" }}
     >
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
