@@ -133,6 +133,200 @@ export function TeacherDashboard({
     }
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용)
+  // ─────────────────────────────────────────────────────────────
+  const dictFileRef = useRef<HTMLInputElement | null>(null);
+
+  function csvEscape(v: unknown): string {
+    const s = v == null ? "" : String(v);
+    if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  }
+
+  function downloadDictCSV() {
+    const header = [
+      "ID",
+      "단어명",
+      "출처",
+      "유해점수",
+      "상태",
+      "바른 대안 표현 1",
+      "바른 대안 표현 2",
+      "제안자",
+    ];
+    const lines = [header.join(",")];
+    for (const d of dict) {
+      lines.push(
+        [
+          d.id,
+          d.word,
+          d.source ?? "",
+          d.total_harmful_score,
+          d.grade,
+          d.alternatives?.[0] ?? "",
+          d.alternatives?.[1] ?? "",
+          d.suggested_by ?? "",
+        ]
+          .map(csvEscape)
+          .join(","),
+      );
+    }
+    // 한글 깨짐 방지: UTF-8 BOM 선행 삽입
+    const blob = new Blob(["\ufeff" + lines.join("\r\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "우리말_사전_데이터셋.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`총 ${dict.length}건의 사전 데이터를 CSV로 저장했어요.`);
+  }
+
+  function parseCSV(text: string): Record<string, string>[] {
+    // BOM 제거
+    const src = text.replace(/^\ufeff/, "");
+    const rows: string[][] = [];
+    let cur: string[] = [];
+    let field = "";
+    let inQ = false;
+    for (let i = 0; i < src.length; i++) {
+      const c = src[i];
+      if (inQ) {
+        if (c === '"') {
+          if (src[i + 1] === '"') { field += '"'; i++; }
+          else inQ = false;
+        } else field += c;
+      } else {
+        if (c === '"') inQ = true;
+        else if (c === ",") { cur.push(field); field = ""; }
+        else if (c === "\n") { cur.push(field); rows.push(cur); cur = []; field = ""; }
+        else if (c === "\r") { /* skip */ }
+        else field += c;
+      }
+    }
+    if (field.length > 0 || cur.length > 0) { cur.push(field); rows.push(cur); }
+    if (rows.length === 0) return [];
+    const headers = rows[0].map((h) => h.trim());
+    return rows.slice(1)
+      .filter((r) => r.some((v) => v.trim() !== ""))
+      .map((r) => {
+        const obj: Record<string, string> = {};
+        headers.forEach((h, i) => { obj[h] = (r[i] ?? "").trim(); });
+        return obj;
+      });
+  }
+
+  async function handleDictUpload(file: File) {
+    try {
+      let rows: Record<string, string>[] = [];
+      const name = file.name.toLowerCase();
+      if (name.endsWith(".csv")) {
+        const text = await file.text();
+        rows = parseCSV(text);
+      } else {
+        // xlsx/xls 도 함께 허용
+        const buf = await file.arrayBuffer();
+        const wb = XLSX.read(buf, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        if (!ws) return toast.error("시트를 찾을 수 없습니다.");
+        rows = XLSX.utils
+          .sheet_to_json<Record<string, unknown>>(ws, { defval: "" })
+          .map((r) => {
+            const o: Record<string, string> = {};
+            for (const k of Object.keys(r)) o[k] = String(r[k] ?? "").trim();
+            return o;
+          });
+      }
+      if (rows.length === 0) return toast.error("유효한 행이 없습니다.");
+
+      const pick = (r: Record<string, string>, ...keys: string[]) => {
+        for (const k of keys) if (r[k] != null && r[k] !== "") return r[k];
+        return "";
+      };
+
+      const current = useDictStore.getState().entries;
+      const byId = new Map<number, DictEntry>(current.map((d) => [d.id, d]));
+      let maxId = current.reduce((m, d) => (d.id > m ? d.id : m), 0);
+      let added = 0;
+      let updated = 0;
+
+      for (const r of rows) {
+        const idStr = pick(r, "ID", "id", "아이디");
+        const word = pick(r, "단어명", "word", "낱말");
+        const source = pick(r, "출처", "source");
+        const scoreStr = pick(r, "유해점수", "score", "total_harmful_score");
+        const statusStr = pick(r, "상태", "grade");
+        const alt1 = pick(r, "바른 대안 표현 1", "대안1", "alt1");
+        const alt2 = pick(r, "바른 대안 표현 2", "대안2", "alt2");
+        const suggested = pick(r, "제안자", "suggested_by");
+        if (!word) continue;
+
+        const idNum = idStr ? Number(idStr) : NaN;
+        const score = scoreStr ? Math.max(0, Math.min(100, Math.round(Number(scoreStr)))) : NaN;
+        const alternatives = [alt1, alt2].filter((x) => x && x.trim() !== "");
+
+        if (!Number.isNaN(idNum) && byId.has(idNum)) {
+          const prev = byId.get(idNum)!;
+          const nextScore = Number.isNaN(score) ? prev.total_harmful_score : score;
+          const next: DictEntry = {
+            ...prev,
+            word,
+            source: source || prev.source,
+            total_harmful_score: nextScore,
+            grade: statusStr || gradeOf(nextScore).label,
+            alternatives: alternatives.length ? alternatives : prev.alternatives,
+            suggested_by: suggested || prev.suggested_by,
+            timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+          };
+          byId.set(idNum, next);
+          updated++;
+        } else {
+          const newId = !Number.isNaN(idNum) && idNum > 0 ? idNum : ++maxId;
+          if (newId > maxId) maxId = newId;
+          const nextScore = Number.isNaN(score) ? 0 : score;
+          const entry: DictEntry = {
+            id: newId,
+            word,
+            student_definition: "(엑셀 업로드로 추가된 항목)",
+            suggested_by: suggested || "교사 업로드",
+            source: source || "출처 미상",
+            evaluations: {
+              aggression: 1,
+              bullying: 1,
+              discrimination: 1,
+              violence: 1,
+              grammar_destruction: 1,
+            },
+            total_harmful_score: nextScore,
+            status: "approved",
+            grade: statusStr || gradeOf(nextScore).label,
+            alternatives,
+            curriculum_code: "4국01-02",
+            timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+            vote_count: 1,
+          };
+          byId.set(newId, entry);
+          added++;
+        }
+      }
+
+      const next = Array.from(byId.values());
+      useDictStore.getState().persist(next);
+      toast.success(`총 ${added + updated}건의 사전 데이터가 성공적으로 반영되었습니다.`, {
+        description: `추가 ${added}건 · 수정 ${updated}건`,
+      });
+    } catch (e) {
+      toast.error("파일을 읽는 중 오류가 발생했습니다: " + String(e));
+    } finally {
+      if (dictFileRef.current) dictFileRef.current.value = "";
+    }
+  }
+
   function downloadExcel(scope: "filtered" | "all") {
     const rows = (scope === "filtered" ? studentList : students).map((s) => ({
       학급코드: s.classCode,
