@@ -532,8 +532,9 @@ export function ChatbotTab({
 
       {/* KakaoTalk chat room (dark) */}
       <div
+        key={`chat-${mobileView}-${scenario.id}`}
         className={`wt-panel rounded-3xl overflow-hidden flex-col shadow-[var(--shadow-soft)] border border-black/40 relative ${
-          mobileView === "list" ? "hidden lg:flex" : "flex"
+          mobileView === "list" ? "hidden lg:flex" : "flex animate-slide-in-right lg:animate-none"
         }`}
         style={{ background: "#1a1a1a" }}
       >
