@@ -7,6 +7,7 @@ import {
   assistantReplyFor,
   type AssistantPatternTag,
 } from "@/lib/ai-assistant-dataset";
+import { matchCyberEthics, type CyberEthicsSolution } from "@/lib/cyber-ethics-dataset";
 
 type ChatMsg = {
   id: string;
@@ -15,6 +16,7 @@ type ChatMsg = {
   at: string;
   pattern?: AssistantPatternTag | null;
   category?: string;
+  solution?: CyberEthicsSolution | null;
 };
 
 const STORE_KEY = "wtmeme:assistant:v1";
@@ -81,6 +83,24 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
 
     // Trigger the data-driven inference engine (with a brief natural delay)
     window.setTimeout(() => {
+      // 1) 사이버 행동 윤리 데이터셋 우선 매칭 (솔루션 카드 렌더)
+      const cyber = matchCyberEthics(text);
+      if (cyber) {
+        const bot: ChatMsg = {
+          id: makeId(),
+          from: "bot",
+          text: cyber.entry.bot_response.title,
+          at: stamp(),
+          solution: cyber.entry.bot_response,
+          category: cyber.entry.category,
+        };
+        setMsgs((prev) => [...prev, bot]);
+        setTyping(false);
+        if (onXP) onXP(2, "assistant-cyber", cyber.entry.category);
+        inputRef.current?.focus();
+        return;
+      }
+      // 2) 일반 유행어/어원 챗봇 지식 매칭
       const { reply, match } = assistantReplyFor(text, AI_KNOWLEDGE);
       const bot: ChatMsg = {
         id: makeId(),
@@ -150,9 +170,26 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
               )}
               <div className="max-w-[78%]">
                 {showAvatar && <div className="text-[11px] text-white/70 mb-0.5 ml-1">AI 수호비서</div>}
-                <div className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                  {m.text}
-                </div>
+                {m.solution ? (
+                  <div className="inline-block max-w-full bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md shadow-sm overflow-hidden border border-emerald-200">
+                    <div className="px-3.5 py-2 bg-gradient-to-r from-emerald-50 to-sky-50 text-[13.5px] font-extrabold border-b border-emerald-100">
+                      {m.solution.title}
+                    </div>
+                    <div className="px-3.5 py-2.5 text-[13px] leading-relaxed" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                      {m.solution.context}
+                    </div>
+                    <div className="mx-3 mb-3 rounded-xl bg-emerald-50/70 border border-emerald-200 px-3 py-2">
+                      <div className="text-[12px] font-bold text-emerald-700 mb-1">💡 바른말 실천 방법</div>
+                      <div className="text-[12.5px] text-slate-700 leading-relaxed" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                        {m.solution.action_guide}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                    {m.text}
+                  </div>
+                )}
                 <div className="text-[10px] text-white/40 mt-1 ml-1">{m.at}</div>
               </div>
             </div>
