@@ -171,6 +171,14 @@ export function ChatbotTab({
   const [input, setInput] = useState("");
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
+  // 브라우저 뒤로가기 → 대화창에서 목록으로 복귀.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onPop = () => setMobileView("list");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   // 대화 피드 자동 스크롤: 사용자가 최하단 근처에 있을 때만 따라 내려간다.
   const feedRef = useRef<HTMLDivElement | null>(null);
   const atBottomRef = useRef(true);
