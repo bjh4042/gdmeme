@@ -99,7 +99,6 @@ export function QuizTab({
     setTyped("");
     setResult(null);
     setTimeLeft(TIME_LIMIT);
-    if (q?.kind === "fill") setTimeout(() => inputRef.current?.focus(), 100);
   }, [idx, phase, q?.kind]);
 
   function markResult(ok: boolean) {
