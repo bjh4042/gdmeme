@@ -276,7 +276,6 @@ export function TeacherDashboard({
         const idStr = pick(r, "ID", "id", "아이디");
         const word = pick(r, "단어명", "word", "낱말");
         const source = pick(r, "출처", "source");
-        const scoreStr = pick(r, "유해점수", "score", "total_harmful_score");
         const statusStr = pick(r, "상태", "grade");
         const alt1 = pick(r, "바른 대안 표현 1", "대안1", "alt1");
         const alt2 = pick(r, "바른 대안 표현 2", "대안2", "alt2");
@@ -284,16 +283,42 @@ export function TeacherDashboard({
         if (!word) continue;
 
         const idNum = idStr ? Number(idStr) : NaN;
-        const score = scoreStr ? Math.max(0, Math.min(100, Math.round(Number(scoreStr)))) : NaN;
         const alternatives = [alt1, alt2].filter((x) => x && x.trim() !== "");
+
+        // 5대 유해성 점수 (1.0~5.0, 0.5 단위). 컬럼 없으면 기존값/기본 1.0
+        const prevEval = !Number.isNaN(idNum) ? byId.get(idNum)?.evaluations : undefined;
+        const evaluations: Evaluation = {
+          aggression: normalizeScore5(
+            pick(r, "점수_공격성", "aggression") || prevEval?.aggression || 1,
+          ),
+          bullying: normalizeScore5(
+            pick(r, "점수_따돌림", "bullying") || prevEval?.bullying || 1,
+          ),
+          discrimination: normalizeScore5(
+            pick(r, "점수_혐오성", "점수_차별성", "discrimination") ||
+              prevEval?.discrimination ||
+              1,
+          ),
+          violence: normalizeScore5(
+            pick(r, "점수_폭력성", "violence") || prevEval?.violence || 1,
+          ),
+          grammar_destruction: normalizeScore5(
+            pick(r, "점수_문법파괴", "grammar_destruction") ||
+              prevEval?.grammar_destruction ||
+              1,
+          ),
+        };
+        // 종합 점수: 5대 영역 평균 → 100점 만점 비례 환산 (computeTotal와 동치)
+        const score = Math.round(computeTotal(evaluations));
 
         if (!Number.isNaN(idNum) && byId.has(idNum)) {
           const prev = byId.get(idNum)!;
-          const nextScore = Number.isNaN(score) ? prev.total_harmful_score : score;
+          const nextScore = score;
           const next: DictEntry = {
             ...prev,
             word,
             source: source || prev.source,
+            evaluations,
             total_harmful_score: nextScore,
             grade: statusStr || gradeOf(nextScore).label,
             alternatives: alternatives.length ? alternatives : prev.alternatives,
@@ -305,20 +330,14 @@ export function TeacherDashboard({
         } else {
           const newId = !Number.isNaN(idNum) && idNum > 0 ? idNum : ++maxId;
           if (newId > maxId) maxId = newId;
-          const nextScore = Number.isNaN(score) ? 0 : score;
+          const nextScore = score;
           const entry: DictEntry = {
             id: newId,
             word,
             student_definition: "(엑셀 업로드로 추가된 항목)",
             suggested_by: suggested || "교사 업로드",
             source: source || "출처 미상",
-            evaluations: {
-              aggression: 1,
-              bullying: 1,
-              discrimination: 1,
-              violence: 1,
-              grammar_destruction: 1,
-            },
+            evaluations,
             total_harmful_score: nextScore,
             status: "approved",
             grade: statusStr || gradeOf(nextScore).label,
