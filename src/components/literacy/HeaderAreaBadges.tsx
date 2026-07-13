@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { AREA_BADGES } from "./AreaBadges";
+import { AREA_BADGES, unlockedAreaBadges } from "./AreaBadges";
+import { useDictStore } from "@/stores/dict";
+import { useAuthStore } from "@/stores/auth";
+import { studentId } from "@/stores/roster";
 
 // 헤더 GNB 전용: 5대 영역 최고 등급 칭호를 항상 표시하는 소형 칩.
 export function HeaderAreaBadges() {
+  const dict = useDictStore((s) => s.entries);
+  const student = useAuthStore((s) => s.student);
+  if (!student) return null;
+  const sid = studentId(student.classCode, student.number);
+  const owned = unlockedAreaBadges(dict, sid);
+  if (owned.length === 0) return null;
   return (
     <div className="flex items-center gap-2">
-      {AREA_BADGES.map((b) => (
+      {owned.map((b) => (
         <HeaderChip key={b.key} badge={b} />
       ))}
     </div>
