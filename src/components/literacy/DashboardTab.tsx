@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { DictEntry, ClassState, Evaluation } from "@/lib/literacy-types";
+import type { DictEntry, ClassState } from "@/lib/literacy-types";
 import { weatherOf, levelOf, LEVELS, WEATHER_MATRIX } from "@/lib/literacy-types";
 import level1 from "@/assets/level1.webp.asset.json";
 import level2 from "@/assets/level2.webp.asset.json";
