@@ -71,9 +71,8 @@ export function ReportModal({
       await new Promise((r) => requestAnimationFrame(() => r(null)));
       try {
         // 웹 폰트가 아직 스왑 중이면 캡처가 fallback으로 렌더되는 문제 방지.
-        if (typeof document !== "undefined" && (document as Document).fonts?.ready) {
-          await (document as Document).fonts.ready;
-        }
+        const fonts = typeof document !== "undefined" ? (document as Document).fonts : undefined;
+        if (fonts?.ready) await fonts.ready;
       } catch {
         /* 폰트 API 미지원 브라우저는 무시 */
       }
