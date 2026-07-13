@@ -492,7 +492,7 @@ export function TeacherDashboard({
         {section === "words" ? (
           <>
             {/* 📊 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용) */}
-            <div className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3">
+            <div data-tour="admin-csv" className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="min-w-0">
                   <div className="text-sm font-black text-[color:var(--navy)]">📊 사전 데이터셋 일괄 관리</div>

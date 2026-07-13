@@ -30,7 +30,7 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
 
   return (
     <div className="space-y-5">
-      <div className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]" style={{ background: wbg }}>
+      <div data-tour="weather" className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]" style={{ background: wbg }}>
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -49,7 +49,7 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
             </div>
             <div className="text-sm mt-1 opacity-95">{weather.desc}</div>
           </div>
-          <div className="shrink-0 text-right">
+          <div data-tour="literacy-chart" className="shrink-0 text-right">
             <div className="text-xs opacity-80">평균 유해 점수</div>
             <div className="text-4xl font-black font-mono">{avg}</div>
             <div className="text-xs opacity-80">{approved.length}개 단어</div>

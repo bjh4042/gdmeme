@@ -144,7 +144,7 @@ export function QuizTab({
 
   if (phase === "intro") {
     return (
-      <div className="animate-fade-in max-w-2xl mx-auto glass-card p-8 text-center space-y-4">
+      <div data-tour="quiz" className="animate-fade-in max-w-2xl mx-auto glass-card p-8 text-center space-y-4">
         <div className="text-6xl">⚡</div>
         <h2 className="text-3xl font-black text-[color:var(--navy)]">스피드 퀴즈</h2>
         <p className="text-sm text-muted-foreground">

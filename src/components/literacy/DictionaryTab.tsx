@@ -3,6 +3,7 @@ import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQu
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
 import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
+import { AreaBadgeChips } from "./AreaBadges";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
 import { toast } from "sonner";
 
@@ -191,9 +192,9 @@ export function DictionaryTab({
           검색 조건에 맞는 단어가 없어요. 다른 초성·위험도·검색어를 시도해 보세요.
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-tour="dict-grid" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((d) => (
-            <EntryCard key={d.id} entry={d} currentStudentId={currentStudentId} currentClassCode={student.classCode} />
+            <EntryCard key={d.id} entry={d} currentStudentId={currentStudentId} currentClassCode={student.classCode} dict={dict} />
           ))}
         </div>
       )}
