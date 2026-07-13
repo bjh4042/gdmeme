@@ -22,6 +22,8 @@ export function Onboarding({
   });
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const submitRef = useRef<HTMLButtonElement | null>(null);
+  const [remember, setRemember] = useState(false);
   const [kstTime, setKstTime] = useState("");
   useEffect(() => {
     setKstTime(formatKST());
