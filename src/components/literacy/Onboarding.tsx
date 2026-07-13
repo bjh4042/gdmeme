@@ -82,6 +82,18 @@ export function Onboarding({
     if (!trimmedName) return setErr("이름을 입력해 주세요.");
     if (trimmedName.length > 20) return setErr("이름은 20자 이하로 적어주세요.");
     setErr("");
+    if (remember) {
+      try {
+        window.localStorage.setItem(
+          "last_login_info",
+          JSON.stringify({ classCode, number: trimmedNumber, name: trimmedName }),
+        );
+      } catch {}
+    } else {
+      try {
+        window.localStorage.removeItem("last_login_info");
+      } catch {}
+    }
     const dup = roster.find(
       (r) => r.classCode === classCode && r.number === trimmedNumber,
     );
