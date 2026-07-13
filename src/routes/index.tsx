@@ -22,6 +22,8 @@ import { seedClass3105IfNeeded } from "@/lib/seed-3105";
 import { Tutorial, TUTORIAL_STORAGE_KEY } from "@/components/literacy/Tutorial";
 import { HeaderAreaBadges } from "@/components/literacy/HeaderAreaBadges";
 import { BadgeCodexModal } from "@/components/literacy/BadgeCodexModal";
+import { WeeklySurveyModal } from "@/components/literacy/WeeklySurveyModal";
+import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey";
 
 
 export const Route = createFileRoute("/")({
@@ -44,6 +46,7 @@ function Index() {
   const [codexOpen, setCodexOpen] = useState(false);
   const [reportForId, setReportForId] = useState<string | null>(null);
   const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [surveyOpen, setSurveyOpen] = useState(false);
   const markLexicographer = useEngagementStore((s) => s.markLexicographer);
   const reportRoleplayClear = useEngagementStore((s) => s.reportRoleplayClear);
   const totalScenarios = SCENARIOS.length;
@@ -68,6 +71,17 @@ function Index() {
         return () => clearTimeout(t);
       }
     } catch {}
+  }, [hydrated, student]);
+
+  // 주간 성찰 설문 트리거 (월/금 접속 시, 이번 주 미응답이면 팝업).
+  useEffect(() => {
+    if (!hydrated || !student) return;
+    if (!isSurveyDayToday()) return;
+    const sid = studentId(student.classCode, student.number);
+    const prior = loadMyAnswer(student.classCode, sid);
+    if (prior && prior.weekKey === isoWeekKey()) return;
+    const t = setTimeout(() => setSurveyOpen(true), 1200);
+    return () => clearTimeout(t);
   }, [hydrated, student]);
 
   const activeId = student ? studentId(student.classCode, student.number) : "";
@@ -203,7 +217,7 @@ function Index() {
   const dictNode = useMemo(
     () => (
       <div className="space-y-6">
-        <DashboardTab dict={dict} state={state} />
+        <DashboardTab dict={dict} state={state} classCode={student?.classCode} />
         {student && (
           <DictionaryTab
             dict={dict}
@@ -298,6 +312,9 @@ function Index() {
             </button>
           </div>
         </div>
+        <div className="bg-gray-50 border-t border-gray-100 text-gray-500 text-xs text-center py-1 px-3">
+          🖥️ 본 장학 플랫폼은 학교 PC 및 태블릿(가로 모드) 환경에 최적화되어 구동됩니다.
+        </div>
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
@@ -373,6 +390,16 @@ function Index() {
         onTabChange={(t) => setTab(t)}
         onOpenTeacher={() => setTeacherOpen(true)}
       />
+
+      {surveyOpen && student && (
+        <WeeklySurveyModal
+          classCode={student.classCode}
+          studentId={activeId}
+          studentName={student.name}
+          dict={dict}
+          onClose={() => setSurveyOpen(false)}
+        />
+      )}
     </div>
   );
 }

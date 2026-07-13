@@ -129,6 +129,9 @@ export function Onboarding({
 
         {/* Inner screen */}
         <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] bg-white flex flex-col">
+        <div className="absolute top-0 inset-x-0 z-30 bg-gray-50 border-b border-gray-100 text-gray-500 text-[10px] text-center py-1 px-2 rounded-t-[2.25rem]">
+          🖥️ 학교 PC 및 태블릿(가로 모드) 환경 최적화
+        </div>
           {/* Dynamic-island / notch */}
           <div aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20" />
           {/* Status bar */}

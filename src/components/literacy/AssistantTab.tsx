@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Send, ChevronLeft, Menu, Search } from "lucide-react";
 import {
   AI_KNOWLEDGE,
-  ASSISTANT_FALLBACK,
+  pickFallback,
   ASSISTANT_GREETING,
   QUICK_REPLIES,
   type AssistantPatternTag,
@@ -111,7 +111,7 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
         bot = {
           id: makeId(),
           from: "bot",
-          text: ASSISTANT_FALLBACK,
+          text: pickFallback(),
           at: stamp(),
           pattern: null,
         };
