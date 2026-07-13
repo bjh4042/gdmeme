@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { X, Download, Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
+import { toast } from "sonner";
 import type { DictEntry, StudentRecord, ClassState } from "@/lib/literacy-types";
 import { levelOf, weatherOf } from "@/lib/literacy-types";
 import { useEngagementStore } from "@/stores/engagement";
@@ -62,12 +63,17 @@ export function ReportModal({
 
   async function download() {
     if (!cardRef.current) return;
+    if (busy) return;
     setBusy(true);
+    const toastId = toast.loading("이미지 저장 중… 잠시만 기다려 주세요.");
     try {
+      // 렌더 프레임 한 번 양보해서 로딩 UI가 먼저 뜨도록.
+      await new Promise((r) => requestAnimationFrame(() => r(null)));
       const canvas = await html2canvas(cardRef.current, {
         backgroundColor: "#ffffff",
         scale: 2,
         useCORS: true,
+        logging: false,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -76,6 +82,10 @@ export function ReportModal({
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      toast.success("이미지 저장 완료! 다운로드 폴더를 확인해 주세요.", { id: toastId });
+    } catch (err) {
+      console.error("[report] html2canvas failed", err);
+      toast.error("이미지 저장에 실패했어요. 잠시 후 다시 시도해 주세요.", { id: toastId });
     } finally {
       setBusy(false);
     }
@@ -84,6 +94,25 @@ export function ReportModal({
   return (
     <div className="fixed inset-0 z-[60] bg-[color:var(--navy)]/60 backdrop-blur-sm flex items-center justify-center p-3 pl-safe pr-safe overflow-y-auto animate-fade-in">
       <div className="w-full max-w-2xl my-4 relative animate-scale-in">
+        {busy && (
+          <div
+            className="fixed inset-0 z-[80] bg-[color:var(--navy)]/60 backdrop-blur-sm flex items-center justify-center animate-fade-in"
+            role="alertdialog"
+            aria-modal="true"
+            aria-label="이미지 저장 중"
+          >
+            <div className="rounded-2xl bg-white/95 shadow-2xl px-6 py-5 flex items-center gap-3">
+              <Loader2 className="animate-spin text-[color:var(--navy)]" size={22} />
+              <div className="min-w-0">
+                <div className="text-sm font-black text-[color:var(--navy)]">이미지 저장 중…</div>
+                <div className="text-[11px] text-muted-foreground">
+                  리포트를 PNG로 렌더링하고 있어요. 잠시만 기다려 주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={onClose}
