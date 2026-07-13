@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, Star } from "lucide-react";
+import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, AlertTriangle, Siren } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
 import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
@@ -463,7 +463,12 @@ function ProposalModal({
                     role="radiogroup"
                     aria-label={`${l.label} 별점 선택 (1점부터 5점)`}
                   >
-                    {[1, 2, 3, 4, 5].map((n) => (
+                    {[1, 2, 3, 4, 5].map((n) => {
+                      const active = n <= ev[l.key];
+                      // 3점 이하: ⚠️ (노란 경고), 4점 이상: 🚨 (경광등) — 직관적 위험 시각화
+                      const IconCmp = n >= 4 ? Siren : AlertTriangle;
+                      const activeColor = n >= 4 ? "text-[color:var(--danger)]" : "text-[color:var(--warn)]";
+                      return (
                       <button
                         type="button"
                         key={n}
@@ -483,13 +488,14 @@ function ProposalModal({
                         aria-label={`${l.label} ${n}점`}
                         tabIndex={ev[l.key] === n ? 0 : -1}
                       >
-                        <Star
+                        <IconCmp
                           size={20}
-                          className={n <= ev[l.key] ? "text-[color:var(--warn)]" : "text-white/70"}
-                          fill={n <= ev[l.key] ? "currentColor" : "none"}
+                          className={active ? activeColor : "text-slate-300"}
+                          fill={active ? "currentColor" : "none"}
                         />
                       </button>
-                    ))}
+                      );
+                    })}
                     <span className="ml-2 font-mono font-bold text-[color:var(--mint-deep)] text-xs">{ev[l.key]}점</span>
                   </div>
                 </div>

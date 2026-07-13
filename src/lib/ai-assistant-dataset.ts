@@ -65,8 +65,21 @@ export const AI_KNOWLEDGE: AssistantEntry[] = [
   ...AI_KNOWLEDGE_EXTRA,
 ];
 
-export const ASSISTANT_FALLBACK =
-  "🤖 안녕하세요! 질문하신 내용의 키워드는 아직 우리 반 'AI 윤리·예절 지식 데이터셋'에 등록되지 않았어요. 하지만 정보 통신 예절을 지키기 위해 항상 고운 말과 표준어를 사용해야 한다는 점은 도덕과 국어 시간의 핵심 약속이랍니다! 아래 가이드 질문을 누르거나 궁금한 다른 유행어를 입력해 보세요.";
+// 돌발 질문 대응 랜덤 풀 — 단일 반복 답변 방지, 자연스러운 대화 흐름 연출.
+export const ASSISTANT_FALLBACK_POOL: string[] = [
+  "🤖 음~ 그 말도 흥미롭지만, 우리 방금 배운 바른말 대안 표현으로 다시 이야기해 볼까?",
+  "🤖 친구야, 방금 사용한 단어는 우리 반 유해 점수를 올릴 수 있어! 고운 말로 물어봐 줄래?",
+  "🤖 수호비서는 방금 한 말을 분석 중이야! 혹시 '사전 등록'이나 '바른말 실천'에 대해 궁금한 건 없어?",
+  "🤖 거친 밈이나 신조어 대신, 서로의 마음에 공감해 주는 말을 건네면 기상도가 맑아질 거야!",
+  "🤖 무슨 뜻인지 이해했어요! 하지만 우리 조금 더 예쁜 문장으로 대화를 이어 나가봐요.",
+];
+
+export function pickFallback(): string {
+  return ASSISTANT_FALLBACK_POOL[Math.floor(Math.random() * ASSISTANT_FALLBACK_POOL.length)];
+}
+
+// 하위 호환 — 기존 import 를 유지하기 위해 첫 항목을 노출.
+export const ASSISTANT_FALLBACK = ASSISTANT_FALLBACK_POOL[0];
 
 export const ASSISTANT_GREETING =
   "🤖 안녕! 나는 바른말 수호비서야.\n요즘 유행어·밈이 궁금하거나, 단톡방에서 속상한 일이 있다면 편하게 물어봐. 아래 가이드 질문을 눌러도 좋아!";

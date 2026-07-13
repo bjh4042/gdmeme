@@ -239,17 +239,21 @@ export function QuizTab({
             {q.choices.map((c, i) => {
               const isRight = result && c === q.answerText;
               const isWrong = chosen === i && c !== q.answerText;
+              const isChosen = chosen === i;
               return (
                 <button
                   key={i}
                   onClick={() => pickMCDebounced(i)}
                   disabled={result !== null}
-                  className={`text-left px-4 py-3 rounded-2xl border-2 font-medium transition inline-flex items-center gap-2 disabled:cursor-not-allowed ${
+                  aria-pressed={isChosen}
+                  className={`text-left px-4 py-3 rounded-2xl border-[3px] font-medium transition inline-flex items-center gap-2 disabled:cursor-not-allowed ${
                     isRight
-                      ? "border-[color:var(--safe)] bg-[color:var(--safe)]/20"
+                      ? "border-[color:var(--safe)] bg-[color:var(--safe)]/20 text-[color:var(--navy)]"
                       : isWrong
-                      ? "border-[color:var(--danger)] bg-[color:var(--danger)]/10"
-                      : "border-white/70 bg-white/60 hover:border-[color:var(--mint-deep)] hover:bg-white"
+                      ? "border-[color:var(--danger)] bg-[color:var(--danger)]/10 text-[color:var(--navy)]"
+                      : isChosen
+                      ? "border-indigo-600 bg-indigo-600 text-white shadow-md scale-[1.01]"
+                      : "border-white/70 bg-white/60 hover:border-[color:var(--mint-deep)] hover:bg-white active:border-indigo-600 active:bg-indigo-50"
                   }`}
                 >
                   {isRight && <CheckCircle2 size={16} className="text-[color:var(--safe)]" />}

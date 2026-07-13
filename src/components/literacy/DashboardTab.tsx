@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DictEntry, ClassState } from "@/lib/literacy-types";
 import { weatherOf, levelOf, LEVELS, WEATHER_MATRIX } from "@/lib/literacy-types";
+import { computeWeatherScore, isoWeekKey, loadAggregate } from "@/lib/weekly-survey";
 import level1 from "@/assets/level1.webp.asset.json";
 import level2 from "@/assets/level2.webp.asset.json";
 import level3 from "@/assets/level3.webp.asset.json";
@@ -9,12 +10,28 @@ import level5 from "@/assets/level5.webp.asset.json";
 
 const LEVEL_IMAGES = [level1.url, level2.url, level3.url, level4.url, level5.url];
 
-export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassState }) {
+export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; state: ClassState; classCode?: string }) {
   const approved = dict.filter((d) => d.status === "approved");
+  const [aggTick, setAggTick] = useState(0);
+  // localStorage에 저장된 이번 주 설문 집계를 반영 (설문 제출 후 재계산 트리거).
+  useEffect(() => {
+    const onStorage = () => setAggTick((v) => v + 1);
+    window.addEventListener("storage", onStorage);
+    const t = window.setInterval(() => setAggTick((v) => v + 1), 15_000);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.clearInterval(t);
+    };
+  }, []);
   const avg = useMemo(() => {
-    if (approved.length === 0) return 0;
-    return Math.round(approved.reduce((s, d) => s + d.total_harmful_score, 0) / approved.length);
-  }, [approved]);
+    const baseHarm =
+      approved.length === 0
+        ? 0
+        : approved.reduce((s, d) => s + d.total_harmful_score, 0) / approved.length;
+    const agg = classCode ? loadAggregate(classCode)[isoWeekKey()] : undefined;
+    return computeWeatherScore({ baseHarm, approvedCount: approved.length, aggregate: agg });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [approved, classCode, aggTick]);
   const weather = weatherOf(avg);
   const lv = levelOf(state.xp);
   const [infoOpen, setInfoOpen] = useState(false);
