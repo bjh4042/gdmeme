@@ -221,10 +221,12 @@ function EntryCard({
   entry,
   currentStudentId,
   currentClassCode,
+  dict,
 }: {
   entry: DictEntry;
   currentStudentId: string;
   currentClassCode: string;
+  dict: DictEntry[];
 }) {
   const g = gradeOf(entry.total_harmful_score);
   const bg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
@@ -292,8 +294,11 @@ function EntryCard({
           ))}
         </ul>
       </div>
-      <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex justify-between">
-        <span>제안 {entry.suggested_by}</span>
+      <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex flex-wrap items-center justify-between gap-1">
+        <span className="inline-flex items-center gap-1.5 flex-wrap">
+          <span>제안 {entry.suggested_by}</span>
+          <AreaBadgeChips suggestedBy={entry.suggested_by} dict={dict} />
+        </span>
         <span>투표 {entry.vote_count ?? 1}</span>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-1.5">
