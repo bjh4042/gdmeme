@@ -20,6 +20,7 @@ import { SCENARIOS } from "@/lib/literacy-seed";
 import { useClassStore, EMPTY_CLASS } from "@/stores/class";
 import { seedClass3105IfNeeded } from "@/lib/seed-3105";
 import { Tutorial, TUTORIAL_STORAGE_KEY } from "@/components/literacy/Tutorial";
+import { HeaderAreaBadges } from "@/components/literacy/HeaderAreaBadges";
 
 
 export const Route = createFileRoute("/")({
@@ -251,6 +252,7 @@ function Index() {
                 {student.classCode}반 · {student.number}번 {student.name} · Lv.{lv.current.lv} {lv.current.name} · {state.xp} XP
               </div>
             </div>
+            <HeaderAreaBadges />
           </div>
           <div className="shrink-0 flex items-center gap-1">
             <button
