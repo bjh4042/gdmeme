@@ -26,6 +26,9 @@ export const AREA_BADGES: {
 
 export const AREA_BADGE_KEYS = AREA_BADGES.map((b) => b.badgeKey);
 
+// Stable empty reference so the selector below never returns a fresh array.
+const EMPTY_KEYS: string[] = [];
+
 // 승인된 제안 중 해당 영역 평균이 2.5 이하이면 그 영역 칭호 해금.
 export function unlockedAreaBadges(dict: DictEntry[], suggestedBy: string) {
   const mine = dict.filter((d) => d.suggested_by === suggestedBy && d.status === "approved");
