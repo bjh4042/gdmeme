@@ -5,6 +5,7 @@ import { Pencil, X, Plus, Trash2, Search, BookOpen, Users, ArrowUp, ArrowDown, D
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { useDictStore } from "@/stores/dict";
+import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
@@ -488,6 +489,8 @@ export function TeacherDashboard({
           <SubTab active={section === "words"} onClick={() => setSection("words")} icon={<BookOpen size={15} />} label={`단어 관리 (${dict.length})`} />
           <SubTab active={section === "students"} onClick={() => setSection("students")} icon={<Users size={15} />} label={`학생 회원 관리 (${students.length})`} />
         </div>
+
+        <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
 
         {section === "words" ? (
           <>
