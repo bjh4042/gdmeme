@@ -19,6 +19,7 @@ import { useEngagementStore } from "@/stores/engagement";
 import { SCENARIOS } from "@/lib/literacy-seed";
 import { useClassStore, EMPTY_CLASS } from "@/stores/class";
 import { seedClass3105IfNeeded } from "@/lib/seed-3105";
+import { Tutorial, TUTORIAL_STORAGE_KEY } from "@/components/literacy/Tutorial";
 
 
 export const Route = createFileRoute("/")({
@@ -39,6 +40,7 @@ function Index() {
   const [openModalKey, setOpenModalKey] = useState<number | undefined>();
   const [profileOpen, setProfileOpen] = useState(false);
   const [reportForId, setReportForId] = useState<string | null>(null);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
   const markLexicographer = useEngagementStore((s) => s.markLexicographer);
   const reportRoleplayClear = useEngagementStore((s) => s.reportRoleplayClear);
   const totalScenarios = SCENARIOS.length;
@@ -53,6 +55,17 @@ function Index() {
   useEffect(() => {
     if (hydrated) seedClass3105IfNeeded();
   }, [hydrated]);
+
+  // 최초 진입자 자동 튜토리얼 (localStorage 방문 기록 없을 때만).
+  useEffect(() => {
+    if (!hydrated || !student) return;
+    try {
+      if (window.localStorage.getItem(TUTORIAL_STORAGE_KEY) !== "true") {
+        const t = setTimeout(() => setTutorialOpen(true), 400);
+        return () => clearTimeout(t);
+      }
+    } catch {}
+  }, [hydrated, student]);
 
   const activeId = student ? studentId(student.classCode, student.number) : "";
 
@@ -241,6 +254,14 @@ function Index() {
           </div>
           <div className="shrink-0 flex items-center gap-1">
             <button
+              onClick={() => setTutorialOpen(true)}
+              title="도움말 · 사용 가이드 다시 보기"
+              aria-label="도움말 · 사용 가이드 다시 보기"
+              className="w-9 h-9 grid place-items-center rounded-lg bg-[color:var(--muted)] hover:bg-[color:var(--mint)] text-lg"
+            >
+              ❓
+            </button>
+            <button
               onClick={() => setProfileOpen(true)}
               title="내 프로필"
               className="w-9 h-9 grid place-items-center rounded-lg bg-[color:var(--muted)] hover:bg-[color:var(--mint)] text-lg"
@@ -327,6 +348,13 @@ function Index() {
           onClose={() => setReportForId(null)}
         />
       )}
+
+      <Tutorial
+        open={tutorialOpen}
+        onClose={() => setTutorialOpen(false)}
+        onTabChange={(t) => setTab(t)}
+        onOpenTeacher={() => setTeacherOpen(true)}
+      />
     </div>
   );
 }
