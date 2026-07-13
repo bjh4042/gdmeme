@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AREA_BADGES, useOwnedAreaBadges } from "./AreaBadges";
+import { useOwnedAreaBadges } from "./AreaBadges";
 import { useDictStore } from "@/stores/dict";
 import { useAuthStore } from "@/stores/auth";
 import { studentId, useRosterStore } from "@/stores/roster";
