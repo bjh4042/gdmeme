@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AREA_BADGES, unlockedAreaBadges } from "./AreaBadges";
+import { AREA_BADGES, useOwnedAreaBadges } from "./AreaBadges";
 import { useDictStore } from "@/stores/dict";
 import { useAuthStore } from "@/stores/auth";
 import { studentId } from "@/stores/roster";
@@ -8,9 +8,9 @@ import { studentId } from "@/stores/roster";
 export function HeaderAreaBadges() {
   const dict = useDictStore((s) => s.entries);
   const student = useAuthStore((s) => s.student);
+  const sid = student ? studentId(student.classCode, student.number) : "";
+  const owned = useOwnedAreaBadges(sid, dict);
   if (!student) return null;
-  const sid = studentId(student.classCode, student.number);
-  const owned = unlockedAreaBadges(dict, sid);
   if (owned.length === 0) return null;
   return (
     <div className="flex items-center gap-2">
