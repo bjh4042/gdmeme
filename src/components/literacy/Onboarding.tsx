@@ -229,7 +229,17 @@ export function Onboarding({
                   </div>
                 </div>
                 {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
+                <label className="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 accent-[color:var(--navy)] focus:ring-[color:var(--navy)]"
+                  />
+                  <span>☑️ 로그인 정보 기억하기</span>
+                </label>
                 <button
+                  ref={submitRef}
                   type="submit"
                   className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-4 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
                 >
