@@ -22,6 +22,8 @@ export function Onboarding({
   });
   const [logoLoaded, setLogoLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const submitRef = useRef<HTMLButtonElement | null>(null);
+  const [remember, setRemember] = useState(false);
   const [kstTime, setKstTime] = useState("");
   useEffect(() => {
     setKstTime(formatKST());
@@ -34,6 +36,27 @@ export function Onboarding({
     if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
       setLogoLoaded(true);
     }
+  }, []);
+
+  // 최근 로그인 정보 자동 완성
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("last_login_info");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (
+        parsed &&
+        typeof parsed.classCode === "string" &&
+        typeof parsed.number === "string" &&
+        typeof parsed.name === "string"
+      ) {
+        setClassCode(parsed.classCode);
+        setNumber(parsed.number);
+        setName(parsed.name);
+        setRemember(true);
+        window.setTimeout(() => submitRef.current?.focus(), 0);
+      }
+    } catch {}
   }, []);
 
   // 필드별 실시간 유효성 — 사용자가 한 번이라도 입력한 필드에만 오류 노출.
@@ -59,6 +82,18 @@ export function Onboarding({
     if (!trimmedName) return setErr("이름을 입력해 주세요.");
     if (trimmedName.length > 20) return setErr("이름은 20자 이하로 적어주세요.");
     setErr("");
+    if (remember) {
+      try {
+        window.localStorage.setItem(
+          "last_login_info",
+          JSON.stringify({ classCode, number: trimmedNumber, name: trimmedName }),
+        );
+      } catch {}
+    } else {
+      try {
+        window.localStorage.removeItem("last_login_info");
+      } catch {}
+    }
     const dup = roster.find(
       (r) => r.classCode === classCode && r.number === trimmedNumber,
     );
@@ -194,7 +229,17 @@ export function Onboarding({
                   </div>
                 </div>
                 {err && <p className="text-xs text-[color:var(--danger)]">{err}</p>}
+                <label className="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 accent-[color:var(--navy)] focus:ring-[color:var(--navy)]"
+                  />
+                  <span>☑️ 로그인 정보 기억하기</span>
+                </label>
                 <button
+                  ref={submitRef}
                   type="submit"
                   className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-4 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
                 >
