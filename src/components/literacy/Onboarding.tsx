@@ -236,7 +236,7 @@ export function Onboarding({
                     onChange={(e) => setRemember(e.target.checked)}
                     className="w-4 h-4 rounded border-slate-300 accent-[color:var(--navy)] focus:ring-[color:var(--navy)]"
                   />
-                  <span>☑️ 로그인 정보 기억하기</span>
+                  <span>로그인 정보 기억하기</span>
                 </label>
                 <button
                   ref={submitRef}
