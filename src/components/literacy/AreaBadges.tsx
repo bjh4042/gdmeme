@@ -1,26 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
+import { useEngagementStore } from "@/stores/engagement";
 
 // 5대 영역별 최고 등급 칭호 매핑.
 export const AREA_BADGES: {
   key: keyof Evaluation;
+  badgeKey: string; // engagement 저장용 안정 키
   icon: string;
   name: string;
   area: string;
   desc: string;
   color: string;
 }[] = [
-  { key: "aggression", icon: "🛡️", name: "평화의 방패", area: "공격성 제어",
+  { key: "aggression", badgeKey: "area_aggression", icon: "🛡️", name: "평화의 방패", area: "공격성 제어",
     desc: "거친 공격성 말을 멋지게 참아낸 학생", color: "#38bdf8" },
-  { key: "bullying", icon: "🤝", name: "포용의 악수", area: "따돌림 예방",
+  { key: "bullying", badgeKey: "area_bullying", icon: "🤝", name: "포용의 악수", area: "따돌림 예방",
     desc: "친구를 소외시키지 않고 모두를 감싸안은 학생", color: "#f472b6" },
-  { key: "discrimination", icon: "🧡", name: "존중의 물결", area: "혐오성 제어",
+  { key: "discrimination", badgeKey: "area_discrimination", icon: "🧡", name: "존중의 물결", area: "혐오성 제어",
     desc: "차별과 혐오 단어 대신 평등의 가치를 실천한 학생", color: "#fb923c" },
-  { key: "violence", icon: "🕊️", name: "화해의 비둘기", area: "폭력성 제어",
+  { key: "violence", badgeKey: "area_violence", icon: "🕊️", name: "화해의 비둘기", area: "폭력성 제어",
     desc: "사이버 언어폭력을 예방하고 평화를 수호한 학생", color: "#10b981" },
-  { key: "grammar_destruction", icon: "✍️", name: "우리말 지킴이", area: "문법파괴 순화",
+  { key: "grammar_destruction", badgeKey: "area_grammar_destruction", icon: "✍️", name: "우리말 지킴이", area: "문법파괴 순화",
     desc: "파괴된 외계어 밈 대신 고운 표준어를 솔선수범해 쓴 학생", color: "#a78bfa" },
 ];
+
+export const AREA_BADGE_KEYS = AREA_BADGES.map((b) => b.badgeKey);
 
 // 승인된 제안 중 해당 영역 평균이 2.5 이하이면 그 영역 칭호 해금.
 export function unlockedAreaBadges(dict: DictEntry[], suggestedBy: string) {
@@ -33,6 +37,26 @@ export function unlockedAreaBadges(dict: DictEntry[], suggestedBy: string) {
   });
 }
 
+// 파생된 area 뱃지 + engagement 에 이미 저장된 area 뱃지(래칫) 합집합.
+// 한 번 획득하면 새로 등재된 단어로 평균이 올라가더라도 유지된다.
+export function useOwnedAreaBadges(suggestedBy: string, dict: DictEntry[]) {
+  const persisted = useEngagementStore(
+    (s) => s.byStudent[suggestedBy]?.unlockedBadges ?? [],
+  );
+  const syncBadges = useEngagementStore((s) => s.syncBadges);
+  const derived = unlockedAreaBadges(dict, suggestedBy);
+  useEffect(() => {
+    if (!suggestedBy) return;
+    const keys = derived.map((b) => b.badgeKey);
+    if (keys.length) syncBadges(suggestedBy, keys);
+  }, [suggestedBy, derived.map((b) => b.badgeKey).join(","), syncBadges]);
+  const own = new Set<string>([
+    ...derived.map((b) => b.badgeKey),
+    ...persisted.filter((k) => AREA_BADGE_KEYS.includes(k)),
+  ]);
+  return AREA_BADGES.filter((b) => own.has(b.badgeKey));
+}
+
 export function AreaBadgeChips({
   suggestedBy,
   dict,
@@ -42,7 +66,7 @@ export function AreaBadgeChips({
   dict: DictEntry[];
   size?: "sm" | "md";
 }) {
-  const owned = unlockedAreaBadges(dict, suggestedBy);
+  const owned = useOwnedAreaBadges(suggestedBy, dict);
   if (owned.length === 0) return null;
   return (
     <span className="inline-flex flex-wrap gap-1 align-middle">

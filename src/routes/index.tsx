@@ -21,6 +21,7 @@ import { useClassStore, EMPTY_CLASS } from "@/stores/class";
 import { seedClass3105IfNeeded } from "@/lib/seed-3105";
 import { Tutorial, TUTORIAL_STORAGE_KEY } from "@/components/literacy/Tutorial";
 import { HeaderAreaBadges } from "@/components/literacy/HeaderAreaBadges";
+import { BadgeCodexModal } from "@/components/literacy/BadgeCodexModal";
 
 
 export const Route = createFileRoute("/")({
@@ -40,6 +41,7 @@ function Index() {
   const [prefillWord, setPrefillWord] = useState<string | undefined>();
   const [openModalKey, setOpenModalKey] = useState<number | undefined>();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [codexOpen, setCodexOpen] = useState(false);
   const [reportForId, setReportForId] = useState<string | null>(null);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const markLexicographer = useEngagementStore((s) => s.markLexicographer);
@@ -264,6 +266,14 @@ function Index() {
               ❓
             </button>
             <button
+              onClick={() => setCodexOpen(true)}
+              title="뱃지 도감 · 획득/잠금 칭호 보기"
+              aria-label="뱃지 도감"
+              className="w-9 h-9 grid place-items-center rounded-lg bg-[color:var(--muted)] hover:bg-[color:var(--mint)] text-lg"
+            >
+              🏆
+            </button>
+            <button
               onClick={() => setProfileOpen(true)}
               title="내 프로필"
               className="w-9 h-9 grid place-items-center rounded-lg bg-[color:var(--muted)] hover:bg-[color:var(--mint)] text-lg"
@@ -339,6 +349,12 @@ function Index() {
             onClose={() => setProfileOpen(false)}
           />
         );
+      })()}
+
+      {codexOpen && (() => {
+        const rec = roster.students.find((r) => r.id === activeId);
+        if (!rec) return null;
+        return <BadgeCodexModal student={rec} dict={dict} onClose={() => setCodexOpen(false)} />;
       })()}
 
       {reportForId && teacherReportStudent && teacherReportClassState && (
