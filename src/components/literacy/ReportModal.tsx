@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { X, Download, Loader2 } from "lucide-react";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import type { DictEntry, StudentRecord, ClassState } from "@/lib/literacy-types";
 import { levelOf, weatherOf } from "@/lib/literacy-types";
@@ -65,28 +65,27 @@ export function ReportModal({
     if (!cardRef.current) return;
     if (busy) return;
     setBusy(true);
-    const toastId = toast.loading("이미지 저장 중… 잠시만 기다려 주세요.");
+    const toastId = toast.loading("📸 멋진 리포트를 이미지로 굽고 있어요...");
     try {
-      // 로딩 오버레이가 먼저 뜨도록 프레임 양보 + 폰트/이모지/이미지 로드 대기.
       await new Promise((r) => requestAnimationFrame(() => r(null)));
       try {
-        // 웹 폰트가 아직 스왑 중이면 캡처가 fallback으로 렌더되는 문제 방지.
         const fonts = typeof document !== "undefined" ? (document as Document).fonts : undefined;
         if (fonts?.ready) await fonts.ready;
       } catch {
-        /* 폰트 API 미지원 브라우저는 무시 */
+        /* ignore */
       }
-      // 300ms 마이크로 딜레이 — 이모지/이미지 디코드 여유.
-      await new Promise((r) => setTimeout(r, 300));
-      const canvas = await html2canvas(cardRef.current, {
+      // 이모지/웹폰트 로드 대기용 500ms 딜레이.
+      await new Promise((r) => setTimeout(r, 500));
+      const url = await toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
         backgroundColor: "#ffffff",
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        imageTimeout: 15000,
+        style: { transform: "scale(1)", transformOrigin: "top left" },
+        filter: (node) => {
+          if (!(node instanceof HTMLElement)) return true;
+          return node.dataset.captureExclude !== "true";
+        },
       });
-      const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = url;
       a.download = `언어수호리포트_${student.classCode}반_${student.number}번_${student.name}.png`;
@@ -95,7 +94,7 @@ export function ReportModal({
       document.body.removeChild(a);
       toast.success("이미지 저장 완료! 다운로드 폴더를 확인해 주세요.", { id: toastId });
     } catch (err) {
-      console.error("[report] html2canvas failed", err);
+      console.error("[report] html-to-image failed", err);
       toast.error("이미지 저장에 실패했어요. 잠시 후 다시 시도해 주세요.", { id: toastId });
     } finally {
       setBusy(false);
@@ -115,9 +114,9 @@ export function ReportModal({
             <div className="rounded-2xl bg-white/95 shadow-2xl px-6 py-5 flex items-center gap-3">
               <Loader2 className="animate-spin text-[color:var(--navy)]" size={22} />
               <div className="min-w-0">
-                <div className="text-sm font-black text-[color:var(--navy)]">이미지 저장 중…</div>
+                <div className="text-sm font-black text-[color:var(--navy)]">📸 멋진 리포트를 이미지로 굽고 있어요...</div>
                 <div className="text-[11px] text-muted-foreground">
-                  리포트를 PNG로 렌더링하고 있어요. 잠시만 기다려 주세요.
+                  폰트와 이모지를 준비하는 중이에요. 잠시만 기다려 주세요.
                 </div>
               </div>
             </div>
