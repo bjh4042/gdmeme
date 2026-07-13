@@ -67,13 +67,25 @@ export function ReportModal({
     setBusy(true);
     const toastId = toast.loading("이미지 저장 중… 잠시만 기다려 주세요.");
     try {
-      // 렌더 프레임 한 번 양보해서 로딩 UI가 먼저 뜨도록.
+      // 로딩 오버레이가 먼저 뜨도록 프레임 양보 + 폰트/이모지/이미지 로드 대기.
       await new Promise((r) => requestAnimationFrame(() => r(null)));
+      try {
+        // 웹 폰트가 아직 스왑 중이면 캡처가 fallback으로 렌더되는 문제 방지.
+        if (typeof document !== "undefined" && (document as Document).fonts?.ready) {
+          await (document as Document).fonts.ready;
+        }
+      } catch {
+        /* 폰트 API 미지원 브라우저는 무시 */
+      }
+      // 300ms 마이크로 딜레이 — 이모지/이미지 디코드 여유.
+      await new Promise((r) => setTimeout(r, 300));
       const canvas = await html2canvas(cardRef.current, {
         backgroundColor: "#ffffff",
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
+        imageTimeout: 15000,
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
