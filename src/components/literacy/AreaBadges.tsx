@@ -40,9 +40,11 @@ export function unlockedAreaBadges(dict: DictEntry[], suggestedBy: string) {
 // 파생된 area 뱃지 + engagement 에 이미 저장된 area 뱃지(래칫) 합집합.
 // 한 번 획득하면 새로 등재된 단어로 평균이 올라가더라도 유지된다.
 export function useOwnedAreaBadges(suggestedBy: string, dict: DictEntry[]) {
-  const persisted = useEngagementStore(
-    (s) => s.byStudent[suggestedBy]?.unlockedBadges ?? [],
-  );
+  // Return the stored reference (or undefined) — never `?? []` inside the
+  // selector, which creates a fresh array each render and trips Zustand's
+  // "getSnapshot should be cached" infinite-loop guard.
+  const persistedRaw = useEngagementStore((s) => s.byStudent[suggestedBy]?.unlockedBadges);
+  const persisted = persistedRaw ?? EMPTY_KEYS;
   const syncBadges = useEngagementStore((s) => s.syncBadges);
   const derived = unlockedAreaBadges(dict, suggestedBy);
   useEffect(() => {
