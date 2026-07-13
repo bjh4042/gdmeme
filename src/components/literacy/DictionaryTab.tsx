@@ -109,7 +109,7 @@ export function DictionaryTab({
         </button>
       </div>
 
-      <div className="glass-soft p-3">
+      <div data-tour="dict-search" className="glass-soft p-3">
         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] mb-3">
           <label className="relative">
             <span className="sr-only">단어·출처 검색</span>
@@ -143,7 +143,7 @@ export function DictionaryTab({
               </button>
             ))}
           </div>
-          <div role="radiogroup" aria-label="위험도 필터" className="flex gap-1 bg-white/50 rounded-2xl p-1">
+          <div data-tour="dict-filter-tabs" role="radiogroup" aria-label="위험도 필터" className="flex gap-1 bg-white/50 rounded-2xl p-1">
             {[
               { id: "all", label: "🌐 전체", tone: "" },
               { id: "safe", label: "🟢 안전", tone: "var(--safe)" },
@@ -297,11 +297,13 @@ function EntryCard({
       <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex flex-wrap items-center justify-between gap-1">
         <span className="inline-flex items-center gap-1.5 flex-wrap">
           <span>제안 {entry.suggested_by}</span>
-          <AreaBadgeChips suggestedBy={entry.suggested_by} dict={dict} />
+          <span data-tour="area-badges">
+            <AreaBadgeChips suggestedBy={entry.suggested_by} dict={dict} />
+          </span>
         </span>
         <span>투표 {entry.vote_count ?? 1}</span>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-1.5">
+      <div data-tour="dict-votes" className="mt-3 grid grid-cols-3 gap-1.5">
         {REACTIONS.map((r) => {
           const on = mine.includes(r.key);
           return (
