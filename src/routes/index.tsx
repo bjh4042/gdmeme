@@ -312,6 +312,9 @@ function Index() {
             </button>
           </div>
         </div>
+        <div className="bg-gray-50 border-t border-gray-100 text-gray-500 text-xs text-center py-1 px-3">
+          🖥️ 본 장학 플랫폼은 학교 PC 및 태블릿(가로 모드) 환경에 최적화되어 구동됩니다.
+        </div>
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
