@@ -178,7 +178,7 @@ export function Tutorial({
           y="0"
           width={vp.w}
           height={vp.h}
-          fill="rgba(2, 6, 23, 0.7)"
+          fill="rgba(2, 6, 23, 0.82)"
           mask="url(#tour-mask)"
         />
         {rect && (
