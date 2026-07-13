@@ -2,7 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { AREA_BADGES, useOwnedAreaBadges } from "./AreaBadges";
 import { useDictStore } from "@/stores/dict";
 import { useAuthStore } from "@/stores/auth";
-import { studentId } from "@/stores/roster";
+import { studentId, useRosterStore } from "@/stores/roster";
+import { useEngagementStore } from "@/stores/engagement";
+import {
+  BADGES_SORTED,
+  TIER_LABEL,
+  derivedUnlocked,
+  type BadgeDef,
+  type BadgeStats,
+} from "@/lib/badges";
+
+type HeaderBadge = {
+  key: string;
+  icon: string;
+  name: string;
+  area: string;
+  desc: string;
+  color: string;
+  tierLabel?: string;
+};
 
 // 헤더 GNB 전용: 5대 영역 최고 등급 칭호를 항상 표시하는 소형 칩.
 export function HeaderAreaBadges() {
@@ -10,18 +28,58 @@ export function HeaderAreaBadges() {
   const student = useAuthStore((s) => s.student);
   const sid = student ? studentId(student.classCode, student.number) : "";
   const owned = useOwnedAreaBadges(sid, dict);
+  const rec = useRosterStore((s) => s.students.find((r) => r.id === sid));
+  const engagement = useEngagementStore((s) => s.byStudent[sid]);
+  const syncBadges = useEngagementStore((s) => s.syncBadges);
+
+  const stats: BadgeStats = {
+    approvedWords: dict.filter((d) => d.suggested_by === sid && d.status === "approved").length,
+    totalXP: rec?.xp ?? 0,
+    votedCount: engagement?.likesGivenCount ?? 0,
+    journalStreak: engagement?.streak ?? 0,
+  };
+  const autoTrack = derivedUnlocked(stats);
+  useEffect(() => {
+    if (sid && autoTrack.length) syncBadges(sid, autoTrack);
+  }, [sid, autoTrack.join(","), syncBadges]);
+
   if (!student) return null;
-  if (owned.length === 0) return null;
+
+  const persisted = engagement?.unlockedBadges ?? [];
+  const trackUnlockedKeys = new Set<string>([...persisted, ...autoTrack]);
+  const ownedTracks: BadgeDef[] = BADGES_SORTED.filter((b) => trackUnlockedKeys.has(b.key));
+
+  const chips: HeaderBadge[] = [
+    ...owned.map((b) => ({
+      key: b.badgeKey,
+      icon: b.icon,
+      name: b.name,
+      area: b.area,
+      desc: b.desc,
+      color: b.color,
+    })),
+    ...ownedTracks.map((b) => ({
+      key: b.key,
+      icon: b.icon,
+      name: b.name,
+      area: `${TIER_LABEL[b.tier]} · Lv.${b.tier}`,
+      desc: b.desc,
+      color: b.color,
+      tierLabel: `Lv.${b.tier}`,
+    })),
+  ];
+  if (chips.length === 0) return null;
+
   return (
-    <div className="flex items-center gap-2">
-      {owned.map((b) => (
+    <div className="flex flex-row flex-wrap items-center gap-1.5">
+      {chips.map((b) => (
         <HeaderChip key={b.key} badge={b} />
       ))}
     </div>
   );
 }
 
-function HeaderChip({ badge }: { badge: (typeof AREA_BADGES)[number] }) {
+function HeaderChip({ badge }: { badge: HeaderBadge }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,6 +117,9 @@ function HeaderChip({ badge }: { badge: (typeof AREA_BADGES)[number] }) {
       >
         <span>{badge.icon}</span>
         <span className="hidden md:inline">{badge.name}</span>
+        {badge.tierLabel && (
+          <span className="hidden md:inline font-mono opacity-80">· {badge.tierLabel}</span>
+        )}
       </button>
       {open && (
         <div
