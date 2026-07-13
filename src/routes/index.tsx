@@ -24,6 +24,13 @@ import { HeaderAreaBadges } from "@/components/literacy/HeaderAreaBadges";
 import { BadgeCodexModal } from "@/components/literacy/BadgeCodexModal";
 import { WeeklySurveyModal } from "@/components/literacy/WeeklySurveyModal";
 import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey";
+import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
+import { STAGES, type StageKey } from "@/lib/roadmap";
+
+function tabToStage(tab: Tab): StageKey {
+  const meta = STAGES.find((s) => s.tabHint === tab);
+  return meta?.key ?? "discover";
+}
 
 
 export const Route = createFileRoute("/")({
@@ -217,6 +224,14 @@ function Index() {
   const dictNode = useMemo(
     () => (
       <div className="space-y-6">
+        {student && (
+          <RoadmapCard
+            studentId={activeId}
+            classCode={student.classCode}
+            dict={dict}
+            onStageJump={(t) => setTab(t)}
+          />
+        )}
         <DashboardTab dict={dict} state={state} classCode={student?.classCode} />
         {student && (
           <DictionaryTab
@@ -229,7 +244,7 @@ function Index() {
         )}
       </div>
     ),
-    [dict, state, student, prefillWord, openModalKey, onDictSubmit],
+    [dict, state, student, prefillWord, openModalKey, onDictSubmit, activeId],
   );
 
   if (!student || !hydrated) {
@@ -318,6 +333,12 @@ function Index() {
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <StageChip stage={tabToStage(tab)} />
+          <span className="text-[10px] text-slate-400">
+            바른말 수호 5단계 학습 중
+          </span>
+        </div>
         <div hidden={tab !== "analyze"}>{analyzerNode}</div>
         <div hidden={tab !== "chat"}>{chatbotNode}</div>
         <div hidden={tab !== "assist"}>{assistNode}</div>

@@ -26,6 +26,8 @@ export type StudentEngagement = {
   lastJournalDate?: string;
   unlockedBadges: BadgeKey[];
   roleplayCleared: string[];
+  /** 「바른말 수호 5단계」 실천 로그 — 선택적 확장 (기존 데이터와 호환). */
+  practiceLogs?: { date: string; note?: string }[];
 };
 
 export const EMPTY_ENGAGEMENT: StudentEngagement = {
@@ -35,6 +37,7 @@ export const EMPTY_ENGAGEMENT: StudentEngagement = {
   streak: 0,
   unlockedBadges: [],
   roleplayCleared: [],
+  practiceLogs: [],
 };
 
 type ReactArgs = {
@@ -60,6 +63,7 @@ type EngagementState = {
   markLexicographer: (authorId: string) => void;
   reportRoleplayClear: (studentId: string, scenarioId: string, total: number) => boolean;
   syncBadges: (studentId: string, keys: string[]) => void;
+  logPractice: (studentId: string, note?: string) => { ok: boolean; already?: boolean; total: number };
 };
 
 function today() {
@@ -215,6 +219,19 @@ export const useEngagementStore = create<EngagementState>()(
           if (merged.length === cur.unlockedBadges.length) return s;
           return { byStudent: { ...s.byStudent, [studentId]: { ...cur, unlockedBadges: merged } } };
         });
+      },
+      logPractice: (studentId, note) => {
+        if (!studentId) return { ok: false, total: 0 };
+        const st = get();
+        const cur = st.byStudent[studentId] ?? EMPTY_ENGAGEMENT;
+        const logs = cur.practiceLogs ?? [];
+        const td = today();
+        if (logs.some((l) => l.date === td)) return { ok: false, already: true, total: logs.length };
+        const nextLogs = [...logs, { date: td, note: note?.trim().slice(0, 200) || undefined }].slice(-60);
+        set({
+          byStudent: { ...st.byStudent, [studentId]: { ...cur, practiceLogs: nextLogs } },
+        });
+        return { ok: true, total: nextLogs.length };
       },
     }),
     {
