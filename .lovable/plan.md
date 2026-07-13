@@ -1,96 +1,80 @@
-# 4대 신규 기능 통합 구현안
+# 바른말 수호대 개선 실행 계획
 
-기존 4탭/Zustand/classCode 격리 구조는 그대로 두고, **단일 신규 스토어 `engagement`** 와 **프로필 모달** 하나를 축으로 4가지 기능을 얹습니다.
+요청 범위가 매우 넓어(대시보드 12개 섹션 + 사전·사후 검사 + CSV/XLSX/PDF + 콘텐츠 관리 + 안내 문서 4종 + 테스트 기록 등) 한 번의 응답에 다 담으면 기존 정상 동작 기능(퀴즈·사전·챗봇·기상도·설문·리포트·배지)이 회귀할 위험이 큽니다. 요청하신 "1차 → 2차 → 3차" 순서를 그대로 따라, **1차만 이번 응답에 구현**하고 각 차수 종료 시점에 회귀 확인 후 다음 차수로 진행하겠습니다.
 
-## 1. 신규 상태 — `src/stores/engagement.ts` (Zustand + persist)
+## 현재 구조 요약(재사용 전제)
 
-한 개 스토어에 학생 단위(`studentId = classCode_number`)로 격리된 데이터를 담습니다.
+- 라우팅: 단일 라우트 `src/routes/index.tsx`(405줄). 학생/교사 뷰를 `TeacherGate` + 탭으로 분기.
+- 상태: Zustand 5개 스토어 — `auth`, `class`, `roster`, `dict`, `engagement`. 모두 localStorage persist.
+- 학생 탭: Dashboard / Dictionary / Quiz / Analyzer / Assistant / Chatbot.
+- 교사: `TeacherDashboard.tsx`(1386줄) 이미 방대 — 확장 방식으로만 접근.
+- 데이터: `engagement` 스토어가 학생별 점수·뱃지·활동 이력을 이미 보관.
 
-```ts
-type StudentEngagement = {
-  likesGiven: Record<number /*entryId*/, ("bravo"|"learned"|"cheer")[]>; // 이 학생이 눌러본 반응
-  likesReceivedCount: number;   // 뱃지 조건용
-  journals: { date: string /*YYYY-MM-DD*/; text: string }[]; // 하루 1개
-  streak: number;               // 연속일수(어제 작성 여부로 계산)
-  lastJournalDate?: string;
-  unlockedBadges: string[];     // ["empathy","recorder","lexicographer","etiquette"]
-  quizAllClearRoleplay: boolean;// 5스테이지 올클리어 플래그
-};
+## 1차 (이번 응답에서 구현)
 
-byStudent: Record<string, StudentEngagement>
-likesByEntry: Record<number, Record<string /*studentId*/, ("bravo"|"learned"|"cheer")[]>>; // 어뷰징 방지 소스오브트루스
-```
+### A. 「바른말 수호 5단계」 데이터 모델
 
-액션:
-- `react(entryId, reactorId, authorId, reactorClass, authorClass, kind)` — 이미 눌렀는지 확인 → 신규면 저장 + `roster.addStudentXP(reactorId,+1)` + `roster.addStudentXP(authorId,+1)` + `class.addXP(reactorClass,+1)` + `class.addXP(authorClass,+1)`. 어뷰징 방지 = **학생 1명이 단어 1개당 kind별 1회**.
-- `writeJournal(studentId, text)` — 오늘 이미 있으면 no-op 반환. XP +2, `streak` 계산 후 3연속이면 +10 보너스와 폭죽 이벤트 리턴.
-- `checkBadges(studentId, ctx)` — 조건 만족 시 unlock 반환(신규 획득만).
-- `markLexicographer(authorId)` — 사전 승인 훅에서 호출.
-- `markEtiquetteMaster(studentId)` — 역할극 5스테이지 클리어 훅.
+신규 파일 `src/lib/roadmap.ts`
+- `STAGES = ["discover","dissect","empathize","rewrite","practice"]`와 한글 라벨/설명/아이콘.
+- 기존 활동을 단계에 매핑:
+  - discover ← Dictionary 열람 1회 이상
+  - dissect ← Analyzer 분석 1회 이상 또는 Dictionary 상세 열람
+  - empathize ← Assistant/Chatbot 응답 확인 1회 이상
+  - rewrite ← Quiz 정답 1회 이상 (기존 이벤트 재활용)
+  - practice ← 주간 성찰 설문 응답 or 신규 "실천 미션 체크" 1회
+- `useRoadmapProgress(studentId)` 훅이 `engagement` 스토어 기존 필드만 읽어서 단계별 완료 여부를 파생. **스토어 스키마는 손대지 않음.**
+- 부족한 이벤트(예: rewrite 사유·실천 성찰 텍스트)는 신규 `mission` 하위 필드를 engagement 스토어에 **선택적(optional)** 으로 추가 — 기존 데이터 없으면 undefined로 동작.
 
-가비지 컬렉션: `journals` 90개 초과 시 앞에서 slice, `likesByEntry`는 승인 엔트리 삭제 시 정리(추후 hook).
+### B. 학생 화면: 5단계 학습 로드맵 카드
 
-## 2. UI 통합
+신규 컴포넌트 `src/components/literacy/RoadmapCard.tsx`
+- Dashboard 탭 상단에 삽입 (기존 카드/기상도 유지).
+- 5개 스텝을 가로(데스크톱)/세로(모바일) 반응형으로. 완료(초록 체크)/현재(강조 링)/잠금(회색) 상태 시각화.
+- 각 스텝 클릭 시 해당 탭으로 전환하는 콜백.
+- 5단계 모두 완료 시 "🛡️ 바른말 수호 임무 완료" 축하 오버레이(1회).
 
-### (A) `DictionaryTab.EntryCard` — 공감 버튼
-카드 하단에 3개 버튼(👍/💡/👏). 각 버튼:
-- 클릭 = `useDebouncedAction`으로 400ms 잠금.
-- 이미 눌렀으면 `disabled` + 활성 스타일(pressed).
-- 카운트 표시(`likesByEntry[entryId]` 집계).
-- 클릭 → 스토어 `react()` 호출 → 폭죽 없는 소형 sonner toast + 카드 살짝 흔들림.
+### C. 각 활동 화면 상단 단계 뱃지
 
-props로 `currentStudent`, `onReact(entryId, authorId, authorClass, kind)`를 위쪽에서 주입. 상위 `routes/index.tsx`에서 학급/작성자 정보 매핑.
+`DictionaryTab / AnalyzerTab / AssistantTab / QuizTab / WeeklySurveyModal` 상단에 얇은 칩(`STAGE n · 라벨`)만 추가. 로직 변경 없음.
 
-### (B) 프로필 모달 — `src/components/literacy/ProfileModal.tsx` (신규)
-헤더의 학생 뱃지 영역을 클릭하거나 새로 만든 👤 버튼으로 열림. 내부 섹션:
-1. **오늘의 우리말 성찰**: textarea + "저장(+2 XP)". 오늘 이미 작성했으면 잠금 표시. streak 3 달성 시 canvas-confetti 폭죽 + toast(+10 XP).
-2. **뱃지 도감**: 4칸 grid. 미획득은 grayscale+blur+🔒. 획득은 컬러 도트 아이콘.
-   - `empathy` 공감의 기사: likesGiven 총 5회.
-   - `recorder` 기록의 달인: streak≥3.
-   - `lexicographer` 사전 편찬자: 승인된 자신의 단어≥1.
-   - `etiquette` 예절 마스터: roleplay 5스테이지 올 클리어.
-3. **📄 나의 언어 수호 리포트 보기** 버튼 → `ReportModal` 오픈.
+### D. 실천 미션 & 성찰(가벼운 확장)
 
-### (C) 리포트 모달 — `src/components/literacy/ReportModal.tsx` (신규)
-Glassmorphism 상장 카드. 내부 `ref` 요소를 `html2canvas`로 png export.
-내용: 학생명·소속, 개인 누적 XP, 획득 뱃지 표시, 사전 기여도(승인/제안 수), 역할극 통과율(스토어에서 유도, 없으면 unlock 플래그 기반), 학급 언어 기상도 요약.
-버튼: 💾 부모님께 자랑하기 → `html2canvas(node).then(c => c.toBlob(download))`.
+- Quiz 오답/정답 시 선택적으로 "왜 그렇게 골랐는지 한 줄 이유" 입력란(선택). 저장은 engagement의 신규 `rewriteReasons: string[]`.
+- Dashboard에 "오늘의 실천 체크" 버튼 → `practiceLogs: { date, note }[]` 누적.
+- 둘 다 미입력이어도 기존 흐름 그대로 통과.
 
-**Prop 기반 재사용**: `ReportModal`은 `studentId`를 받아 스토어에서 데이터 조회 → 교사 대시보드에서도 같은 컴포넌트 사용.
+### E. 교사 대시보드 기본 확장 — 학급 현황 & 학생별·단계별 현황
 
-### (D) 교사 대시보드 통합
-학생 목록 각 행에 "📄 리포트" 액션 버튼 추가 → `<ReportModal studentId={r.id} viewerIsTeacher />` 열림. 학부모 배포용으로 PNG 저장 가능.
+`TeacherDashboard.tsx`에 상단 탭 3개 추가(기존 콘텐츠 유지):
+1. **학급 현황**: 등록 학생 수, 참여 학생 수, 전체 완료율, 5단계별 평균 완료율, 최근 7일 활동 수, 미참여 학생 수, 평균 정답률, 실천 미션 완료율 — 카드 + 간단한 막대.
+2. **학생별 학습 현황**: 표(번호/이름 또는 익명코드/최근접속/완료단계/완료율/활동수/정답률/실천 수). 이름/완료율 필터, 익명화 토글(`S01, S02...`), 학생별 초기화(확인 다이얼로그).
+3. **단계별 활동 분석**: 5단계 카드 — 참여/완료/평균 결과/대표 대체표현 요약.
 
-## 3. 훅 연결 (기존 로직 최소 침습)
+모두 **읽기 전용 파생**. `engagement`·`roster` 스토어에서 계산.
 
-- `routes/index.tsx` `onApprove` 이후: `engagement.markLexicographer(applicantId)`.
-- `QuizTab` / `ChatbotTab`에서 역할극 스테이지 완료 시 `awardXP` 옆에 `engagement.reportRoleplayClear(studentId, stageId)` 훅 추가. 스테이지 세트(5)를 모두 클리어하면 `markEtiquetteMaster` 발동.
-- 공감/저널의 XP 지급은 스토어 내부에서 `useRosterStore.getState()`, `useClassStore.getState()`를 직접 호출 → 전역 상태가 즉시 갱신되어 헤더 XP 인디케이터·타임라인이 자동 리렌더(기존 selector 그대로 동작).
+### F. 안전장치
 
-## 4. 의존성
+- 신규 필드는 전부 optional. 마이그레이션 불필요.
+- 라우트 추가 없음(단일 라우트 유지). SEO/head 영향 없음.
+- 타입 검사(`tsgo`)와 시각 확인 후 회귀 확인.
 
-- `bun add zustand`(이미 있음), **`bun add html2canvas canvas-confetti`** (2종 신규).
-- 폭죽은 canvas-confetti의 `fire()` 한 방(리포트/저널 스트릭).
+## 2차 (승인 후 다음 응답)
 
-## 5. 안전장치
+- 사전·사후 검사 폼(4영역 Likert, 역채점 flag), 중복 제출 방지, 재응답 허용.
+- 통계·그래프(막대·레이더) — recharts 사용, 제목/N/단위 표기.
+- CSV/XLSX 내보내기(실명/익명 토글, 기간 필터), 그래프 PNG 저장.
+- A4 인쇄용 요약 보고서(print CSS).
 
-- `classCode` 격리: 공감 XP는 `reactor`와 `author`의 홈 학급 각각에만 가산 → 다른 학급 XP는 절대 오염되지 않음.
-- 어뷰징 방지: `likesByEntry[entryId][studentId]` 배열에 kind가 이미 있으면 액션 무시(스토어 레벨) + 버튼 `disabled`(UI 레벨) 2중 방어.
-- 저널: `lastJournalDate === today`면 저장 버튼 잠금.
-- 뱃지 해금은 조건 재계산 시 신규만 unlock 배열에 push(중복 방지).
+## 3차 (승인 후 다음 응답)
 
-## 6. 파일 변경 요약
+- 콘텐츠 관리(밈/신조어 CRUD, 필터, 검토일).
+- 개인정보/AI/출처/기기 테스트/연구 활용 자료 안내 페이지(정적, 라우트 or 교사 탭).
+- 성취기준 매핑표.
 
-신규:
-- `src/stores/engagement.ts`
-- `src/components/literacy/ProfileModal.tsx`
-- `src/components/literacy/ReportModal.tsx`
+## 보고 예정 항목(1차 완료 후)
 
-수정:
-- `src/components/literacy/DictionaryTab.tsx` — EntryCard 공감 버튼
-- `src/components/literacy/TeacherDashboard.tsx` — 학생 행 리포트 버튼
-- `src/routes/index.tsx` — Profile/Report 모달 오픈, engagement 훅 연결
-- `src/lib/literacy-store.ts` — 얇은 `useEngagement` 어댑터 노출
-- `src/components/literacy/QuizTab.tsx`, `ChatbotTab.tsx` — 역할극 클리어 시 `reportRoleplayClear`
+파일 목록 · 스토어 필드 추가(optional) · 신규 라우트(없음) · 권한 분리 유지 방식 · 반응형 확인 · 회귀 여부 · 미구현 항목(=2·3차 대기) · 타입 검사 결과.
 
-전 과정 후 `tsgo` 타입체크. 진행할까요?
+---
+
+**진행 방식 확인 요청**: 위 순서(1차만 이번에)로 진행할까요? 아니면 특정 항목(예: 사전·사후 검사, CSV 내보내기)을 1차에 우선 포함해야 할지 알려주세요.
