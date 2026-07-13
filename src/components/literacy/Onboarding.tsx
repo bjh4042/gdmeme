@@ -38,6 +38,27 @@ export function Onboarding({
     }
   }, []);
 
+  // 최근 로그인 정보 자동 완성
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("last_login_info");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (
+        parsed &&
+        typeof parsed.classCode === "string" &&
+        typeof parsed.number === "string" &&
+        typeof parsed.name === "string"
+      ) {
+        setClassCode(parsed.classCode);
+        setNumber(parsed.number);
+        setName(parsed.name);
+        setRemember(true);
+        window.setTimeout(() => submitRef.current?.focus(), 0);
+      }
+    } catch {}
+  }, []);
+
   // 필드별 실시간 유효성 — 사용자가 한 번이라도 입력한 필드에만 오류 노출.
   const trimmedNumber = number.trim();
   const trimmedName = name.trim();
