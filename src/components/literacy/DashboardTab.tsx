@@ -15,19 +15,6 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
     if (approved.length === 0) return 0;
     return Math.round(approved.reduce((s, d) => s + d.total_harmful_score, 0) / approved.length);
   }, [approved]);
-  const areaAvgs = useMemo(() => {
-    const keys: (keyof Evaluation)[] = ["aggression", "bullying", "discrimination", "violence", "grammar_destruction"];
-    const out: Record<string, number> = {};
-    keys.forEach((k) => {
-      if (approved.length === 0) {
-        out[k] = 1;
-        return;
-      }
-      const s = approved.reduce((acc, d) => acc + (d.evaluations?.[k] ?? 1), 0);
-      out[k] = Math.round((s / approved.length) * 10) / 10;
-    });
-    return out;
-  }, [approved]);
   const weather = weatherOf(avg);
   const lv = levelOf(state.xp);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -71,44 +58,6 @@ export function DashboardTab({ dict, state }: { dict: DictEntry[]; state: ClassS
       </div>
 
       {infoOpen && <WeatherInfoModal avg={avg} onClose={() => setInfoOpen(false)} />}
-
-      <div data-tour="literacy-chart" className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-5">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <div className="text-xs font-bold text-muted-foreground uppercase">5대 리터러시 평가</div>
-            <div className="text-sm font-black text-[color:var(--navy)]">우리 반 세부 영역 평균 (1.0 ~ 5.0)</div>
-          </div>
-          <div className="text-[10px] text-muted-foreground">낮을수록 건강한 언어</div>
-        </div>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {[
-            { key: "aggression", label: "💥 공격성", tour: "gauge-aggression" },
-            { key: "bullying", label: "🚫 따돌림", tour: "gauge-aggression" },
-            { key: "discrimination", label: "🧡 혐오성", tour: "gauge-hate" },
-            { key: "violence", label: "🕊️ 폭력성", tour: "gauge-hate" },
-            { key: "grammar_destruction", label: "✍️ 문법파괴", tour: "gauge-hate" },
-          ].map((row, i) => {
-            const v = areaAvgs[row.key] ?? 1;
-            const pct = Math.max(0, Math.min(100, ((v - 1) / 4) * 100));
-            const tone = v <= 2 ? "var(--safe)" : v <= 3.5 ? "var(--warn)" : "var(--danger)";
-            const wrapAttr: Record<string, string> = {};
-            // 앞 두 개 게이지 묶음(공격성/따돌림)과 뒤 세 개 묶음(혐오/폭력/문법파괴)에 첫 항목에만 tour 마커
-            if (i === 0) wrapAttr["data-tour"] = "gauge-aggression";
-            if (i === 2) wrapAttr["data-tour"] = "gauge-hate";
-            return (
-              <div key={row.key} {...wrapAttr} className="rounded-xl bg-[color:var(--muted)]/60 p-2.5">
-                <div className="flex items-center justify-between text-xs font-bold text-[color:var(--navy)]">
-                  <span>{row.label}</span>
-                  <span className="font-mono" style={{ color: tone }}>{v.toFixed(1)}</span>
-                </div>
-                <div className="h-2 mt-1 rounded-full bg-white/70 overflow-hidden">
-                  <div className="h-full transition-all" style={{ width: `${pct}%`, background: tone }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6">
