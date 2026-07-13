@@ -27,6 +27,11 @@ import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey"
 import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { STAGES, type StageKey } from "@/lib/roadmap";
 
+function tabToStage(tab: Tab): StageKey {
+  const meta = STAGES.find((s) => s.tabHint === tab);
+  return meta?.key ?? "discover";
+}
+
 
 export const Route = createFileRoute("/")({
   component: Index,
