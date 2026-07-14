@@ -130,9 +130,7 @@ export function RoadmapTeacherPanel({
                 aria-selected={view === t.id}
                 onClick={() => setView(t.id as typeof view)}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  view === t.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-slate-600"
+                  view === t.id ? "bg-primary text-primary-foreground" : "text-slate-600"
                 }`}
               >
                 {t.label}
