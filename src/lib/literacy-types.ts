@@ -51,9 +51,23 @@ export function computeTotal(e: Evaluation) {
 }
 
 export function gradeOf(score: number): { label: string; tone: "safe" | "warn" | "danger"; emoji: string } {
-  if (score <= 40) return { label: "안전/순화 필요", tone: "safe", emoji: "🟢" };
-  if (score <= 70) return { label: "주의/경고", tone: "warn", emoji: "🟡" };
+  // 시스템 전역 단일 기준(SSOT): 0–39 안전, 40–69 주의/경고, 70–100 위험.
+  if (score < RISK_THRESHOLDS.mild) return { label: "안전/순화 필요", tone: "safe", emoji: "🟢" };
+  if (score < RISK_THRESHOLDS.danger) return { label: "주의/경고", tone: "warn", emoji: "🟡" };
   return { label: "위험/사용 금지", tone: "danger", emoji: "🔴" };
+}
+
+// 100점 만점 유해 점수 구간의 유일한 기준점.
+// 필터 탭·뱃지·통계 어디서든 이 상수/함수만 참조한다.
+export const RISK_THRESHOLDS = { safe: 0, mild: 40, danger: 70 } as const;
+
+export type RiskBucket = "safe" | "mild" | "danger";
+
+export function riskBucketOf(score: number): RiskBucket {
+  const s = Math.max(0, Math.min(100, Math.round(score ?? 0)));
+  if (s < RISK_THRESHOLDS.mild) return "safe";
+  if (s < RISK_THRESHOLDS.danger) return "mild";
+  return "danger";
 }
 
 export type WeatherTier = {
