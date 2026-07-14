@@ -35,12 +35,13 @@ import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey"
 import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { stageContextForTab } from "@/lib/stage-context";
 import { AppSidebar, type SidebarKey } from "@/components/literacy/AppSidebar";
+import { HomeTab } from "@/components/literacy/HomeTab";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "analyze" | "chat" | "assist" | "quiz" | "dict";
+type Tab = "home" | "analyze" | "chat" | "assist" | "quiz" | "dict";
 
 function Index() {
   const hydrated = useHydrated();
@@ -48,7 +49,7 @@ function Index() {
   const { dict, addProposal, setStatus, updateEntry, resetSeed } = useDictionary();
   const { state, addXP, setXP } = useClassState(student?.classCode);
   const roster = useStudents();
-  const [tab, setTab] = useState<Tab>("analyze");
+  const [tab, setTab] = useState<Tab>("home");
   const [teacherOpen, setTeacherOpen] = useState(false);
   const [prefillWord, setPrefillWord] = useState<string | undefined>();
   const [openModalKey, setOpenModalKey] = useState<number | undefined>();
@@ -261,6 +262,21 @@ function Index() {
     [dict, state, student, prefillWord, openModalKey, onDictSubmit, activeId],
   );
 
+  const homeNode = useMemo(
+    () =>
+      student ? (
+        <HomeTab
+          studentName={student.name}
+          classCode={student.classCode}
+          studentNumber={student.number}
+          activeId={activeId}
+          dict={dict}
+          onJump={(t) => setTab(t)}
+        />
+      ) : null,
+    [student, activeId, dict],
+  );
+
   if (!student || !hydrated) {
     // hydrated 가 false 인 동안(SSR + 첫 클라 렌더)에는 스플래시를 보여
     // 자동 로그인 복원 중 폼이 잠깐 깜빡이는 현상을 방지.
@@ -293,6 +309,7 @@ function Index() {
     >
       <AppSidebar
         activeKey={((): SidebarKey => {
+          if (tab === "home") return "home";
           if (tab === "analyze") return "analyze";
           if (tab === "dict") return "dict";
           if (tab === "quiz") return "quiz";
@@ -302,6 +319,8 @@ function Index() {
         onSelect={(key) => {
           switch (key) {
             case "home":
+              setTab("home");
+              break;
             case "analyze":
               setTab("analyze");
               break;
@@ -315,7 +334,7 @@ function Index() {
               setTab("assist");
               break;
             case "roadmap":
-              setTab("dict");
+              setTab("home");
               break;
             case "badges":
               setCodexOpen(true);
@@ -394,7 +413,7 @@ function Index() {
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
-        {(() => {
+        {tab !== "home" && (() => {
           const ctx = stageContextForTab(tab);
           return (
             <div className="mb-3 rounded-2xl bg-white/60 border border-white/70 px-3 py-2.5">
@@ -416,6 +435,7 @@ function Index() {
             </div>
           );
         })()}
+        <div hidden={tab !== "home"}>{homeNode}</div>
         <div hidden={tab !== "analyze"}>{analyzerNode}</div>
         <div hidden={tab !== "chat"}>{chatbotNode}</div>
         <div hidden={tab !== "assist"}>{assistNode}</div>
