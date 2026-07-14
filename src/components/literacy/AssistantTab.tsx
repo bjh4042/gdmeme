@@ -272,7 +272,7 @@ export function AssistantTab({
           style={{ scrollbarWidth: "none" }}
         >
           <style>{`.assistant-chips::-webkit-scrollbar{display:none}`}</style>
-          {(dynamicChips ?? QUICK_REPLIES).map((q, i) => (
+          {(dynamicChips ?? rotatingQuickReplies).map((q, i) => (
             <button
               key={`${q.label}-${i}`}
               onClick={() => send(q.prompt)}
