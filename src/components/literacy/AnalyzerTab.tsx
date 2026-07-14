@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { DictEntry } from "@/lib/literacy-types";
 import { gradeOf } from "@/lib/literacy-types";
+import { harmHints } from "@/lib/harm-hints";
 
 const DEFAULT_TRENDS: Record<string, number> = {
   어쩔티비: 10,
@@ -204,32 +205,78 @@ function AnalyzerCard({ entry }: { entry: DictEntry }) {
   const bg =
     g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
   const Icon = g.tone === "safe" ? ShieldCheck : g.tone === "warn" ? ShieldQuestion : ShieldAlert;
+  const hints = harmHints(entry.evaluations);
   return (
-    <div className="glass-card p-5">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 mb-2">
+    <div className="glass-card p-5 hover:-translate-y-1 transition-all duration-300">
+      {/* 1) 표현 */}
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 mb-3">
         <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">{entry.word}</h3>
         <span
           className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm"
           style={{ background: bg }}
         >
-          <Icon size={12} /> {entry.total_harmful_score} · {g.label}
+          <Icon size={12} /> {g.label}
         </span>
       </div>
+      {/* 2) 뜻 */}
+      <div className="mb-3">
+        <div className="text-[11px] font-black text-[color:var(--mint-deep)] mb-1">
+          📖 우리가 정리한 뜻
+        </div>
+        {entry.student_definition?.trim() ? (
+          <p className="text-sm text-[color:var(--navy)]">{entry.student_definition}</p>
+        ) : (
+          <p className="text-xs text-slate-400 italic">아직 정리된 뜻이 없어요.</p>
+        )}
+      </div>
+      {/* 3) 출처 */}
       {entry.source && (
-        <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
+        <div className="mb-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
           <Radio size={11} /> 출처 · {entry.source}
         </div>
       )}
-      <p className="text-sm text-[color:var(--navy)] mb-3">{entry.student_definition}</p>
+      {/* 4) 유해성 */}
+      <div className="mb-3">
+        <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-1">
+          <span>5대 유해성 종합 점수</span>
+          <span style={{ color: bg }}>{entry.total_harmful_score}/100</span>
+        </div>
+        <div className="h-2 rounded-full bg-white/60 overflow-hidden">
+          <div
+            className="h-full transition-all duration-500"
+            style={{ width: `${entry.total_harmful_score}%`, background: bg }}
+          />
+        </div>
+      </div>
+      {/* 5) 생각할 점 */}
+      {hints.length > 0 && (
+        <div className="mb-3 rounded-2xl bg-amber-50/70 border border-amber-200 p-2.5">
+          <div className="text-[11px] font-black text-amber-800 mb-1">💭 사용할 때 생각할 점</div>
+          <ul className="space-y-0.5 text-[11px] text-amber-900">
+            {hints.map((h, i) => (
+              <li key={i}>
+                <span aria-hidden>{h.icon}</span> {h.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {/* 6) 대체 표현 */}
       <div className="rounded-2xl bg-white/60 p-3">
         <div className="text-xs font-bold text-[color:var(--mint-deep)] mb-1 flex items-center gap-1">
           <Sparkles size={12} /> 바른 우리말 대안
         </div>
-        <ul className="text-sm text-[color:var(--navy)] space-y-0.5">
-          {entry.alternatives.map((a, i) => (
-            <li key={i}>· {a}</li>
-          ))}
-        </ul>
+        {entry.alternatives && entry.alternatives.length > 0 ? (
+          <ul className="text-sm text-[color:var(--navy)] space-y-0.5">
+            {entry.alternatives.map((a, i) => (
+              <li key={i}>· {a}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-slate-400 italic">
+            아직 대안 표현이 없어요. 사전 등록에서 함께 만들어 봐요.
+          </p>
+        )}
       </div>
     </div>
   );
