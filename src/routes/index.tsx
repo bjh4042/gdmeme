@@ -288,7 +288,7 @@ function Index() {
 
   return (
     <div
-      className="min-h-screen w-full max-w-full overflow-x-hidden pastel-bg"
+      className="min-h-screen w-full max-w-full overflow-x-hidden pastel-bg lg:pl-60"
       style={{ paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))" }}
     >
       <AppSidebar
