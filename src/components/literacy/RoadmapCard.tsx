@@ -16,13 +16,11 @@ export function RoadmapCard({
   classCode,
   dict,
   onStageJump,
-  onOpenSurvey,
 }: {
   studentId: string;
   classCode: string;
   dict: DictEntry[];
   onStageJump?: (tab: "analyze" | "chat" | "assist" | "quiz" | "dict") => void;
-  onOpenSurvey?: (stage: "pre" | "post") => void;
 }) {
   const engagement = useEngagementStore((s) => s.byStudent[studentId]);
   const logPractice = useEngagementStore((s) => s.logPractice);
@@ -137,26 +135,6 @@ export function RoadmapCard({
           💡 지금 도전: <b>{STAGES[rm.currentIndex]?.title ?? "완료"}</b> — {STAGES[rm.currentIndex]?.hint ?? "5단계 모두 완료했어요!"}
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {onOpenSurvey && (
-            <>
-              <button
-                type="button"
-                onClick={() => onOpenSurvey("pre")}
-                className="rounded-full bg-slate-100 text-slate-700 font-bold px-3 py-1.5 hover:bg-slate-200 transition border border-slate-300"
-                title="수업 시작 전 자기 점검"
-              >
-                🧭 사전 검사
-              </button>
-              <button
-                type="button"
-                onClick={() => onOpenSurvey("post")}
-                className="rounded-full bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold px-3 py-1.5 hover:opacity-90 transition"
-                title="수업 마무리 자기 점검"
-              >
-                🏁 사후 검사
-              </button>
-            </>
-          )}
           <button
             type="button"
             onClick={handlePracticeCheck}

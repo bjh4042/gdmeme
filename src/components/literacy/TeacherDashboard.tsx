@@ -6,7 +6,6 @@ import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { useDictStore } from "@/stores/dict";
 import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
-import { SurveyAnalyticsPanel } from "./SurveyAnalyticsPanel";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
@@ -493,7 +492,6 @@ export function TeacherDashboard({
 
         <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
 
-        <SurveyAnalyticsPanel students={students} currentClassCode={currentClassCode} dict={dict} />
 
         {section === "words" ? (
           <>
