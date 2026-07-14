@@ -59,14 +59,14 @@ export function AssistantTab({
         const parsed = JSON.parse(raw) as ChatMsg[];
         if (Array.isArray(parsed) && parsed.length > 0) setMsgs(parsed);
       }
-    } catch {}
+    } catch { /* storage/parse 실패 무시 */ }
   }, []);
 
   // Persist
   useEffect(() => {
     try {
       window.localStorage.setItem(STORE_KEY, JSON.stringify(msgs.slice(-100)));
-    } catch {}
+    } catch { /* storage/parse 실패 무시 */ }
   }, [msgs]);
 
   // Auto-scroll to bottom on new messages / typing

@@ -121,7 +121,7 @@ export function deriveRoadmap(input: {
   try {
     const ans = loadMyAnswer(classCode, studentId);
     surveyThisWeek = !!ans && ans.weekKey === isoWeekKey();
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
 
   // 1) 발견하기 — 사전 열람/제안 or 로그인만으로도 시작. 첫 제안 있으면 100%.
   const discoverProg = proposedByMe.length > 0 ? 1 : likesGiven > 0 || journals > 0 ? 0.5 : 0;

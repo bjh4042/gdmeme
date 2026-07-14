@@ -56,7 +56,7 @@ export function Onboarding({
         setRemember(true);
         window.setTimeout(() => submitRef.current?.focus(), 0);
       }
-    } catch {}
+    } catch { /* storage/parse 실패 무시 */ }
   }, []);
 
   // 필드별 실시간 유효성 — 사용자가 한 번이라도 입력한 필드에만 오류 노출.
@@ -88,11 +88,11 @@ export function Onboarding({
           "last_login_info",
           JSON.stringify({ classCode, number: trimmedNumber, name: trimmedName }),
         );
-      } catch {}
+      } catch { /* storage/parse 실패 무시 */ }
     } else {
       try {
         window.localStorage.removeItem("last_login_info");
-      } catch {}
+      } catch { /* storage/parse 실패 무시 */ }
     }
     const dup = roster.find((r) => r.classCode === classCode && r.number === trimmedNumber);
     if (dup && dup.name.trim() !== trimmedName) {

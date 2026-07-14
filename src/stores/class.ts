@@ -31,7 +31,7 @@ function migrateLegacy(): Record<string, ClassState> {
               ? parsed.activityLog.map((a) => ({ ...a, classCode: a.classCode ?? code }))
               : [],
           };
-        } catch {}
+        } catch { /* storage/parse 실패 무시 */ }
         window.localStorage.removeItem(LEGACY_COMBINED_PREFIX + code);
       } else {
         const xp =
@@ -48,7 +48,7 @@ function migrateLegacy(): Record<string, ClassState> {
       window.localStorage.removeItem(LEGACY_XP_PREFIX + code);
       window.localStorage.removeItem(LEGACY_ACT_PREFIX + code);
     }
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
   return out;
 }
 
@@ -63,7 +63,7 @@ if (typeof window !== "undefined") {
         );
       }
     }
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
 }
 
 type ClassStoreState = {

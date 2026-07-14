@@ -465,7 +465,7 @@ export function seedClass3105IfNeeded() {
 
   try {
     window.localStorage.setItem(SEED_FLAG, "1");
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
 }
 
 function buildEngagement(row: Row) {

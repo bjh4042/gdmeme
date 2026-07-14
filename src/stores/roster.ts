@@ -17,7 +17,7 @@ if (typeof window !== "undefined") {
         window.localStorage.removeItem(LEGACY_KEY);
       }
     }
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
 }
 
 function studentId(classCode: string, number: string) {

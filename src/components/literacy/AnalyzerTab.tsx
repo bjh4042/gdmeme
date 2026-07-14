@@ -34,14 +34,14 @@ function readCounts(classCode: string): Record<string, number> {
     }
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === "object") return parsed as Record<string, number>;
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
   return { ...DEFAULT_TRENDS };
 }
 
 function writeCounts(classCode: string, next: Record<string, number>) {
   try {
     window.localStorage.setItem(storageKey(classCode), JSON.stringify(next));
-  } catch {}
+  } catch { /* storage/parse 실패 무시 */ }
 }
 
 export function AnalyzerTab({

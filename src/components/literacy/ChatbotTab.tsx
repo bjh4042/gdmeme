@@ -172,7 +172,7 @@ export function ChatbotTab({
           }
           setRooms(merged);
         }
-      } catch {}
+      } catch { /* storage/parse 실패 무시 */ }
     }
     setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,7 +183,7 @@ export function ChatbotTab({
     if (!hydrated) return;
     try {
       window.localStorage.setItem(storageKey, JSON.stringify(rooms));
-    } catch {}
+    } catch { /* storage/parse 실패 무시 */ }
   }, [rooms, hydrated, storageKey]);
 
   const unlockedIds = useMemo(
@@ -319,7 +319,7 @@ export function ChatbotTab({
     if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
       try {
         window.history.pushState({ wtChat: true, id }, "");
-      } catch {}
+      } catch { /* storage/parse 실패 무시 */ }
     }
   }
 
