@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, AlertTriangle, Siren } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
-import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, sortByInitial } from "@/lib/literacy-types";
+import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, riskBucketOf, sortByInitial } from "@/lib/literacy-types";
 import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
 import { AreaBadgeChips } from "./AreaBadges";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
@@ -51,26 +51,11 @@ export function DictionaryTab({
   }, [dict]);
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
-    // 위험도 탭 4분기 엄격 매칭 명세:
-    //  · 전체   → 조건 없이 통과
-    //  · 안전   → 점수 ≤ 20 이고 grade 가 "안전/순화 필요"
-    //  · 순화   → 점수 21~40 이고 grade 가 "안전/순화 필요"
-    //  · 위험   → grade 가 "주의/경고" 또는 "위험/사용 금지", 혹은 점수 ≥ 41
+    // 위험도 탭은 SSOT 인 riskBucketOf() 결과 하나로만 판정한다.
+    // (0–39 safe · 40–69 mild · 70–100 danger) — 카드 뱃지의 gradeOf() 와 동일 기준.
     const passRisk = (d: DictEntry) => {
       if (risk === "all") return true;
-      const score = d.total_harmful_score ?? 0;
-      const g = (d.grade ?? "").trim();
-      const isSafeGrade = g === "안전/순화 필요";
-      const isWarnGrade = g === "주의/경고";
-      const isDangerGrade = g === "위험/사용 금지";
-      if (risk === "safe") return isSafeGrade && score <= 20;
-      if (risk === "mild") return isSafeGrade && score > 20 && score <= 40;
-      // danger 탭: 안전·순화 필드는 절대 포함되지 않도록 이중 차단
-      if (risk === "danger") {
-        if (isSafeGrade) return false;
-        return isWarnGrade || isDangerGrade || score >= 41;
-      }
-      return true;
+      return riskBucketOf(d.total_harmful_score ?? 0) === risk;
     };
     return approved.filter((d) => {
       if (filter !== "전체" && firstInitial(d.word) !== filter) return false;
