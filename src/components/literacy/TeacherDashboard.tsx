@@ -575,7 +575,11 @@ export function TeacherDashboard({
 
         {/* 2) 로드맵 */}
         <DashboardCard title="학습 로드맵" subtitle="단계별 학급 진행률" className="mb-4">
-          <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
+          <RoadmapTeacherPanel
+            students={students}
+            currentClassCode={currentClassCode}
+            dict={dict}
+          />
         </DashboardCard>
 
         {/* 3) 학생 현황 */}
@@ -610,122 +614,124 @@ export function TeacherDashboard({
               subtitle="검색·필터·상태별 승인 처리"
               className="mb-4"
             >
-            {/* Search bar */}
-            <div className="relative mb-4">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
-                className="w-full rounded-xl border border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center rounded-full hover:bg-black/5"
-                  aria-label="검색 초기화"
-                >
-                  <X size={14} />
-                </button>
+              {/* Search bar */}
+              <div className="relative mb-4">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
+                  className="w-full rounded-xl border border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
+                {query && (
+                  <button
+                    onClick={() => setQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center rounded-full hover:bg-black/5"
+                    aria-label="검색 초기화"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              {/* Filters */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                <label className="flex flex-col gap-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">교육과정 코드</span>
+                  <select
+                    value={curriculumFilter}
+                    onChange={(e) => setCurriculumFilter(e.target.value)}
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="all">전체</option>
+                    {curriculumOptions.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">유해 등급</span>
+                  <select
+                    value={gradeFilter}
+                    onChange={(e) => setGradeFilter(e.target.value)}
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="all">전체</option>
+                    {gradeOptions.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">승인 상태</span>
+                  <select
+                    value={status}
+                    onChange={(e) =>
+                      setStatus(e.target.value as "pending" | "approved" | "rejected")
+                    }
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="pending">대기 ({pending.length})</option>
+                    <option value="approved">승인 ({approved.length})</option>
+                    <option value="rejected">반려 ({rejected.length})</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                <TabStat
+                  label="대기"
+                  n={pending.length}
+                  active={status === "pending"}
+                  color="var(--warn)"
+                  onClick={() => setStatus("pending")}
+                />
+                <TabStat
+                  label="승인"
+                  n={approved.length}
+                  active={status === "approved"}
+                  color="var(--safe)"
+                  onClick={() => setStatus("approved")}
+                />
+                <TabStat
+                  label="반려"
+                  n={rejected.length}
+                  active={status === "rejected"}
+                  color="var(--danger)"
+                  onClick={() => setStatus("rejected")}
+                />
+              </div>
+
+              <div className="text-xs text-muted-foreground mb-2">
+                총 <b className="text-[color:var(--navy)]">{list.length}</b>개
+                {query && <> · 검색어 "{query}"</>}
+              </div>
+
+              {list.length === 0 ? (
+                <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
+                  {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {list.map((d) => (
+                    <EntryRow
+                      key={d.id}
+                      entry={d}
+                      showActions={status === "pending"}
+                      onApprove={onApprove}
+                      onReject={onReject}
+                      onEdit={() => setEditingId(d.id)}
+                    />
+                  ))}
+                </div>
               )}
-            </div>
-
-            {/* Filters */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-muted-foreground">교육과정 코드</span>
-                <select
-                  value={curriculumFilter}
-                  onChange={(e) => setCurriculumFilter(e.target.value)}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
-                >
-                  <option value="all">전체</option>
-                  {curriculumOptions.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-muted-foreground">유해 등급</span>
-                <select
-                  value={gradeFilter}
-                  onChange={(e) => setGradeFilter(e.target.value)}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
-                >
-                  <option value="all">전체</option>
-                  {gradeOptions.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                <span className="text-[11px] font-bold text-muted-foreground">승인 상태</span>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as "pending" | "approved" | "rejected")}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
-                >
-                  <option value="pending">대기 ({pending.length})</option>
-                  <option value="approved">승인 ({approved.length})</option>
-                  <option value="rejected">반려 ({rejected.length})</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-              <TabStat
-                label="대기"
-                n={pending.length}
-                active={status === "pending"}
-                color="var(--warn)"
-                onClick={() => setStatus("pending")}
-              />
-              <TabStat
-                label="승인"
-                n={approved.length}
-                active={status === "approved"}
-                color="var(--safe)"
-                onClick={() => setStatus("approved")}
-              />
-              <TabStat
-                label="반려"
-                n={rejected.length}
-                active={status === "rejected"}
-                color="var(--danger)"
-                onClick={() => setStatus("rejected")}
-              />
-            </div>
-
-            <div className="text-xs text-muted-foreground mb-2">
-              총 <b className="text-[color:var(--navy)]">{list.length}</b>개
-              {query && <> · 검색어 "{query}"</>}
-            </div>
-
-            {list.length === 0 ? (
-              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {list.map((d) => (
-                  <EntryRow
-                    key={d.id}
-                    entry={d}
-                    showActions={status === "pending"}
-                    onApprove={onApprove}
-                    onReject={onReject}
-                    onEdit={() => setEditingId(d.id)}
-                  />
-                ))}
-              </div>
-            )}
             </DashboardCard>
 
             {/* 6) CSV · 사전 데이터셋 일괄 관리 */}
@@ -734,10 +740,7 @@ export function TeacherDashboard({
               subtitle="CSV로 내려받아 편집 후 업로드 (ID 기준 Upsert)"
               className="mb-4"
             >
-              <div
-                data-tour="admin-csv"
-                className="flex flex-wrap items-center justify-end gap-2"
-              >
+              <div data-tour="admin-csv" className="flex flex-wrap items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={downloadDictCSV}
@@ -1693,9 +1696,7 @@ function DashboardCard({
           <h4 className="text-sm sm:text-base font-black text-[color:var(--navy)] truncate">
             {title}
           </h4>
-          {subtitle && (
-            <p className="text-[11px] text-muted-foreground truncate">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-[11px] text-muted-foreground truncate">{subtitle}</p>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
       </header>
@@ -1727,9 +1728,7 @@ function QuickSummary({
   const avgHarm = useMemo(() => {
     const list = dict.filter((d) => d.status === "approved");
     if (list.length === 0) return 0;
-    return Math.round(
-      list.reduce((s, d) => s + (d.total_harmful_score ?? 0), 0) / list.length,
-    );
+    return Math.round(list.reduce((s, d) => s + (d.total_harmful_score ?? 0), 0) / list.length);
   }, [dict]);
   const items = [
     { label: "학생 수", value: `${students.length}명`, tone: "primary" },
