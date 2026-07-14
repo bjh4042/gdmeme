@@ -36,6 +36,8 @@ type DictState = {
     evaluations: Evaluation;
     suggested_by: string;
     source?: string;
+    context_note?: string;
+    listener_effect?: string;
   }) => void;
   setStatus: (id: number, status: "approved" | "rejected") => void;
   updateEntry: (
@@ -86,6 +88,8 @@ export const useDictStore = create<DictState>()(
               grade: gradeOf(total).label,
               alternatives: Array.from(new Set([...existing.alternatives, ...payload.alternatives])).slice(0, 6),
               source: existing.source || payload.source,
+              context_note: existing.context_note || payload.context_note,
+              listener_effect: existing.listener_effect || payload.listener_effect,
               vote_count: vc,
               sum_eval: sum,
               timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
@@ -101,6 +105,8 @@ export const useDictStore = create<DictState>()(
             student_definition: payload.student_definition,
             suggested_by: payload.suggested_by,
             source: payload.source,
+            context_note: payload.context_note?.trim() || undefined,
+            listener_effect: payload.listener_effect?.trim() || undefined,
             evaluations: payload.evaluations,
             total_harmful_score: total,
             status: "pending",

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, AlertTriangle, Siren } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, riskBucketOf, sortByInitial } from "@/lib/literacy-types";
+import { harmHints } from "@/lib/harm-hints";
 import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
 import { AreaBadgeChips } from "./AreaBadges";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
@@ -15,7 +16,16 @@ export function DictionaryTab({
   openModalKey,
 }: {
   dict: DictEntry[];
-  onSubmit: (payload: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; suggested_by: string; source?: string }) => void;
+  onSubmit: (payload: {
+    word: string;
+    student_definition: string;
+    alternatives: string[];
+    evaluations: Evaluation;
+    suggested_by: string;
+    source?: string;
+    context_note?: string;
+    listener_effect?: string;
+  }) => void;
   student: { classCode: string; number: string; name: string };
   prefillWord?: string;
   openModalKey?: number;
@@ -256,28 +266,80 @@ function EntryCard({
           <Icon size={12} /> {g.label}
         </span>
       </div>
-      {entry.source && (
+      {/* 1) 뜻 */}
+      <div className="mb-2">
+        <div className="text-[11px] font-black text-[color:var(--mint-deep)] mb-0.5">📖 우리가 정리한 뜻</div>
+        {entry.student_definition?.trim() ? (
+          <p className="text-sm text-[color:var(--navy)] line-clamp-4">{entry.student_definition}</p>
+        ) : (
+          <p className="text-xs text-slate-400 italic">아직 정리된 뜻이 없어요.</p>
+        )}
+      </div>
+      {/* 2) 출처 · 사용 배경 */}
+      {(entry.source || entry.context_note) && (
+        <div className="mb-2 space-y-1">
+          {entry.source && (
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
+              <Radio size={11} /> 출처 · {entry.source}
+            </div>
+          )}
+          {entry.context_note && (
+            <div className="text-[11px] text-slate-700">
+              <b className="text-[color:var(--navy)]">🎬 본 상황</b> · {entry.context_note}
+            </div>
+          )}
+        </div>
+      )}
+      {/* legacy source-only placeholder removed above */}
+      {false && entry.source && (
         <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
           <Radio size={11} /> 출처 · {entry.source}
         </div>
       )}
-      <p className="text-sm text-[color:var(--navy)] mb-3 line-clamp-3">{entry.student_definition}</p>
+      {/* 3) 5대 유해성 점수 */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-1">
-          <span>유해 점수</span>
+          <span>5대 유해성 종합 점수</span>
           <span style={{ color: bg }}>{entry.total_harmful_score}/100</span>
         </div>
         <div className="h-2 rounded-full bg-white/60 overflow-hidden">
           <div className="h-full transition-all duration-500" style={{ width: `${entry.total_harmful_score}%`, background: bg }} />
         </div>
       </div>
+      {/* 4) 사용할 때 생각할 점 (규칙 기반) */}
+      {(() => {
+        const hints = harmHints(entry.evaluations);
+        if (hints.length === 0) return null;
+        return (
+          <div className="mb-3 rounded-2xl bg-amber-50/70 border border-amber-200 p-2.5">
+            <div className="text-[11px] font-black text-amber-800 mb-1">💭 사용할 때 생각할 점</div>
+            <ul className="space-y-0.5 text-[11px] text-amber-900">
+              {hints.map((h, i) => (
+                <li key={i}><span aria-hidden>{h.icon}</span> {h.text}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      })()}
+      {/* 5) 듣는 사람의 마음 */}
+      {entry.listener_effect && (
+        <div className="mb-3 rounded-2xl bg-rose-50/70 border border-rose-200 p-2.5 text-[11px] text-rose-900">
+          <div className="font-black text-rose-800 mb-0.5">💗 이 말을 들으면</div>
+          {entry.listener_effect}
+        </div>
+      )}
+      {/* 6) 대체 표현 */}
       <div className="text-xs">
         <div className="font-bold text-[color:var(--mint-deep)] mb-1 flex items-center gap-1"><Sparkles size={12} /> 바른 대안 표현</div>
-        <ul className="space-y-0.5 text-[color:var(--navy)]">
-          {entry.alternatives.map((a, i) => (
-            <li key={i}>· {a}</li>
-          ))}
-        </ul>
+        {entry.alternatives && entry.alternatives.length > 0 ? (
+          <ul className="space-y-0.5 text-[color:var(--navy)]">
+            {entry.alternatives.map((a, i) => (
+              <li key={i}>· {a}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-slate-400 italic">아직 대안 표현이 없어요. 사전 등록에서 함께 만들어 봐요.</p>
+        )}
       </div>
       <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex flex-wrap items-center justify-between gap-1">
         <span className="inline-flex items-center gap-1.5 flex-wrap">
@@ -331,13 +393,23 @@ function ProposalModal({
   initialWord,
 }: {
   onClose: () => void;
-  onSubmit: (p: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; source?: string }) => void;
+  onSubmit: (p: {
+    word: string;
+    student_definition: string;
+    alternatives: string[];
+    evaluations: Evaluation;
+    source?: string;
+    context_note?: string;
+    listener_effect?: string;
+  }) => void;
   initialWord?: string;
 }) {
   const [word, setWord] = useState(initialWord ?? "");
   const [def, setDef] = useState("");
   const [alt, setAlt] = useState("");
   const [source, setSource] = useState("");
+  const [contextNote, setContextNote] = useState("");
+  const [listenerEffect, setListenerEffect] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [ev, setEv] = useState<Evaluation>({
     aggression: 3,
@@ -370,6 +442,8 @@ function ProposalModal({
       student_definition: def.trim(),
       alternatives: alt.split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
       source: source.trim(),
+      context_note: contextNote.trim() || undefined,
+      listener_effect: listenerEffect.trim() || undefined,
       evaluations: ev,
     });
   }
@@ -435,6 +509,37 @@ function ProposalModal({
               placeholder="네 생각을 존중해, 그렇게 생각할 수도 있겠구나"
             />
           </label>
+          <details className="rounded-2xl bg-white/40 border border-white/60 px-3 py-2">
+            <summary className="cursor-pointer text-xs font-black text-[color:var(--navy)] select-none">
+              💭 함께 생각해 보기 (선택) — 상황·듣는 사람의 마음
+            </summary>
+            <div className="mt-2 grid gap-2">
+              <label className="block">
+                <span className="text-[11px] font-bold text-[color:var(--navy)]">
+                  🎬 어떤 상황에서 본 말인가요? <span className="text-slate-500">(선택 · 출처와 다르게 &lsquo;장면&rsquo;을 적어요)</span>
+                </span>
+                <textarea
+                  value={contextNote}
+                  onChange={(e) => setContextNote(e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-xl border border-white/70 bg-white/70 px-2.5 py-1.5 text-sm outline-none focus:border-[color:var(--mint-deep)] transition"
+                  placeholder="예: 쉬는 시간에 친구가 게임에서 지고 나서 툭 내뱉었어요."
+                />
+              </label>
+              <label className="block">
+                <span className="text-[11px] font-bold text-[color:var(--navy)]">
+                  💗 이 말을 들은 친구는 어떻게 느낄 수 있을까요? <span className="text-slate-500">(선택)</span>
+                </span>
+                <textarea
+                  value={listenerEffect}
+                  onChange={(e) => setListenerEffect(e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-xl border border-white/70 bg-white/70 px-2.5 py-1.5 text-sm outline-none focus:border-[color:var(--mint-deep)] transition"
+                  placeholder="예: 무시당한다고 느껴서 속상하고 대화가 끊어질 수 있어요."
+                />
+              </label>
+            </div>
+          </details>
         </div>
         <div className="mt-5">
           <h4 className="text-sm font-black text-[color:var(--navy)] mb-2">리터러시 유해성 5대 척도 (1~5점)</h4>

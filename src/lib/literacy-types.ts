@@ -21,6 +21,10 @@ export type DictEntry = {
   timestamp: string;
   vote_count?: number;
   sum_eval?: Evaluation;
+  /** 학생이 이 표현을 어떤 상황에서 보거나 들었는지 (선택). source 는 매체·경로, context_note 는 장면·맥락. */
+  context_note?: string;
+  /** 이 말을 들은 친구가 어떻게 느낄지 학생이 상상해 적은 짧은 문장 (선택). */
+  listener_effect?: string;
 };
 
 export type Student = {
