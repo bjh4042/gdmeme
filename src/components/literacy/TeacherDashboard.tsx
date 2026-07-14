@@ -1668,3 +1668,142 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
+
+/** 대시보드 공통 카드 래퍼 — 섹션마다 동일한 여백·헤더·라운드로 통일. */
+function DashboardCard({
+  title,
+  subtitle,
+  right,
+  className = "",
+  children,
+}: {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  right?: React.ReactNode;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className={`rounded-2xl border border-[color:var(--border)] bg-white shadow-[var(--shadow-soft)] p-4 sm:p-5 ${className}`}
+    >
+      <header className="flex items-start justify-between gap-3 mb-3">
+        <div className="min-w-0">
+          <h4 className="text-sm sm:text-base font-black text-[color:var(--navy)] truncate">
+            {title}
+          </h4>
+          {subtitle && (
+            <p className="text-[11px] text-muted-foreground truncate">{subtitle}</p>
+          )}
+        </div>
+        {right && <div className="shrink-0">{right}</div>}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+/** Quick Summary — 학급 규모·승인 대기·평균 유해도·최근 활동 수 등 오늘의 지표 요약. */
+function QuickSummary({
+  dict,
+  students,
+  currentClassCode,
+  pending,
+  approved,
+}: {
+  dict: DictEntry[];
+  students: StudentRecord[];
+  currentClassCode: string;
+  pending: number;
+  approved: number;
+}) {
+  const classState = useClassStore((s) => s.byClass[currentClassCode]);
+  const activityToday = useMemo(() => {
+    const logs = classState?.activityLog ?? [];
+    const today = new Date().toDateString();
+    return logs.filter((a) => new Date(a.at).toDateString() === today).length;
+  }, [classState]);
+  const avgHarm = useMemo(() => {
+    const list = dict.filter((d) => d.status === "approved");
+    if (list.length === 0) return 0;
+    return Math.round(
+      list.reduce((s, d) => s + (d.total_harmful_score ?? 0), 0) / list.length,
+    );
+  }, [dict]);
+  const items = [
+    { label: "학생 수", value: `${students.length}명`, tone: "primary" },
+    { label: "승인 대기", value: `${pending}건`, tone: "warn" },
+    { label: "승인 완료", value: `${approved}건`, tone: "safe" },
+    { label: "평균 유해도", value: `${avgHarm}/100`, tone: "accent" },
+    { label: "오늘 활동", value: `${activityToday}건`, tone: "purple" },
+  ] as const;
+  const TONE: Record<string, string> = {
+    primary: "bg-primary/10 text-primary",
+    warn: "bg-amber-100 text-amber-800",
+    safe: "bg-emerald-100 text-emerald-800",
+    accent: "bg-orange-100 text-orange-800",
+    purple: "bg-violet-100 text-violet-800",
+  };
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      {items.map((it) => (
+        <div
+          key={it.label}
+          className={`rounded-2xl px-3 py-3 text-center transition hover:-translate-y-0.5 ${TONE[it.tone]}`}
+        >
+          <div className="text-[11px] font-bold opacity-80">{it.label}</div>
+          <div className="text-lg sm:text-xl font-black tabular-nums">{it.value}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** 최근 활동 로그 — 학급 activityLog 에서 최근 10건을 통일된 표 형태로 렌더. */
+function RecentActivity({ classCode }: { classCode: string }) {
+  const log = useClassStore((s) => s.byClass[classCode]?.activityLog ?? []);
+  const rows = log.slice(0, 10);
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-xl bg-[color:var(--muted)] p-5 text-center text-xs text-muted-foreground">
+        아직 기록된 활동이 없어요.
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-xl border border-[color:var(--border)] overflow-hidden">
+      <table className="w-full text-sm">
+        <thead className="bg-[color:var(--muted)] text-[11px] uppercase text-muted-foreground">
+          <tr>
+            <th className="text-left px-3 py-2 font-bold">시각</th>
+            <th className="text-left px-3 py-2 font-bold">누구</th>
+            <th className="text-left px-3 py-2 font-bold">활동</th>
+            <th className="text-right px-3 py-2 font-bold">XP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((a, i) => {
+            const d = new Date(a.at);
+            const t = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+            return (
+              <tr key={i} className="border-t border-[color:var(--border)] hover:bg-slate-50">
+                <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{t}</td>
+                <td className="px-3 py-2 text-xs font-bold text-[color:var(--navy)]">{a.who}</td>
+                <td className="px-3 py-2 text-xs text-[color:var(--navy)] truncate">
+                  <span className="font-semibold">{a.kind}</span>
+                  {a.note && <span className="text-muted-foreground"> · {a.note}</span>}
+                </td>
+                <td
+                  className={`px-3 py-2 text-xs text-right font-black tabular-nums ${a.delta >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+                >
+                  {a.delta >= 0 ? "+" : ""}
+                  {a.delta}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
