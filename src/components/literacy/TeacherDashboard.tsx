@@ -6,6 +6,9 @@ import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { useDictStore } from "@/stores/dict";
 import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
+import { TeacherEducationalSummary } from "./TeacherEducationalSummary";
+import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
+import { useEngagementStore } from "@/stores/engagement";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
@@ -59,6 +62,7 @@ export function TeacherDashboard({
   onOpenReport?: (studentId: string) => void;
 }) {
   const [section, setSection] = useState<"words" | "students">("words");
+  const engagementByStudent = useEngagementStore((s) => s.byStudent);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
   const [status, setStatus] = useState<"pending" | "approved" | "rejected">("pending");
@@ -492,6 +496,12 @@ export function TeacherDashboard({
 
         <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
 
+        <TeacherEducationalSummary
+          students={students}
+          currentClassCode={currentClassCode}
+          dict={dict}
+        />
+
 
         {section === "words" ? (
           <>
@@ -724,6 +734,27 @@ export function TeacherDashboard({
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--muted)] text-[color:var(--navy)]"
               >
                 📄 업로드 양식 받기
+              </button>
+              <span className="mx-1 h-5 w-px bg-slate-200" aria-hidden />
+              <button
+                onClick={() => {
+                  const n = exportAnonCSV({ students, byStudent: engagementByStudent, dict });
+                  toast.success(`익명 학습활동 CSV 저장 (${n}명)`);
+                }}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white border-2 border-[color:var(--mint-deep)] text-[color:var(--mint-deep)]"
+                title="개인정보를 제외한 익명 학습활동 데이터를 CSV로 저장"
+              >
+                <Download size={13} /> 익명 CSV
+              </button>
+              <button
+                onClick={() => {
+                  const n = exportAnonXLSX({ students, byStudent: engagementByStudent, dict });
+                  toast.success(`익명 학습활동 XLSX 저장 (${n}명)`);
+                }}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white border-2 border-[color:var(--mint-deep)] text-[color:var(--mint-deep)]"
+                title="개인정보를 제외한 익명 학습활동 데이터를 XLSX로 저장"
+              >
+                <Download size={13} /> 익명 XLSX
               </button>
             </div>
 
