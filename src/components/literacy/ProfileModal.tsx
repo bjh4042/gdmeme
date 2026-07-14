@@ -154,7 +154,7 @@ export function ProfileModal({
                 <button
                   type="button"
                   onClick={submit}
-                  className="inline-flex items-center gap-1 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-4 py-2 text-sm font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+                  className="inline-flex items-center gap-1 rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
                 >
                   <Sparkles size={14} /> 저장 (+2 XP)
                 </button>

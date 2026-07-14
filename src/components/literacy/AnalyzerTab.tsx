@@ -134,7 +134,7 @@ export function AnalyzerTab({
             />
             <button
               type="submit"
-              className="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-5 py-3 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+              className="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-5 py-3 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
             >
               분석하기
             </button>
@@ -188,7 +188,7 @@ export function AnalyzerTab({
               </div>
               <button
                 onClick={() => onRegisterNew(submitted)}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-6 py-3 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+                className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
               >
                 <BookOpen size={18} /> "{submitted}" 신규 등록 신청하기 <ArrowRight size={16} />
               </button>
