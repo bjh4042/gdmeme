@@ -31,6 +31,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
 
   const done = state.done;
   const trimmed = answer.trim();
+  const missionRef = mission;
 
   function handleSubmit() {
     if (submitting) return;
@@ -40,7 +41,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
     setState(next);
     setOpen(true);
     setShowAgain(true);
-    if (xpJustAwarded && onXP) onXP(3, "daily-mission", mission.areaLabel);
+    if (xpJustAwarded && onXP) onXP(3, "daily-mission", missionRef.areaLabel);
     setSubmitting(false);
   }
 
