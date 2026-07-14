@@ -1,80 +1,112 @@
-# 바른말 수호대 개선 실행 계획
+# 바른말 수호대 교육적 리팩터링 계획
 
-요청 범위가 매우 넓어(대시보드 12개 섹션 + 사전·사후 검사 + CSV/XLSX/PDF + 콘텐츠 관리 + 안내 문서 4종 + 테스트 기록 등) 한 번의 응답에 다 담으면 기존 정상 동작 기능(퀴즈·사전·챗봇·기상도·설문·리포트·배지)이 회귀할 위험이 큽니다. 요청하신 "1차 → 2차 → 3차" 순서를 그대로 따라, **1차만 이번 응답에 구현**하고 각 차수 종료 시점에 회귀 확인 후 다음 차수로 진행하겠습니다.
+전면 재개발이 아닌 **기존 구조·데이터 유지 + 정보 위계·규칙 기반 안내 보강** 중심. 위험이 낮은 단계부터 순차 적용하고, 각 단계 후 기존 기능 동작을 확인한 뒤 다음 단계로 넘어갑니다.
 
-## 현재 구조 요약(재사용 전제)
+## 사전 분석 (구현 전 1회)
 
-- 라우팅: 단일 라우트 `src/routes/index.tsx`(405줄). 학생/교사 뷰를 `TeacherGate` + 탭으로 분기.
-- 상태: Zustand 5개 스토어 — `auth`, `class`, `roster`, `dict`, `engagement`. 모두 localStorage persist.
-- 학생 탭: Dashboard / Dictionary / Quiz / Analyzer / Assistant / Chatbot.
-- 교사: `TeacherDashboard.tsx`(1386줄) 이미 방대 — 확장 방식으로만 접근.
-- 데이터: `engagement` 스토어가 학생별 점수·뱃지·활동 이력을 이미 보관.
+- 현재 라우트: `src/routes/__root.tsx`, `src/routes/index.tsx` (단일 SPA 스타일 탭)
+- 상태: `src/stores/{dict,engagement,roster,class,auth}.ts` (Zustand + persist)
+- 핵심 도메인: `src/lib/{literacy-types,roadmap,weekly-survey,badges,literacy-seed}.ts`
+- 주요 탭: `DictionaryTab / AnalyzerTab / AssistantTab / QuizTab / DashboardTab`
+- 교사: `TeacherDashboard`, `RoadmapTeacherPanel`
+- 이미 존재하는 것 → **재사용, 재구현 금지**: Roadmap 5단계 계산, StageChip, 주간 설문, 성찰 저널, 실천 로그(`practiceLogs`), 배지·XP, CSV/XLSX 내보내기, 위험도 SSOT(`riskBucketOf`)
 
-## 1차 (이번 응답에서 구현)
+## 단계별 작업
 
-### A. 「바른말 수호 5단계」 데이터 모델
+### 1단계 — 로드맵과 탭 연결 명료화 (저위험)
+- 신규 유틸 `src/lib/stage-context.ts`: 탭 id → `{ stage, goal, next }` 매핑 (단일 SSOT)
+- 각 탭 상단에 이미 있는 `StageChip` 옆에 한 줄 안내(`학습 목표 / 다음 활동`) 추가. 중복 표시 방지 위해 헤더 영역에만 배치
+- `routes/index.tsx` 메인 제목 아래에 지도 문구 1줄 추가
+- Roadmap 카드 정보 위계: 첫 화면에서 접근성 향상을 위해 `DashboardTab` 상단으로 이동(이미 상단이면 skip)
+- **강제 잠금 금지**, 자유 이동 유지
 
-신규 파일 `src/lib/roadmap.ts`
-- `STAGES = ["discover","dissect","empathize","rewrite","practice"]`와 한글 라벨/설명/아이콘.
-- 기존 활동을 단계에 매핑:
-  - discover ← Dictionary 열람 1회 이상
-  - dissect ← Analyzer 분석 1회 이상 또는 Dictionary 상세 열람
-  - empathize ← Assistant/Chatbot 응답 확인 1회 이상
-  - rewrite ← Quiz 정답 1회 이상 (기존 이벤트 재활용)
-  - practice ← 주간 성찰 설문 응답 or 신규 "실천 미션 체크" 1회
-- `useRoadmapProgress(studentId)` 훅이 `engagement` 스토어 기존 필드만 읽어서 단계별 완료 여부를 파생. **스토어 스키마는 손대지 않음.**
-- 부족한 이벤트(예: rewrite 사유·실천 성찰 텍스트)는 신규 `mission` 하위 필드를 engagement 스토어에 **선택적(optional)** 으로 추가 — 기존 데이터 없으면 undefined로 동작.
+### 2단계 — 검색·분석 결과 카드 순서 정리 (저위험, UI만)
+- `DictionaryTab.tsx` 카드 컴포넌트 렌더 순서: 표현 → 뜻 → 출처/배경 → 5대 유해성 → **사용할 때 생각할 점** → 대체 표현 → 관련 학습 링크
+- 신규 유틸 `src/lib/harm-hints.ts`: `Evaluation` → 규칙 기반 문구 배열 반환. AI 미사용, null/undefined 안전
+- 빈 데이터 상태 문구 처리 (뜻/출처/대체 표현 부재 시)
+- 카드 디자인 전면 교체 X — 섹션 헤더와 순서만 재배열
 
-### B. 학생 화면: 5단계 학습 로드맵 카드
+### 3단계 — 사전 등록 선택 필드 추가 (스키마 확장)
+- `DictEntry`에 `context_note?: string`, `listener_effect?: string` 선택 추가
+- `stores/dict.ts` `addProposal` 시그니처에 선택 필드 pass-through (기본값 undefined)
+- 등록 폼(`DictionaryTab.tsx`의 제안 모달)에 **접기·펼치기** 섹션으로 두 항목 추가. `source`와 문구 차별화 안내
+- 결과 카드에서 값 있을 때만 표시
+- 기존 localStorage 마이그레이션 불필요(선택 필드라 undefined 허용)
 
-신규 컴포넌트 `src/components/literacy/RoadmapCard.tsx`
-- Dashboard 탭 상단에 삽입 (기존 카드/기상도 유지).
-- 5개 스텝을 가로(데스크톱)/세로(모바일) 반응형으로. 완료(초록 체크)/현재(강조 링)/잠금(회색) 상태 시각화.
-- 각 스텝 클릭 시 해당 탭으로 전환하는 콜백.
-- 5단계 모두 완료 시 "🛡️ 바른말 수호 임무 완료" 축하 오버레이(1회).
+### 4단계 — 성찰·실천 흐름 재사용 정리
+- 기존 저널·주간 설문·`practiceLogs` 그대로 사용, 신규 저장소 만들지 않음
+- 질문 문구 4종 통일(`src/lib/reflection-prompts.ts`) — 오늘 알게 된 표현 / 상대 감정 / 바꿔 말할 표현 / 실천 한 가지
+- 저장 검증: `.trim()` 후 빈 문자열 차단, 동일 학생·동일 날짜·동일 내용 중복 저장 방지 로직
+- 저장 후 피드백 문구 노출 ("오늘 생각한 바른 표현을 실제 대화에서도 실천해 보세요.")
+- `RoadmapCard` 실천하기 진행률에 반영되는지 재확인 (`roadmap.ts` 이미 반영)
+- 학생 ID 변경 시 데이터 유지: 기존 `${classCode}_${number}` 키 유지, 마이그레이션 없이 그대로 사용
 
-### C. 각 활동 화면 상단 단계 뱃지
+### 5단계 — 교사 대시보드 교육적 요약
+- `TeacherDashboard.tsx` 상단에 **요약 섹션**을 신설(기존 관리 UI는 아래로 유지)
+  1. Roadmap 단계별 진행 현황 (기존 `RoadmapTeacherPanel` 재사용)
+  2. 최근 활동 학생 top 5 (`engagement` 로그에서 파생)
+  3. 학생별 진행률 요약 링크
+  4. 많이 검색·제안된 표현 (dict `vote_count` 기준)
+  5. 고유해성 표현 top (score ≥ 70)
+  6. 승인 대기 제안 수
+  7. 성찰·실천 참여율
+  8. 퀴즈 영역별 결과 — **domain 데이터 존재 시에만** 표시
+- 신규 유틸 `src/lib/teacher-insights.ts`: 규칙 기반 안내 문구 생성
+- 데이터 없으면 "아직 기록된 활동이 없습니다" 빈 상태
 
-`DictionaryTab / AnalyzerTab / AssistantTab / QuizTab / WeeklySurveyModal` 상단에 얇은 칩(`STAGE n · 라벨`)만 추가. 로직 변경 없음.
+### 6단계 — 익명 연구 데이터 내보내기
+- `src/lib/anon-export.ts`:
+  - 학생을 `joinedAt / number` 정렬 → `S01, S02...` 안정 매핑
+  - CSV: UTF-8 BOM(`\uFEFF`) 접두
+  - XLSX: 기존 `xlsx` 라이브러리 재사용
+  - 컬럼: 익명코드/검색수/제안수/공감수/퀴즈수/성찰수/실천수/단계별 진행률/마지막 활동
+- 파일명: `바른말수호대_익명_학습활동.csv` / `.xlsx`
+- `TeacherDashboard` 내보내기 영역에 버튼 2개 추가 (기존 CSV/XLSX 인접 배치)
 
-### D. 실천 미션 & 성찰(가벼운 확장)
+### 7단계 — 퀴즈 domain 필드 + 결과 피드백
+- 퀴즈 문제 타입(`src/lib/quiz-bank-50.json` 로더 부분)에 `domain?` 선택 필드 확장
+- 기존 문제 임의 재분류 X — 필드가 없으면 통계 미표시
+- `QuizTab.tsx` 결과 화면에 총점 하단 피드백 섹션 추가
+  - domain 별 정답률 계산 → 부족 영역별 규칙 안내(`src/lib/quiz-feedback.ts`)
+  - domain 값이 하나도 없으면 총점 피드백만 표시
 
-- Quiz 오답/정답 시 선택적으로 "왜 그렇게 골랐는지 한 줄 이유" 입력란(선택). 저장은 engagement의 신규 `rewriteReasons: string[]`.
-- Dashboard에 "오늘의 실천 체크" 버튼 → `practiceLogs: { date, note }[]` 누적.
-- 둘 다 미입력이어도 기존 흐름 그대로 통과.
+### 8단계 — PC 중심 UX·접근성·빈 상태 점검
+- 우선 뷰포트: 1920×1080, 1366×768
+- 표: `overflow-x-auto` 확인/추가, 모달 `max-h-[90dvh] overflow-y-auto`
+- 아이콘 버튼 `aria-label` 감사, `Dialog` ESC 닫힘/포커스 관리(Radix 기본 활용)
+- 유해성 표시에 숫자/텍스트/아이콘 동반 확인 (이미 대부분 충족)
+- 빈 상태 문구 일괄 검토
+- Playwright로 두 뷰포트에서 주요 화면 스크린샷 캡처
 
-### E. 교사 대시보드 기본 확장 — 학급 현황 & 학생별·단계별 현황
+### 9단계 — 데모 데이터·초기화 안전성
+- 교사 화면 상단에 소형 배너: "현재 화면은 기능 확인을 위한 예시 데이터입니다."
+- 학생 화면 미표시
+- 시드 로직: 실데이터 존재 시 재시드 방지 가드(이미 있으면 유지)
+- 초기화 버튼: 2단계 확인(확인창 + 문구 입력 또는 재확인). 삭제 대상 명시
+- 실제 학교/지역/교사/학생명 하드코딩 grep 후 제거
 
-`TeacherDashboard.tsx`에 상단 탭 3개 추가(기존 콘텐츠 유지):
-1. **학급 현황**: 등록 학생 수, 참여 학생 수, 전체 완료율, 5단계별 평균 완료율, 최근 7일 활동 수, 미참여 학생 수, 평균 정답률, 실천 미션 완료율 — 카드 + 간단한 막대.
-2. **학생별 학습 현황**: 표(번호/이름 또는 익명코드/최근접속/완료단계/완료율/활동수/정답률/실천 수). 이름/완료율 필터, 익명화 토글(`S01, S02...`), 학생별 초기화(확인 다이얼로그).
-3. **단계별 활동 분석**: 5단계 카드 — 참여/완료/평균 결과/대표 대체표현 요약.
+### 10단계 — 최종 검증
+- `bun install && bun run lint && bun run build`
+- 학생/교사 흐름을 Playwright로 자동 순회 스크린샷
+- 새로고침 후 persist 유지 확인
 
-모두 **읽기 전용 파생**. `engagement`·`roster` 스토어에서 계산.
+## 데이터 타입 확장 (모두 선택 필드, 기존 데이터 호환)
 
-### F. 안전장치
+```ts
+DictEntry {
+  ...
+  context_note?: string
+  listener_effect?: string
+}
+QuizItem { ...; domain?: "meaning" | "context" | "empathy" | "expression" }
+```
 
-- 신규 필드는 전부 optional. 마이그레이션 불필요.
-- 라우트 추가 없음(단일 라우트 유지). SEO/head 영향 없음.
-- 타입 검사(`tsgo`)와 시각 확인 후 회귀 확인.
+## 위험 관리
 
-## 2차 (승인 후 다음 응답)
+- 단계마다 파일 수정을 최소 세트로 분리하여 각 단계 후 lint/build 통과 확인
+- 3·7단계는 스키마 확장을 포함하므로 기존 persist 데이터에 대해 `undefined` 안전성 테스트
+- 대형 컴포넌트(`DictionaryTab`, `TeacherDashboard`, `QuizTab`)는 재작성 대신 **섹션 삽입·순서 변경**만 수행
 
-- 사전·사후 검사 폼(4영역 Likert, 역채점 flag), 중복 제출 방지, 재응답 허용.
-- 통계·그래프(막대·레이더) — recharts 사용, 제목/N/단위 표기.
-- CSV/XLSX 내보내기(실명/익명 토글, 기간 필터), 그래프 PNG 저장.
-- A4 인쇄용 요약 보고서(print CSS).
+## 승인 요청
 
-## 3차 (승인 후 다음 응답)
-
-- 콘텐츠 관리(밈/신조어 CRUD, 필터, 검토일).
-- 개인정보/AI/출처/기기 테스트/연구 활용 자료 안내 페이지(정적, 라우트 or 교사 탭).
-- 성취기준 매핑표.
-
-## 보고 예정 항목(1차 완료 후)
-
-파일 목록 · 스토어 필드 추가(optional) · 신규 라우트(없음) · 권한 분리 유지 방식 · 반응형 확인 · 회귀 여부 · 미구현 항목(=2·3차 대기) · 타입 검사 결과.
-
----
-
-**진행 방식 확인 요청**: 위 순서(1차만 이번에)로 진행할까요? 아니면 특정 항목(예: 사전·사후 검사, CSV 내보내기)을 1차에 우선 포함해야 할지 알려주세요.
+이 계획대로 1단계부터 순차 진행할까요? 특정 단계만 우선하고 싶으면 알려주세요 (예: "5·6단계 먼저").
