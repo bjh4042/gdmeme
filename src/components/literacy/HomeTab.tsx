@@ -16,14 +16,7 @@ type Props = {
   onJump: (tab: QuickTab) => void;
 };
 
-export function HomeTab({
-  studentName,
-  classCode,
-  studentNumber,
-  activeId,
-  dict,
-  onJump,
-}: Props) {
+export function HomeTab({ studentName, classCode, studentNumber, activeId, dict, onJump }: Props) {
   const engagement = useEngagementStore((s) => s.byStudent[activeId]);
 
   const stats = useMemo(() => {
@@ -210,7 +203,9 @@ export function HomeTab({
                 key={q.key}
                 className="group flex flex-col rounded-[20px] border border-border bg-white p-4 sm:p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background"
               >
-                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${q.iconBg} mb-3 transition-transform duration-200 group-hover:scale-105`}>
+                <div
+                  className={`grid h-12 w-12 place-items-center rounded-2xl ${q.iconBg} mb-3 transition-transform duration-200 group-hover:scale-105`}
+                >
                   {q.icon}
                 </div>
                 <div className="font-black text-sm text-navy">{q.title}</div>
@@ -241,9 +236,17 @@ export function HomeTab({
         >
           <h3 className="text-sm font-black text-[color:var(--navy)] mb-3">나의 활동 현황</h3>
           <ul className="text-sm divide-y divide-slate-100">
-            <StatRow label="등록한 표현" value={`${stats.registered}개`} accent="text-emerald-600" />
+            <StatRow
+              label="등록한 표현"
+              value={`${stats.registered}개`}
+              accent="text-emerald-600"
+            />
             <StatRow label="완료한 역할극" value={`${stats.roleplay}개`} accent="text-orange-600" />
-            <StatRow label="작성한 성찰" value={`${stats.reflections}개`} accent="text-purple-600" />
+            <StatRow
+              label="작성한 성찰"
+              value={`${stats.reflections}개`}
+              accent="text-purple-600"
+            />
             <StatRow label="받은 배지" value={`${stats.badges}개`} accent="text-amber-600" />
           </ul>
         </section>
@@ -280,15 +283,7 @@ export function HomeTab({
   );
 }
 
-function StatRow({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: string;
-  accent: string;
-}) {
+function StatRow({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <li className="flex items-center justify-between py-2">
       <span className="text-slate-600">{label}</span>
