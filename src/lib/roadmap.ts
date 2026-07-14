@@ -16,6 +16,7 @@ export type StageMeta = {
   short: string;
   desc: string;
   hint: string; // 학생용 안내
+  oneLiner: string; // 로드맵 카드에 항상 노출되는 한 줄 안내(문구 통일)
   color: string; // tailwind bg tone
   tabHint: "analyze" | "chat" | "assist" | "quiz" | "dict";
 };
@@ -29,6 +30,7 @@ export const STAGES: StageMeta[] = [
     short: "발견",
     desc: "대화·댓글·게임 채팅 속 문제가 될 수 있는 표현을 스스로 찾아봐요.",
     hint: "밈 분석기나 우리말 사전에서 낯선 말을 하나 골라볼까요?",
+    oneLiner: "궁금한 표현을 찾아보아요.",
     color: "bg-sky-100 text-sky-900 border-sky-300",
     tabHint: "analyze",
   },
@@ -40,6 +42,7 @@ export const STAGES: StageMeta[] = [
     short: "파헤치기",
     desc: "표현의 뜻·유래·숨은 비하 요소를 확인해요. 좋은 말/나쁜 말이 아니라 맥락을 살펴요.",
     hint: "새 낱말을 사전에 등록하거나, 사전 카드를 자세히 열어봐요.",
+    oneLiner: "뜻과 생겨난 배경을 살펴보아요.",
     color: "bg-indigo-100 text-indigo-900 border-indigo-300",
     tabHint: "dict",
   },
@@ -51,6 +54,7 @@ export const STAGES: StageMeta[] = [
     short: "공감",
     desc: "그 말을 들은 사람의 마음과 관계에 미치는 영향을 생각해요.",
     hint: "친구의 사전 등록이나 성찰 글에 공감(👍💡👏)을 3개 이상 남겨봐요.",
+    oneLiner: "이 말을 들은 사람의 기분을 생각해 보아요.",
     color: "bg-rose-100 text-rose-900 border-rose-300",
     tabHint: "assist",
   },
@@ -62,6 +66,7 @@ export const STAGES: StageMeta[] = [
     short: "바꾸기",
     desc: "상처를 줄 수 있는 표현을 존중하고 정확한 표현으로 바꿔봐요.",
     hint: "성찰 저널에 오늘 바꾼 표현과 그 이유를 한 문장 적어봐요.",
+    oneLiner: "더 존중하는 표현으로 바꾸어 보아요.",
     color: "bg-amber-100 text-amber-900 border-amber-300",
     tabHint: "chat",
   },
@@ -73,6 +78,7 @@ export const STAGES: StageMeta[] = [
     short: "실천",
     desc: "교실·가정·온라인에서 바른 표현을 실제로 사용하고, 짧은 성찰을 남겨요.",
     hint: "이번 주 성찰 설문에 응답하거나, 실천 미션을 체크해요.",
+    oneLiner: "오늘 배운 표현을 생활에서 실천해 보아요.",
     color: "bg-emerald-100 text-emerald-900 border-emerald-300",
     tabHint: "quiz",
   },
