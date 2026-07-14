@@ -53,7 +53,7 @@ function detectPattern(category: string): AssistantPatternTag {
 export function tokenize(query: string): { raw: string; tokens: string[] } {
   const cleaned = query
     .toLowerCase()
-    .replace(/[?？!！.。,·:;()\[\]{}<>"'`~@#$%^&*+=\\/|_-]+/g, " ")
+    .replace(/[?？!！.。,·:;()[\]{}<>"'`~@#$%^&*+=\\/|_-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   const tokens = cleaned.length === 0 ? [] : cleaned.split(" ").filter((t) => t.length > 0);
