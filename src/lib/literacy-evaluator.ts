@@ -120,7 +120,7 @@ const CASUAL_ENDINGS = [
 ];
 
 function stripTail(s: string) {
-  return s.replace(/[\s\.\!\?~]+$/g, "");
+  return s.replace(/[\s.!?~]+$/g, "");
 }
 
 function endsWithAny(text: string, arr: string[]) {
@@ -150,7 +150,7 @@ function isSarcasticMockery(text: string) {
 function isEvasiveQuestion(text: string) {
   const t = text.trim();
   if (/[?？]\s*$/.test(t)) return true;
-  const bare = t.replace(/[\s\.\!\?~]+/g, "");
+  const bare = t.replace(/[\s.!?~]+/g, "");
   return EVASIVE_STANDALONE.includes(bare);
 }
 
