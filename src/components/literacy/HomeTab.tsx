@@ -198,34 +198,36 @@ export function HomeTab({
         {/* Quick Actions */}
         <section
           aria-label="바로 시작하기"
-          className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-5"
+          className="rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-[var(--shadow-soft)]"
         >
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-4">
             <Sparkles className="h-4 w-4 text-primary" />
-            <h2 className="text-base font-black text-[color:var(--navy)]">바로 시작하기</h2>
+            <h2 className="text-base font-black text-navy">바로 시작하기</h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {quicks.map((q) => (
               <div
                 key={q.key}
-                className={`rounded-2xl border ${q.tone} p-4 flex flex-col gap-2 transition-transform duration-200 hover:-translate-y-0.5`}
+                className="group flex flex-col rounded-[20px] border border-border bg-white p-4 sm:p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background"
               >
-                <div>{q.icon}</div>
-                <div className="font-black text-sm text-[color:var(--navy)]">{q.title}</div>
-                <div className="text-[11px] leading-snug text-slate-600 min-h-[2.4em]">
+                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${q.iconBg} mb-3 transition-transform duration-200 group-hover:scale-105`}>
+                  {q.icon}
+                </div>
+                <div className="font-black text-sm text-navy">{q.title}</div>
+                <div className="mt-1 flex-1 text-[11px] leading-snug text-muted-foreground">
                   {q.desc}
                 </div>
                 <button
                   type="button"
                   onClick={() => onJump(q.key)}
-                  className={`mt-1 rounded-xl px-3 py-2 text-xs font-bold text-white transition ${q.btn}`}
+                  className={`mt-4 w-full rounded-xl px-3 py-2.5 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background ${q.btnText} ${q.btn}`}
                 >
                   시작하기
                 </button>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-4 text-[11px] text-muted-foreground">
             💡 TIP · 모르는 표현이 있을 때는 <b>표현 찾아보기</b>부터 시작해 보세요!
           </p>
         </section>
