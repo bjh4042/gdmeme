@@ -39,7 +39,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
     const { xpJustAwarded, state: next } = completeMission(activeId, trimmed);
     setState(next);
     setOpen(true);
-    setShowAgain(false);
+    setShowAgain(true);
     if (xpJustAwarded && onXP) onXP(3, "daily-mission", mission.areaLabel);
     setSubmitting(false);
   }
