@@ -862,7 +862,7 @@ export function TeacherDashboard({
               </button>
               <button
                 onClick={() => downloadExcel("all")}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-primary-foreground"
               >
                 <Download size={13} /> 전체 XLSX 다운로드
               </button>
@@ -992,7 +992,7 @@ export function TeacherDashboard({
                               <div className="flex justify-end gap-1">
                                 <button
                                   onClick={() => setEditingStudent(s.id)}
-                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)] hover:scale-[1.03] transition"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:scale-[1.03] transition"
                                 >
                                   <Pencil size={11} /> 정보 수정
                                 </button>
@@ -1058,7 +1058,7 @@ export function TeacherDashboard({
                         <div className="mt-2 flex flex-wrap gap-1 justify-end">
                           <button
                             onClick={() => setEditingStudent(s.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-primary-foreground"
                           >
                             <Pencil size={12} /> 정보 수정
                           </button>
@@ -1295,7 +1295,7 @@ function EntryRow({
         )}
         <button
           onClick={onEdit}
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)] hover:scale-[1.03] transition"
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold bg-primary text-primary-foreground hover:scale-[1.03] transition"
         >
           <Pencil size={13} /> 데이터 수정
         </button>
@@ -1656,7 +1656,7 @@ function ModalFooter({
       <button
         onClick={onSave}
         disabled={disabled}
-        className="px-5 py-2 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] text-sm font-bold disabled:opacity-40 hover:scale-[1.03] transition"
+        className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold disabled:opacity-40 hover:scale-[1.03] transition"
       >
         💾 변경사항 저장하기
       </button>

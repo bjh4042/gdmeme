@@ -413,28 +413,29 @@ function Index() {
       </header>
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
-        {tab !== "home" && (() => {
-          const ctx = stageContextForTab(tab);
-          return (
-            <div className="mb-3 rounded-2xl bg-white/60 border border-white/70 px-3 py-2.5">
-              <p className="text-[11px] sm:text-xs text-slate-600 mb-2 leading-snug">
-                디지털 언어의 뜻과 맥락을 살펴보고, 상대를 존중하는 표현을 함께 만들어 가는 학습
-                공간
-              </p>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <StageChip stage={ctx.stage} />
-                <span className="text-[11px] sm:text-xs text-slate-700 min-w-0">
-                  <b className="text-[color:var(--navy)]">학습 목표</b> · {ctx.goal}
-                </span>
-                {ctx.next && (
-                  <span className="text-[10px] sm:text-[11px] text-slate-500 ml-auto">
-                    다음 활동 → <b className="text-[color:var(--navy)]">{ctx.next}</b>
+        {tab !== "home" &&
+          (() => {
+            const ctx = stageContextForTab(tab);
+            return (
+              <div className="mb-3 rounded-2xl bg-white/60 border border-white/70 px-3 py-2.5">
+                <p className="text-[11px] sm:text-xs text-slate-600 mb-2 leading-snug">
+                  디지털 언어의 뜻과 맥락을 살펴보고, 상대를 존중하는 표현을 함께 만들어 가는 학습
+                  공간
+                </p>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <StageChip stage={ctx.stage} />
+                  <span className="text-[11px] sm:text-xs text-slate-700 min-w-0">
+                    <b className="text-[color:var(--navy)]">학습 목표</b> · {ctx.goal}
                   </span>
-                )}
+                  {ctx.next && (
+                    <span className="text-[10px] sm:text-[11px] text-slate-500 ml-auto">
+                      다음 활동 → <b className="text-[color:var(--navy)]">{ctx.next}</b>
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
         <div hidden={tab !== "home"}>{homeNode}</div>
         <div hidden={tab !== "analyze"}>{analyzerNode}</div>
         <div hidden={tab !== "chat"}>{chatbotNode}</div>
@@ -448,13 +449,13 @@ function Index() {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-5">
-        {[
-          { id: "analyze", icon: "🔎", label: "밈 분석기" },
-          { id: "dict", icon: "📚", label: "우리말 사전" },
-          { id: "assist", icon: "🤖", label: "AI 수호비서" },
-          { id: "chat", icon: "💬", label: "예절 역할극" },
-          { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
-        ].map((t) => (
+          {[
+            { id: "analyze", icon: "🔎", label: "밈 분석기" },
+            { id: "dict", icon: "📚", label: "우리말 사전" },
+            { id: "assist", icon: "🤖", label: "AI 수호비서" },
+            { id: "chat", icon: "💬", label: "예절 역할극" },
+            { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
+          ].map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id as Tab)}

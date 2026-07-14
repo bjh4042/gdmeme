@@ -259,7 +259,13 @@ const APPROVED_SAMPLES: {
     source: "인스타그램 릴스",
     score: 28,
     suggested_by: "3105_01",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 3,
+    },
   },
   {
     word: "완내스",
@@ -268,7 +274,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 쇼츠",
     score: 28,
     suggested_by: "3105_01",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 3,
+    },
   },
   {
     word: "무물",
@@ -277,7 +289,13 @@ const APPROVED_SAMPLES: {
     source: "인스타그램 스토리",
     score: 24,
     suggested_by: "3105_02",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "노잼",
@@ -286,7 +304,13 @@ const APPROVED_SAMPLES: {
     source: "학교 운동장",
     score: 24,
     suggested_by: "3105_02",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "반모",
@@ -295,7 +319,13 @@ const APPROVED_SAMPLES: {
     source: "학생 단톡방",
     score: 24,
     suggested_by: "3105_03",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "넘사벽",
@@ -304,7 +334,13 @@ const APPROVED_SAMPLES: {
     source: "온라인 게임",
     score: 28,
     suggested_by: "3105_03",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 3,
+    },
   },
   {
     word: "웃참",
@@ -313,7 +349,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 쇼츠",
     score: 24,
     suggested_by: "3105_04",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "뉴비",
@@ -322,7 +364,13 @@ const APPROVED_SAMPLES: {
     source: "온라인 게임",
     score: 22,
     suggested_by: "3105_04",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 1.5 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 1.5,
+    },
   },
   {
     word: "인생샷",
@@ -331,7 +379,13 @@ const APPROVED_SAMPLES: {
     source: "인스타그램 릴스",
     score: 24,
     suggested_by: "3105_05",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "고인물",
@@ -340,7 +394,13 @@ const APPROVED_SAMPLES: {
     source: "인터넷 커뮤니티",
     score: 24,
     suggested_by: "3105_05",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "먹방",
@@ -349,7 +409,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 채널",
     score: 24,
     suggested_by: "3105_06",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "마상",
@@ -358,7 +424,13 @@ const APPROVED_SAMPLES: {
     source: "학생 단톡방",
     score: 24,
     suggested_by: "3105_06",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "얼죽아",
@@ -367,7 +439,13 @@ const APPROVED_SAMPLES: {
     source: "웹툰",
     score: 28,
     suggested_by: "3105_07",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 3,
+    },
   },
   {
     word: "스포",
@@ -376,7 +454,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 리뷰 영상",
     score: 24,
     suggested_by: "3105_07",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "혼밥",
@@ -385,7 +469,13 @@ const APPROVED_SAMPLES: {
     source: "인터넷 커뮤니티",
     score: 24,
     suggested_by: "3105_08",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "TMI",
@@ -394,7 +484,13 @@ const APPROVED_SAMPLES: {
     source: "TV 예능 프로그램",
     score: 22,
     suggested_by: "3105_08",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 1.5 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 1.5,
+    },
   },
   {
     word: "본캐",
@@ -403,7 +499,13 @@ const APPROVED_SAMPLES: {
     source: "온라인 게임",
     score: 24,
     suggested_by: "3105_09",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "인싸",
@@ -412,7 +514,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 쇼츠",
     score: 24,
     suggested_by: "3105_09",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "부캐",
@@ -421,7 +529,13 @@ const APPROVED_SAMPLES: {
     source: "TV 예능 프로그램",
     score: 24,
     suggested_by: "3105_10",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "꿀팁",
@@ -430,7 +544,13 @@ const APPROVED_SAMPLES: {
     source: "인스타그램 릴스",
     score: 24,
     suggested_by: "3105_10",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "케미",
@@ -439,7 +559,13 @@ const APPROVED_SAMPLES: {
     source: "TV 드라마",
     score: 22,
     suggested_by: "3105_11",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 1.5 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 1.5,
+    },
   },
   {
     word: "국룰",
@@ -448,7 +574,13 @@ const APPROVED_SAMPLES: {
     source: "학교 교실",
     score: 26,
     suggested_by: "3105_12",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2.5 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2.5,
+    },
   },
   {
     word: "득템",
@@ -457,7 +589,13 @@ const APPROVED_SAMPLES: {
     source: "온라인 게임",
     score: 24,
     suggested_by: "3105_13",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "눈팅",
@@ -466,7 +604,13 @@ const APPROVED_SAMPLES: {
     source: "학생 단톡방",
     score: 24,
     suggested_by: "3105_14",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "어덕행덕",
@@ -475,7 +619,13 @@ const APPROVED_SAMPLES: {
     source: "인터넷 팬카페",
     score: 32,
     suggested_by: "3105_15",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 4 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 4,
+    },
   },
   {
     word: "스라밸",
@@ -484,7 +634,13 @@ const APPROVED_SAMPLES: {
     source: "인터넷 뉴스 기사",
     score: 28,
     suggested_by: "3105_16",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 3 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 3,
+    },
   },
   {
     word: "쩝쩝박사",
@@ -493,7 +649,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 먹방",
     score: 26,
     suggested_by: "3105_17",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2.5 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2.5,
+    },
   },
   {
     word: "빵지순례",
@@ -502,7 +664,13 @@ const APPROVED_SAMPLES: {
     source: "인스타그램 릴스",
     score: 24,
     suggested_by: "3105_18",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "불금",
@@ -511,7 +679,13 @@ const APPROVED_SAMPLES: {
     source: "가족 대화",
     score: 24,
     suggested_by: "3105_19",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
   {
     word: "홈트",
@@ -520,7 +694,13 @@ const APPROVED_SAMPLES: {
     source: "유튜브 쇼츠",
     score: 24,
     suggested_by: "3105_20",
-    evaluations: { aggression: 1, bullying: 1, discrimination: 1, violence: 1, grammar_destruction: 2 },
+    evaluations: {
+      aggression: 1,
+      bullying: 1,
+      discrimination: 1,
+      violence: 1,
+      grammar_destruction: 2,
+    },
   },
 ];
 
