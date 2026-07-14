@@ -16,14 +16,7 @@ type Props = {
   onJump: (tab: QuickTab) => void;
 };
 
-export function HomeTab({
-  studentName,
-  classCode,
-  studentNumber,
-  activeId,
-  dict,
-  onJump,
-}: Props) {
+export function HomeTab({ studentName, classCode, studentNumber, activeId, dict, onJump }: Props) {
   const engagement = useEngagementStore((s) => s.byStudent[activeId]);
 
   const stats = useMemo(() => {
@@ -74,40 +67,45 @@ export function HomeTab({
     title: string;
     desc: string;
     icon: React.ReactNode;
-    tone: string;
+    iconBg: string;
     btn: string;
+    btnText: string;
   }[] = [
     {
       key: "analyze",
       title: "표현 찾아보기",
-      desc: "궁금한 디지털 언어를 검색해요.",
-      icon: <Search className="h-6 w-6 text-blue-600" />,
-      tone: "bg-blue-50 border-blue-100",
-      btn: "bg-blue-600 hover:bg-blue-700",
+      desc: "궁금한 디지털 언어를 검색하고 뜻을 확인해요.",
+      icon: <Search className="h-6 w-6 text-primary" />,
+      iconBg: "bg-primary/10",
+      btn: "bg-primary hover:bg-primary/90 focus:ring-primary/40",
+      btnText: "text-primary-foreground",
     },
     {
       key: "dict",
       title: "참여 사전",
-      desc: "새로운 표현을 등록해요.",
-      icon: <BookOpen className="h-6 w-6 text-emerald-600" />,
-      tone: "bg-emerald-50 border-emerald-100",
-      btn: "bg-emerald-600 hover:bg-emerald-700",
+      desc: "새로운 표현을 직접 등록하고 사전을 함께 만들어요.",
+      icon: <BookOpen className="h-6 w-6 text-secondary" />,
+      iconBg: "bg-secondary/10",
+      btn: "bg-secondary hover:bg-secondary/90 focus:ring-secondary/40",
+      btnText: "text-secondary-foreground",
     },
     {
       key: "quiz",
       title: "퀴즈 놀이터",
-      desc: "퀴즈를 풀며 실력을 쌓아요.",
-      icon: <Gamepad2 className="h-6 w-6 text-orange-600" />,
-      tone: "bg-orange-50 border-orange-100",
-      btn: "bg-orange-500 hover:bg-orange-600",
+      desc: "재미있는 퀴즈를 풀며 실력을 쌓아요.",
+      icon: <Gamepad2 className="h-6 w-6 text-accent" />,
+      iconBg: "bg-accent/10",
+      btn: "bg-accent hover:bg-accent/90 focus:ring-accent/40",
+      btnText: "text-accent-foreground",
     },
     {
       key: "assist",
       title: "나의 표현 돌아보기",
-      desc: "나의 생각과 성찰을 기록해요.",
-      icon: <NotebookPen className="h-6 w-6 text-purple-600" />,
-      tone: "bg-purple-50 border-purple-100",
-      btn: "bg-purple-600 hover:bg-purple-700",
+      desc: "나의 생각과 성찰을 기록하며 돌아봐요.",
+      icon: <NotebookPen className="h-6 w-6 text-purple" />,
+      iconBg: "bg-purple/10",
+      btn: "bg-purple hover:bg-purple/90 focus:ring-purple/40",
+      btnText: "text-white",
     },
   ];
 
@@ -193,34 +191,38 @@ export function HomeTab({
         {/* Quick Actions */}
         <section
           aria-label="바로 시작하기"
-          className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-5"
+          className="rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-[var(--shadow-soft)]"
         >
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-4">
             <Sparkles className="h-4 w-4 text-primary" />
-            <h2 className="text-base font-black text-[color:var(--navy)]">바로 시작하기</h2>
+            <h2 className="text-base font-black text-navy">바로 시작하기</h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {quicks.map((q) => (
               <div
                 key={q.key}
-                className={`rounded-2xl border ${q.tone} p-4 flex flex-col gap-2 transition-transform duration-200 hover:-translate-y-0.5`}
+                className="group flex flex-col rounded-[20px] border border-border bg-white p-4 sm:p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background"
               >
-                <div>{q.icon}</div>
-                <div className="font-black text-sm text-[color:var(--navy)]">{q.title}</div>
-                <div className="text-[11px] leading-snug text-slate-600 min-h-[2.4em]">
+                <div
+                  className={`grid h-12 w-12 place-items-center rounded-2xl ${q.iconBg} mb-3 transition-transform duration-200 group-hover:scale-105`}
+                >
+                  {q.icon}
+                </div>
+                <div className="font-black text-sm text-navy">{q.title}</div>
+                <div className="mt-1 flex-1 text-[11px] leading-snug text-muted-foreground">
                   {q.desc}
                 </div>
                 <button
                   type="button"
                   onClick={() => onJump(q.key)}
-                  className={`mt-1 rounded-xl px-3 py-2 text-xs font-bold text-white transition ${q.btn}`}
+                  className={`mt-4 w-full rounded-xl px-3 py-2.5 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background ${q.btnText} ${q.btn}`}
                 >
                   시작하기
                 </button>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-4 text-[11px] text-muted-foreground">
             💡 TIP · 모르는 표현이 있을 때는 <b>표현 찾아보기</b>부터 시작해 보세요!
           </p>
         </section>
@@ -234,9 +236,17 @@ export function HomeTab({
         >
           <h3 className="text-sm font-black text-[color:var(--navy)] mb-3">나의 활동 현황</h3>
           <ul className="text-sm divide-y divide-slate-100">
-            <StatRow label="등록한 표현" value={`${stats.registered}개`} accent="text-emerald-600" />
+            <StatRow
+              label="등록한 표현"
+              value={`${stats.registered}개`}
+              accent="text-emerald-600"
+            />
             <StatRow label="완료한 역할극" value={`${stats.roleplay}개`} accent="text-orange-600" />
-            <StatRow label="작성한 성찰" value={`${stats.reflections}개`} accent="text-purple-600" />
+            <StatRow
+              label="작성한 성찰"
+              value={`${stats.reflections}개`}
+              accent="text-purple-600"
+            />
             <StatRow label="받은 배지" value={`${stats.badges}개`} accent="text-amber-600" />
           </ul>
         </section>
@@ -273,15 +283,7 @@ export function HomeTab({
   );
 }
 
-function StatRow({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: string;
-  accent: string;
-}) {
+function StatRow({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <li className="flex items-center justify-between py-2">
       <span className="text-slate-600">{label}</span>
