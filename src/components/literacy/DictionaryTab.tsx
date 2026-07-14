@@ -352,12 +352,7 @@ function EntryCard({
           )}
         </div>
       )}
-      {/* legacy source-only placeholder removed above */}
-      {false && entry.source && (
-        <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
-          <Radio size={11} /> 출처 · {entry.source}
-        </div>
-      )}
+      {/* legacy source-only placeholder removed — 출처는 위 통합 블록에서 노출 */}
       {/* 3) 5대 유해성 점수 */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-1">
