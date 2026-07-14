@@ -1,4 +1,9 @@
-import { forwardRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
+import {
+  forwardRef,
+  type ButtonHTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from "react";
 
 /**
  * 공통 UI 프리미티브 — 학생 화면 전 탭(검색·사전·퀴즈·성찰·로드맵·배지)에서
@@ -45,9 +50,7 @@ export function SectionHeader({
           <div className="text-base sm:text-lg font-black text-[color:var(--navy)] truncate">
             {title}
           </div>
-          {subtitle && (
-            <div className="text-xs text-muted-foreground truncate">{subtitle}</div>
-          )}
+          {subtitle && <div className="text-xs text-muted-foreground truncate">{subtitle}</div>}
         </div>
       </div>
       {right && <div className="shrink-0">{right}</div>}
@@ -63,8 +66,7 @@ const TONE_BTN: Record<Tone, string> = {
   accent: "bg-accent text-accent-foreground hover:bg-accent/90",
   purple: "bg-[color:var(--purple)] text-white hover:opacity-90",
   danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-  ghost:
-    "bg-white/70 text-[color:var(--navy)] hover:bg-white border border-white/70",
+  ghost: "bg-white/70 text-[color:var(--navy)] hover:bg-white border border-white/70",
 };
 
 export const AppButton = forwardRef<

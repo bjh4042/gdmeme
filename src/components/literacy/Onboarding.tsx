@@ -189,7 +189,8 @@ export function Onboarding({
                   바른말 수호대
                 </h1>
                 <p className="mt-1 text-[11px] leading-snug text-slate-600 px-2">
-                  디지털 언어의 뜻과 맥락을 살펴보고,<br />
+                  디지털 언어의 뜻과 맥락을 살펴보고,
+                  <br />
                   상대를 존중하는 표현을 함께 만들어 가는 학습 공간
                 </p>
                 <ol
@@ -209,7 +210,9 @@ export function Onboarding({
                         <span>{s.t}</span>
                       </span>
                       {idx < arr.length - 1 && (
-                        <span aria-hidden className="text-slate-300">›</span>
+                        <span aria-hidden className="text-slate-300">
+                          ›
+                        </span>
                       )}
                     </li>
                   ))}

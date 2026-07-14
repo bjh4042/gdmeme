@@ -193,11 +193,7 @@ export function RoadmapCard({
                           : "bg-slate-50 border-slate-200 text-slate-300"
                     }`}
                   >
-                    <Icon
-                      className="h-6 w-6"
-                      strokeWidth={isCurrent ? 2.4 : 2}
-                      aria-hidden
-                    />
+                    <Icon className="h-6 w-6" strokeWidth={isCurrent ? 2.4 : 2} aria-hidden />
                     {st.done && (
                       <span
                         aria-hidden
@@ -234,11 +230,7 @@ export function RoadmapCard({
                 {/* 진행 상태 라벨 */}
                 <div
                   className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider ${
-                    st.done
-                      ? "text-emerald-600"
-                      : isCurrent
-                        ? style.label
-                        : "text-slate-400"
+                    st.done ? "text-emerald-600" : isCurrent ? style.label : "text-slate-400"
                   }`}
                 >
                   {st.done ? "완료" : isCurrent ? "진행 중" : "잠금"}
@@ -248,11 +240,7 @@ export function RoadmapCard({
                 <div className="mt-1.5 w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                   <div
                     className={`h-full transition-all duration-300 ${
-                      st.done
-                        ? "bg-emerald-500"
-                        : isCurrent
-                          ? "bg-current"
-                          : "bg-slate-300"
+                      st.done ? "bg-emerald-500" : isCurrent ? "bg-current" : "bg-slate-300"
                     } ${isCurrent ? style.fg : ""}`}
                     style={{ width: `${Math.round(st.progress * 100)}%` }}
                   />

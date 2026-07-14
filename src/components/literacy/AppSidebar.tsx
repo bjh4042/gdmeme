@@ -11,14 +11,7 @@ import {
 } from "lucide-react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
 
-export type SidebarKey =
-  | "home"
-  | "analyze"
-  | "dict"
-  | "quiz"
-  | "reflect"
-  | "roadmap"
-  | "badges";
+export type SidebarKey = "home" | "analyze" | "dict" | "quiz" | "reflect" | "roadmap" | "badges";
 
 type Item = {
   key: SidebarKey;
@@ -70,9 +63,7 @@ export function AppSidebar({
             <div className="font-black text-base leading-tight text-foreground truncate">
               바른말 수호대
             </div>
-            <div className="text-[11px] text-muted-foreground truncate">
-              디지털 언어를 바르게!
-            </div>
+            <div className="text-[11px] text-muted-foreground truncate">디지털 언어를 바르게!</div>
           </div>
         </div>
       </div>
