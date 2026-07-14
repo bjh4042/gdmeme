@@ -1095,8 +1095,20 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
     </th>
   );
 }
-function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>;
+function Td({
+  children,
+  className = "",
+  title,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  title?: string;
+}) {
+  return (
+    <td className={`px-3 py-2 align-middle ${className}`} title={title}>
+      {children}
+    </td>
+  );
 }
 
 function SortableTh({
