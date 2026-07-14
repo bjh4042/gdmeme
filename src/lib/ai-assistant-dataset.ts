@@ -21,6 +21,7 @@ export type AssistantEntry = {
 };
 
 import { AI_KNOWLEDGE_EXTRA } from "./ai-assistant-dataset-extra";
+import { AI_KNOWLEDGE_SCENARIO } from "./ai-assistant-dataset-scenario";
 
 /**
  * 마스터 데이터셋. 교사가 새 객체를 push 하면 즉시 챗봇에 반영된다.
@@ -63,6 +64,7 @@ export const AI_KNOWLEDGE: AssistantEntry[] = [
       "🤖 [누리망 에티켓 안내]\n가상 공간에서 익명성에 숨어 무심코 던진 한 줄의 댓글이나 인터넷 밈은 다른 사람의 마음에 깊은 칼날이 되어 돌아옵니다. 도덕적인 '시민 책임'을 다하기 위해, 글을 전송하기 전 '내가 이 말을 눈앞에서 친구에게 직접 할 수 있는가?'를 꼭 점검해 보세요.",
   },
   ...AI_KNOWLEDGE_EXTRA,
+  ...AI_KNOWLEDGE_SCENARIO,
 ];
 
 // 돌발 질문 대응 랜덤 풀 — 단일 반복 답변 방지, 자연스러운 대화 흐름 연출.
@@ -106,6 +108,36 @@ export const QUICK_REPLIES: QuickReply[] = [
     icon: "🌱",
     label: "인터넷 댓글 도덕",
     prompt: "인터넷 게시판에 댓글을 달 때 도덕적으로 주의할 점은?",
+  },
+  {
+    icon: "🙏",
+    label: "친구에게 사과하기",
+    prompt: "친구 물건을 실수로 망가뜨렸어요. 어떻게 사과하면 좋을까요?",
+  },
+  {
+    icon: "🙅",
+    label: "부탁을 거절하고 싶을 때",
+    prompt: "숙제 보여 달라는 부탁을 예의 있게 거절하고 싶어요.",
+  },
+  {
+    icon: "🎮",
+    label: "게임에서 화가 날 때",
+    prompt: "게임에서 팀원이 못한다고 욕하고 싶은 마음이 들어요.",
+  },
+  {
+    icon: "🔒",
+    label: "AI에 개인정보 입력",
+    prompt: "AI 챗봇에게 이름이나 전화번호를 입력해도 되나요?",
+  },
+  {
+    icon: "💗",
+    label: "친구 외모 놀림 바꾸기",
+    prompt: "친구 외모를 놀리는 말을 바른말로 바꾸고 싶어요.",
+  },
+  {
+    icon: "🙋",
+    label: "선생님께 도움 요청",
+    prompt: "선생님께 다시 설명해 달라고 정중히 말하고 싶어요.",
   },
 ];
 
