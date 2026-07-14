@@ -74,40 +74,45 @@ export function HomeTab({
     title: string;
     desc: string;
     icon: React.ReactNode;
-    tone: string;
+    iconBg: string;
     btn: string;
+    btnText: string;
   }[] = [
     {
       key: "analyze",
       title: "표현 찾아보기",
-      desc: "궁금한 디지털 언어를 검색해요.",
-      icon: <Search className="h-6 w-6 text-blue-600" />,
-      tone: "bg-blue-50 border-blue-100",
-      btn: "bg-blue-600 hover:bg-blue-700",
+      desc: "궁금한 디지털 언어를 검색하고 뜻을 확인해요.",
+      icon: <Search className="h-6 w-6 text-primary" />,
+      iconBg: "bg-primary/10",
+      btn: "bg-primary hover:bg-primary/90 focus:ring-primary/40",
+      btnText: "text-primary-foreground",
     },
     {
       key: "dict",
       title: "참여 사전",
-      desc: "새로운 표현을 등록해요.",
-      icon: <BookOpen className="h-6 w-6 text-emerald-600" />,
-      tone: "bg-emerald-50 border-emerald-100",
-      btn: "bg-emerald-600 hover:bg-emerald-700",
+      desc: "새로운 표현을 직접 등록하고 사전을 함께 만들어요.",
+      icon: <BookOpen className="h-6 w-6 text-secondary" />,
+      iconBg: "bg-secondary/10",
+      btn: "bg-secondary hover:bg-secondary/90 focus:ring-secondary/40",
+      btnText: "text-secondary-foreground",
     },
     {
       key: "quiz",
       title: "퀴즈 놀이터",
-      desc: "퀴즈를 풀며 실력을 쌓아요.",
-      icon: <Gamepad2 className="h-6 w-6 text-orange-600" />,
-      tone: "bg-orange-50 border-orange-100",
-      btn: "bg-orange-500 hover:bg-orange-600",
+      desc: "재미있는 퀴즈를 풀며 실력을 쌓아요.",
+      icon: <Gamepad2 className="h-6 w-6 text-accent" />,
+      iconBg: "bg-accent/10",
+      btn: "bg-accent hover:bg-accent/90 focus:ring-accent/40",
+      btnText: "text-accent-foreground",
     },
     {
       key: "assist",
       title: "나의 표현 돌아보기",
-      desc: "나의 생각과 성찰을 기록해요.",
-      icon: <NotebookPen className="h-6 w-6 text-purple-600" />,
-      tone: "bg-purple-50 border-purple-100",
-      btn: "bg-purple-600 hover:bg-purple-700",
+      desc: "나의 생각과 성찰을 기록하며 돌아봐요.",
+      icon: <NotebookPen className="h-6 w-6 text-purple" />,
+      iconBg: "bg-purple/10",
+      btn: "bg-purple hover:bg-purple/90 focus:ring-purple/40",
+      btnText: "text-white",
     },
   ];
 
