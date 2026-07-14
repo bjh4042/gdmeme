@@ -266,28 +266,80 @@ function EntryCard({
           <Icon size={12} /> {g.label}
         </span>
       </div>
-      {entry.source && (
+      {/* 1) 뜻 */}
+      <div className="mb-2">
+        <div className="text-[11px] font-black text-[color:var(--mint-deep)] mb-0.5">📖 우리가 정리한 뜻</div>
+        {entry.student_definition?.trim() ? (
+          <p className="text-sm text-[color:var(--navy)] line-clamp-4">{entry.student_definition}</p>
+        ) : (
+          <p className="text-xs text-slate-400 italic">아직 정리된 뜻이 없어요.</p>
+        )}
+      </div>
+      {/* 2) 출처 · 사용 배경 */}
+      {(entry.source || entry.context_note) && (
+        <div className="mb-2 space-y-1">
+          {entry.source && (
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
+              <Radio size={11} /> 출처 · {entry.source}
+            </div>
+          )}
+          {entry.context_note && (
+            <div className="text-[11px] text-slate-700">
+              <b className="text-[color:var(--navy)]">🎬 본 상황</b> · {entry.context_note}
+            </div>
+          )}
+        </div>
+      )}
+      {/* legacy source-only placeholder removed above */}
+      {false && entry.source && (
         <div className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[color:var(--mint-deep)] bg-[color:var(--mint)]/40 rounded-full px-2 py-0.5">
           <Radio size={11} /> 출처 · {entry.source}
         </div>
       )}
-      <p className="text-sm text-[color:var(--navy)] mb-3 line-clamp-3">{entry.student_definition}</p>
+      {/* 3) 5대 유해성 점수 */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-xs font-bold text-muted-foreground mb-1">
-          <span>유해 점수</span>
+          <span>5대 유해성 종합 점수</span>
           <span style={{ color: bg }}>{entry.total_harmful_score}/100</span>
         </div>
         <div className="h-2 rounded-full bg-white/60 overflow-hidden">
           <div className="h-full transition-all duration-500" style={{ width: `${entry.total_harmful_score}%`, background: bg }} />
         </div>
       </div>
+      {/* 4) 사용할 때 생각할 점 (규칙 기반) */}
+      {(() => {
+        const hints = harmHints(entry.evaluations);
+        if (hints.length === 0) return null;
+        return (
+          <div className="mb-3 rounded-2xl bg-amber-50/70 border border-amber-200 p-2.5">
+            <div className="text-[11px] font-black text-amber-800 mb-1">💭 사용할 때 생각할 점</div>
+            <ul className="space-y-0.5 text-[11px] text-amber-900">
+              {hints.map((h, i) => (
+                <li key={i}><span aria-hidden>{h.icon}</span> {h.text}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      })()}
+      {/* 5) 듣는 사람의 마음 */}
+      {entry.listener_effect && (
+        <div className="mb-3 rounded-2xl bg-rose-50/70 border border-rose-200 p-2.5 text-[11px] text-rose-900">
+          <div className="font-black text-rose-800 mb-0.5">💗 이 말을 들으면</div>
+          {entry.listener_effect}
+        </div>
+      )}
+      {/* 6) 대체 표현 */}
       <div className="text-xs">
         <div className="font-bold text-[color:var(--mint-deep)] mb-1 flex items-center gap-1"><Sparkles size={12} /> 바른 대안 표현</div>
-        <ul className="space-y-0.5 text-[color:var(--navy)]">
-          {entry.alternatives.map((a, i) => (
-            <li key={i}>· {a}</li>
-          ))}
-        </ul>
+        {entry.alternatives && entry.alternatives.length > 0 ? (
+          <ul className="space-y-0.5 text-[color:var(--navy)]">
+            {entry.alternatives.map((a, i) => (
+              <li key={i}>· {a}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-slate-400 italic">아직 대안 표현이 없어요. 사전 등록에서 함께 만들어 봐요.</p>
+        )}
       </div>
       <div className="mt-3 pt-2 border-t border-white/60 text-[10px] text-muted-foreground flex flex-wrap items-center justify-between gap-1">
         <span className="inline-flex items-center gap-1.5 flex-wrap">
