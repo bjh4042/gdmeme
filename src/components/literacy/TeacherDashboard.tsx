@@ -521,7 +521,7 @@ export function TeacherDashboard({
         className="w-full max-w-4xl min-w-0 mx-auto my-2 sm:my-6 rounded-3xl bg-card p-3 sm:p-6 border-2 border-[color:var(--navy)]"
         style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
+        <div className="sticky -top-3 sm:-top-6 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 pt-3 sm:pt-6 pb-3 mb-4 bg-card/95 backdrop-blur rounded-t-3xl border-b border-[color:var(--border)] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">
             <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">
               🧑‍🏫 교사 대시보드
@@ -539,7 +539,7 @@ export function TeacherDashboard({
             )}
             <button
               onClick={onClose}
-              className="text-xs px-3 py-2 rounded-lg bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold"
+              className="text-xs px-3 py-2 rounded-lg bg-primary text-primary-foreground font-bold"
             >
               닫기
             </button>
@@ -562,13 +562,35 @@ export function TeacherDashboard({
           />
         </div>
 
-        <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
+        {/* 1) 오늘 현황 · Quick Summary */}
+        <DashboardCard title="오늘 현황" subtitle="한눈에 보는 학급 지표" className="mb-4">
+          <QuickSummary
+            dict={dict}
+            students={students}
+            currentClassCode={currentClassCode}
+            pending={pending.length}
+            approved={approved.length}
+          />
+        </DashboardCard>
 
-        <TeacherEducationalSummary
-          students={students}
-          currentClassCode={currentClassCode}
-          dict={dict}
-        />
+        {/* 2) 로드맵 */}
+        <DashboardCard title="학습 로드맵" subtitle="단계별 학급 진행률" className="mb-4">
+          <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
+        </DashboardCard>
+
+        {/* 3) 학생 현황 */}
+        <DashboardCard title="학생 현황" subtitle="영역별 참여·성찰 요약" className="mb-4">
+          <TeacherEducationalSummary
+            students={students}
+            currentClassCode={currentClassCode}
+            dict={dict}
+          />
+        </DashboardCard>
+
+        {/* 4) 최근 활동 */}
+        <DashboardCard title="최근 활동" subtitle="학급 활동 로그 (최근 10건)" className="mb-4">
+          <RecentActivity classCode={currentClassCode} />
+        </DashboardCard>
 
         {/* 데모 데이터 안내 배너 (교사 화면 전용) */}
         <div
