@@ -21,6 +21,7 @@ import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
 import { TeacherEducationalSummary } from "./TeacherEducationalSummary";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
+import { useClassStore } from "@/stores/class";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
@@ -520,7 +521,7 @@ export function TeacherDashboard({
         className="w-full max-w-4xl min-w-0 mx-auto my-2 sm:my-6 rounded-3xl bg-card p-3 sm:p-6 border-2 border-[color:var(--navy)]"
         style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
+        <div className="sticky -top-3 sm:-top-6 z-20 -mx-3 sm:-mx-6 px-3 sm:px-6 pt-3 sm:pt-6 pb-3 mb-4 bg-card/95 backdrop-blur rounded-t-3xl border-b border-[color:var(--border)] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div className="min-w-0">
             <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">
               🧑‍🏫 교사 대시보드
@@ -538,7 +539,7 @@ export function TeacherDashboard({
             )}
             <button
               onClick={onClose}
-              className="text-xs px-3 py-2 rounded-lg bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold"
+              className="text-xs px-3 py-2 rounded-lg bg-primary text-primary-foreground font-bold"
             >
               닫기
             </button>
@@ -561,13 +562,39 @@ export function TeacherDashboard({
           />
         </div>
 
-        <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
+        {/* 1) 오늘 현황 · Quick Summary */}
+        <DashboardCard title="오늘 현황" subtitle="한눈에 보는 학급 지표" className="mb-4">
+          <QuickSummary
+            dict={dict}
+            students={students}
+            currentClassCode={currentClassCode}
+            pending={pending.length}
+            approved={approved.length}
+          />
+        </DashboardCard>
 
-        <TeacherEducationalSummary
-          students={students}
-          currentClassCode={currentClassCode}
-          dict={dict}
-        />
+        {/* 2) 로드맵 */}
+        <DashboardCard title="학습 로드맵" subtitle="단계별 학급 진행률" className="mb-4">
+          <RoadmapTeacherPanel
+            students={students}
+            currentClassCode={currentClassCode}
+            dict={dict}
+          />
+        </DashboardCard>
+
+        {/* 3) 학생 현황 */}
+        <DashboardCard title="학생 현황" subtitle="영역별 참여·성찰 요약" className="mb-4">
+          <TeacherEducationalSummary
+            students={students}
+            currentClassCode={currentClassCode}
+            dict={dict}
+          />
+        </DashboardCard>
+
+        {/* 4) 최근 활동 */}
+        <DashboardCard title="최근 활동" subtitle="학급 활동 로그 (최근 10건)" className="mb-4">
+          <RecentActivity classCode={currentClassCode} />
+        </DashboardCard>
 
         {/* 데모 데이터 안내 배너 (교사 화면 전용) */}
         <div
@@ -581,165 +608,165 @@ export function TeacherDashboard({
 
         {section === "words" ? (
           <>
-            {/* 📊 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용) */}
-            <div
-              data-tour="admin-csv"
-              className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3"
+            {/* 5) 승인 대기 · 단어 관리 */}
+            <DashboardCard
+              title="승인 대기 · 단어 관리"
+              subtitle="검색·필터·상태별 승인 처리"
+              className="mb-4"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="text-sm font-black text-[color:var(--navy)]">
-                    📊 사전 데이터셋 일괄 관리
-                  </div>
-                  <div className="text-[11px] text-muted-foreground">
-                    CSV로 내려받아 엑셀에서 편집 → 다시 업로드하면 ID 기준으로 Upsert 반영돼요.
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
+              {/* Search bar */}
+              <div className="relative mb-4">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
+                  className="w-full rounded-xl border border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                />
+                {query && (
                   <button
-                    type="button"
-                    onClick={downloadDictCSV}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-3 py-2 text-xs font-bold hover:scale-[1.03] transition"
+                    onClick={() => setQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center rounded-full hover:bg-black/5"
+                    aria-label="검색 초기화"
                   >
-                    <Download size={14} /> 사전 데이터 엑셀 다운로드
+                    <X size={14} />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => dictFileRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border-2 border-[color:var(--navy)] text-[color:var(--navy)] px-3 py-2 text-xs font-bold hover:bg-[color:var(--mint)] transition"
-                  >
-                    <Upload size={14} /> 엑셀 파일 선택
-                  </button>
-                  <input
-                    ref={dictFileRef}
-                    type="file"
-                    accept=".csv,.xlsx,.xls,text/csv"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) void handleDictUpload(f);
-                    }}
-                  />
-                </div>
+                )}
               </div>
-            </div>
 
-            {/* Search bar */}
-            <div className="relative mb-4">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
-                className="w-full rounded-xl border-2 border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[color:var(--mint-deep)]"
-              />
-              {query && (
-                <button
-                  onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center rounded-full hover:bg-black/5"
-                  aria-label="검색 초기화"
-                >
-                  <X size={14} />
-                </button>
+              {/* Filters */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                <label className="flex flex-col gap-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">교육과정 코드</span>
+                  <select
+                    value={curriculumFilter}
+                    onChange={(e) => setCurriculumFilter(e.target.value)}
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="all">전체</option>
+                    {curriculumOptions.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">유해 등급</span>
+                  <select
+                    value={gradeFilter}
+                    onChange={(e) => setGradeFilter(e.target.value)}
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="all">전체</option>
+                    {gradeOptions.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                  <span className="text-[11px] font-bold text-muted-foreground">승인 상태</span>
+                  <select
+                    value={status}
+                    onChange={(e) =>
+                      setStatus(e.target.value as "pending" | "approved" | "rejected")
+                    }
+                    className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  >
+                    <option value="pending">대기 ({pending.length})</option>
+                    <option value="approved">승인 ({approved.length})</option>
+                    <option value="rejected">반려 ({rejected.length})</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                <TabStat
+                  label="대기"
+                  n={pending.length}
+                  active={status === "pending"}
+                  color="var(--warn)"
+                  onClick={() => setStatus("pending")}
+                />
+                <TabStat
+                  label="승인"
+                  n={approved.length}
+                  active={status === "approved"}
+                  color="var(--safe)"
+                  onClick={() => setStatus("approved")}
+                />
+                <TabStat
+                  label="반려"
+                  n={rejected.length}
+                  active={status === "rejected"}
+                  color="var(--danger)"
+                  onClick={() => setStatus("rejected")}
+                />
+              </div>
+
+              <div className="text-xs text-muted-foreground mb-2">
+                총 <b className="text-[color:var(--navy)]">{list.length}</b>개
+                {query && <> · 검색어 "{query}"</>}
+              </div>
+
+              {list.length === 0 ? (
+                <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
+                  {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {list.map((d) => (
+                    <EntryRow
+                      key={d.id}
+                      entry={d}
+                      showActions={status === "pending"}
+                      onApprove={onApprove}
+                      onReject={onReject}
+                      onEdit={() => setEditingId(d.id)}
+                    />
+                  ))}
+                </div>
               )}
-            </div>
+            </DashboardCard>
 
-            {/* Filters */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-muted-foreground">교육과정 코드</span>
-                <select
-                  value={curriculumFilter}
-                  onChange={(e) => setCurriculumFilter(e.target.value)}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+            {/* 6) CSV · 사전 데이터셋 일괄 관리 */}
+            <DashboardCard
+              title="CSV · 사전 데이터셋 일괄 관리"
+              subtitle="CSV로 내려받아 편집 후 업로드 (ID 기준 Upsert)"
+              className="mb-4"
+            >
+              <div data-tour="admin-csv" className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={downloadDictCSV}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-2 text-xs font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] transition"
                 >
-                  <option value="all">전체</option>
-                  {curriculumOptions.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-muted-foreground">유해 등급</span>
-                <select
-                  value={gradeFilter}
-                  onChange={(e) => setGradeFilter(e.target.value)}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
+                  <Download size={14} /> 사전 데이터 엑셀 다운로드
+                </button>
+                <button
+                  type="button"
+                  onClick={() => dictFileRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white border-2 border-primary text-primary px-3 py-2 text-xs font-bold hover:bg-primary/5 transition"
                 >
-                  <option value="all">전체</option>
-                  {gradeOptions.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                <span className="text-[11px] font-bold text-muted-foreground">승인 상태</span>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as "pending" | "approved" | "rejected")}
-                  className="rounded-xl border-2 border-[color:var(--border)] px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
-                >
-                  <option value="pending">대기 ({pending.length})</option>
-                  <option value="approved">승인 ({approved.length})</option>
-                  <option value="rejected">반려 ({rejected.length})</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-              <TabStat
-                label="대기"
-                n={pending.length}
-                active={status === "pending"}
-                color="var(--warn)"
-                onClick={() => setStatus("pending")}
-              />
-              <TabStat
-                label="승인"
-                n={approved.length}
-                active={status === "approved"}
-                color="var(--safe)"
-                onClick={() => setStatus("approved")}
-              />
-              <TabStat
-                label="반려"
-                n={rejected.length}
-                active={status === "rejected"}
-                color="var(--danger)"
-                onClick={() => setStatus("rejected")}
-              />
-            </div>
-
-            <div className="text-xs text-muted-foreground mb-2">
-              총 <b className="text-[color:var(--navy)]">{list.length}</b>개
-              {query && <> · 검색어 "{query}"</>}
-            </div>
-
-            {list.length === 0 ? (
-              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
+                  <Upload size={14} /> 엑셀 파일 선택
+                </button>
+                <input
+                  ref={dictFileRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls,text/csv"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void handleDictUpload(f);
+                  }}
+                />
               </div>
-            ) : (
-              <div className="space-y-2">
-                {list.map((d) => (
-                  <EntryRow
-                    key={d.id}
-                    entry={d}
-                    showActions={status === "pending"}
-                    onApprove={onApprove}
-                    onReject={onReject}
-                    onEdit={() => setEditingId(d.id)}
-                  />
-                ))}
-              </div>
-            )}
+            </DashboardCard>
           </>
         ) : (
           <>
@@ -1642,6 +1669,141 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <div className="text-sm font-bold text-[color:var(--navy)] mb-1.5">{label}</div>
       {children}
+    </div>
+  );
+}
+
+/** 대시보드 공통 카드 래퍼 — 섹션마다 동일한 여백·헤더·라운드로 통일. */
+function DashboardCard({
+  title,
+  subtitle,
+  right,
+  className = "",
+  children,
+}: {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  right?: React.ReactNode;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className={`rounded-2xl border border-[color:var(--border)] bg-white shadow-[var(--shadow-soft)] p-4 sm:p-5 ${className}`}
+    >
+      <header className="flex items-start justify-between gap-3 mb-3">
+        <div className="min-w-0">
+          <h4 className="text-sm sm:text-base font-black text-[color:var(--navy)] truncate">
+            {title}
+          </h4>
+          {subtitle && <p className="text-[11px] text-muted-foreground truncate">{subtitle}</p>}
+        </div>
+        {right && <div className="shrink-0">{right}</div>}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+/** Quick Summary — 학급 규모·승인 대기·평균 유해도·최근 활동 수 등 오늘의 지표 요약. */
+function QuickSummary({
+  dict,
+  students,
+  currentClassCode,
+  pending,
+  approved,
+}: {
+  dict: DictEntry[];
+  students: StudentRecord[];
+  currentClassCode: string;
+  pending: number;
+  approved: number;
+}) {
+  const classState = useClassStore((s) => s.byClass[currentClassCode]);
+  const activityToday = useMemo(() => {
+    const logs = classState?.activityLog ?? [];
+    const today = new Date().toDateString();
+    return logs.filter((a) => new Date(a.at).toDateString() === today).length;
+  }, [classState]);
+  const avgHarm = useMemo(() => {
+    const list = dict.filter((d) => d.status === "approved");
+    if (list.length === 0) return 0;
+    return Math.round(list.reduce((s, d) => s + (d.total_harmful_score ?? 0), 0) / list.length);
+  }, [dict]);
+  const items = [
+    { label: "학생 수", value: `${students.length}명`, tone: "primary" },
+    { label: "승인 대기", value: `${pending}건`, tone: "warn" },
+    { label: "승인 완료", value: `${approved}건`, tone: "safe" },
+    { label: "평균 유해도", value: `${avgHarm}/100`, tone: "accent" },
+    { label: "오늘 활동", value: `${activityToday}건`, tone: "purple" },
+  ] as const;
+  const TONE: Record<string, string> = {
+    primary: "bg-primary/10 text-primary",
+    warn: "bg-amber-100 text-amber-800",
+    safe: "bg-emerald-100 text-emerald-800",
+    accent: "bg-orange-100 text-orange-800",
+    purple: "bg-violet-100 text-violet-800",
+  };
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      {items.map((it) => (
+        <div
+          key={it.label}
+          className={`rounded-2xl px-3 py-3 text-center transition hover:-translate-y-0.5 ${TONE[it.tone]}`}
+        >
+          <div className="text-[11px] font-bold opacity-80">{it.label}</div>
+          <div className="text-lg sm:text-xl font-black tabular-nums">{it.value}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** 최근 활동 로그 — 학급 activityLog 에서 최근 10건을 통일된 표 형태로 렌더. */
+function RecentActivity({ classCode }: { classCode: string }) {
+  const log = useClassStore((s) => s.byClass[classCode]?.activityLog ?? []);
+  const rows = log.slice(0, 10);
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-xl bg-[color:var(--muted)] p-5 text-center text-xs text-muted-foreground">
+        아직 기록된 활동이 없어요.
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-xl border border-[color:var(--border)] overflow-hidden">
+      <table className="w-full text-sm">
+        <thead className="bg-[color:var(--muted)] text-[11px] uppercase text-muted-foreground">
+          <tr>
+            <th className="text-left px-3 py-2 font-bold">시각</th>
+            <th className="text-left px-3 py-2 font-bold">누구</th>
+            <th className="text-left px-3 py-2 font-bold">활동</th>
+            <th className="text-right px-3 py-2 font-bold">XP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((a, i) => {
+            const d = new Date(a.at);
+            const t = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+            return (
+              <tr key={i} className="border-t border-[color:var(--border)] hover:bg-slate-50">
+                <td className="px-3 py-2 text-xs text-muted-foreground tabular-nums">{t}</td>
+                <td className="px-3 py-2 text-xs font-bold text-[color:var(--navy)]">{a.who}</td>
+                <td className="px-3 py-2 text-xs text-[color:var(--navy)] truncate">
+                  <span className="font-semibold">{a.kind}</span>
+                  {a.note && <span className="text-muted-foreground"> · {a.note}</span>}
+                </td>
+                <td
+                  className={`px-3 py-2 text-xs text-right font-black tabular-nums ${a.delta >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+                >
+                  {a.delta >= 0 ? "+" : ""}
+                  {a.delta}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
