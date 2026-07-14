@@ -16,6 +16,7 @@ import {
   type BadgeStats,
 } from "@/lib/badges";
 import { ReportModal } from "./ReportModal";
+import { todaysReflectionPrompt, REFLECTION_AFTER_SAVE, REFLECTION_PROMPTS } from "@/lib/reflection-prompts";
 
 export function ProfileModal({
   student,
@@ -37,6 +38,7 @@ export function ProfileModal({
   const wroteToday = engagement?.lastJournalDate === today;
   const [text, setText] = useState("");
   const [showReport, setShowReport] = useState(false);
+  const prompt = todaysReflectionPrompt();
   const approvedWords = useMemo(
     () => dict.filter((d) => d.suggested_by === student.id && d.status === "approved").length,
     [dict, student.id],
@@ -74,10 +76,10 @@ export function ProfileModal({
     if (res.streakBonus) {
       confetti({ particleCount: 120, spread: 90, origin: { y: 0.4 } });
       toast.success(`🎆 ${res.streak}일 연속 달성! 보너스 +10 XP`, {
-        description: "꾸준함이 곧 실력입니다.",
+        description: `꾸준함이 곧 실력입니다. ${REFLECTION_AFTER_SAVE}`,
       });
     } else {
-      toast.success("성찰 저널 저장 완료! +2 XP");
+      toast.success("성찰 저널 저장 완료! +2 XP", { description: REFLECTION_AFTER_SAVE });
     }
   }
 
@@ -131,9 +133,14 @@ export function ProfileModal({
                 onChange={(e) => setText(e.target.value)}
                 maxLength={300}
                 rows={2}
-                placeholder="오늘 내가 지킨 바른 말 한 줄을 남겨보아요. (하루 1회 · +2 XP)"
+                placeholder={`오늘의 질문 · ${prompt.label} — ${prompt.hint}`}
                 className="w-full rounded-xl border-2 border-white/70 bg-white/80 px-3 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] transition wt-text"
               />
+              <ul className="mt-2 grid grid-cols-2 gap-1 text-[10px] text-slate-500">
+                {REFLECTION_PROMPTS.map((p) => (
+                  <li key={p.key}>· {p.label}</li>
+                ))}
+              </ul>
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-[11px] text-muted-foreground">{text.length}/300</span>
                 <button
