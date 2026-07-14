@@ -278,9 +278,10 @@ function Index() {
           activeId={activeId}
           dict={dict}
           onJump={(t) => setTab(t)}
+          onXP={awardXP}
         />
       ) : null,
-    [student, activeId, dict],
+    [student, activeId, dict, awardXP],
   );
 
   if (!student || !hydrated) {
