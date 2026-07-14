@@ -393,13 +393,23 @@ function ProposalModal({
   initialWord,
 }: {
   onClose: () => void;
-  onSubmit: (p: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; source?: string }) => void;
+  onSubmit: (p: {
+    word: string;
+    student_definition: string;
+    alternatives: string[];
+    evaluations: Evaluation;
+    source?: string;
+    context_note?: string;
+    listener_effect?: string;
+  }) => void;
   initialWord?: string;
 }) {
   const [word, setWord] = useState(initialWord ?? "");
   const [def, setDef] = useState("");
   const [alt, setAlt] = useState("");
   const [source, setSource] = useState("");
+  const [contextNote, setContextNote] = useState("");
+  const [listenerEffect, setListenerEffect] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [ev, setEv] = useState<Evaluation>({
     aggression: 3,
@@ -432,6 +442,8 @@ function ProposalModal({
       student_definition: def.trim(),
       alternatives: alt.split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
       source: source.trim(),
+      context_note: contextNote.trim() || undefined,
+      listener_effect: listenerEffect.trim() || undefined,
       evaluations: ev,
     });
   }
