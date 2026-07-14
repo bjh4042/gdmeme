@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Plus, Search, Sparkles, X, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, AlertTriangle, Siren } from "lucide-react";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { KOREAN_INITIALS, ALPHABET, firstInitial, computeTotal, gradeOf, riskBucketOf, sortByInitial } from "@/lib/literacy-types";
+import { harmHints } from "@/lib/harm-hints";
 import { REACTIONS, reactionCountsFor, myReactionsFor, useEngagementStore, type ReactionKind } from "@/stores/engagement";
 import { AreaBadgeChips } from "./AreaBadges";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
@@ -15,7 +16,16 @@ export function DictionaryTab({
   openModalKey,
 }: {
   dict: DictEntry[];
-  onSubmit: (payload: { word: string; student_definition: string; alternatives: string[]; evaluations: Evaluation; suggested_by: string; source?: string }) => void;
+  onSubmit: (payload: {
+    word: string;
+    student_definition: string;
+    alternatives: string[];
+    evaluations: Evaluation;
+    suggested_by: string;
+    source?: string;
+    context_note?: string;
+    listener_effect?: string;
+  }) => void;
   student: { classCode: string; number: string; name: string };
   prefillWord?: string;
   openModalKey?: number;
