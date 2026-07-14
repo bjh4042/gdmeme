@@ -185,6 +185,35 @@ export function Onboarding({
                     />
                   </div>
                 </div>
+                <h1 className="mt-2 text-base font-black text-[color:var(--navy)]">
+                  바른말 수호대
+                </h1>
+                <p className="mt-1 text-[11px] leading-snug text-slate-600 px-2">
+                  디지털 언어의 뜻과 맥락을 살펴보고,<br />
+                  상대를 존중하는 표현을 함께 만들어 가는 학습 공간
+                </p>
+                <ol
+                  aria-label="바른말 수호 5단계 학습 흐름"
+                  className="mt-3 flex items-center justify-center gap-1 text-[10px] font-bold text-slate-600 flex-wrap"
+                >
+                  {[
+                    { i: "🔎", t: "발견" },
+                    { i: "🧭", t: "파헤치기" },
+                    { i: "💗", t: "공감" },
+                    { i: "✏️", t: "바꾸기" },
+                    { i: "🌱", t: "실천" },
+                  ].map((s, idx, arr) => (
+                    <li key={s.t} className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5">
+                        <span aria-hidden>{s.i}</span>
+                        <span>{s.t}</span>
+                      </span>
+                      {idx < arr.length - 1 && (
+                        <span aria-hidden className="text-slate-300">›</span>
+                      )}
+                    </li>
+                  ))}
+                </ol>
               </div>
               <form onSubmit={submit} className="space-y-4">
                 <div>
