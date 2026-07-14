@@ -36,12 +36,14 @@ import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { stageContextForTab } from "@/lib/stage-context";
 import { AppSidebar, type SidebarKey } from "@/components/literacy/AppSidebar";
 import { HomeTab } from "@/components/literacy/HomeTab";
+import { Step5Tab } from "@/components/literacy/Step5Tab";
+import { deriveRoadmap } from "@/lib/roadmap";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "home" | "analyze" | "chat" | "assist" | "quiz" | "dict";
+type Tab = "home" | "analyze" | "chat" | "assist" | "quiz" | "dict" | "step5";
 
 function Index() {
   const hydrated = useHydrated();
@@ -236,6 +238,10 @@ function Index() {
   );
   const assistNode = useMemo(() => <AssistantTab onXP={awardXP} />, [awardXP]);
   const quizNode = useMemo(() => <QuizTab dict={dict} onXP={awardXP} />, [dict, awardXP]);
+  const step5Node = useMemo(
+    () => <Step5Tab quiz={<QuizTab dict={dict} onXP={awardXP} />} reflect={<AssistantTab onXP={awardXP} />} />,
+    [dict, awardXP],
+  );
   const dictNode = useMemo(
     () => (
       <div className="space-y-6">
@@ -310,10 +316,11 @@ function Index() {
       <AppSidebar
         activeKey={((): SidebarKey => {
           if (tab === "home") return "home";
-          if (tab === "analyze") return "analyze";
-          if (tab === "dict") return "dict";
-          if (tab === "quiz") return "quiz";
-          if (tab === "assist") return "reflect";
+          if (tab === "analyze") return "step1";
+          if (tab === "dict") return "step2";
+          if (tab === "assist") return "step3";
+          if (tab === "chat") return "step4";
+          if (tab === "quiz" || tab === "step5") return "step5";
           return "home";
         })()}
         onSelect={(key) => {
@@ -321,17 +328,24 @@ function Index() {
             case "home":
               setTab("home");
               break;
+            case "step1":
             case "analyze":
               setTab("analyze");
               break;
+            case "step2":
             case "dict":
               setTab("dict");
               break;
-            case "quiz":
-              setTab("quiz");
-              break;
+            case "step3":
             case "reflect":
               setTab("assist");
+              break;
+            case "step4":
+              setTab("chat");
+              break;
+            case "step5":
+            case "quiz":
+              setTab("step5");
               break;
             case "roadmap":
               setTab("home");
@@ -347,6 +361,15 @@ function Index() {
         onLogout={() => {
           if (confirm("세션을 종료하고 새 학생으로 다시 시작할까요?")) setStudent(null);
         }}
+        stageDone={(() => {
+          const rm = deriveRoadmap({
+            studentId: activeId,
+            classCode: student.classCode,
+            engagement: undefined,
+            dict,
+          });
+          return Object.fromEntries(rm.stages.map((s) => [s.key, s.done]));
+        })()}
       />
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
@@ -442,10 +465,11 @@ function Index() {
         <div hidden={tab !== "assist"}>{assistNode}</div>
         <div hidden={tab !== "quiz"}>{quizNode}</div>
         <div hidden={tab !== "dict"}>{dictNode}</div>
+        <div hidden={tab !== "step5"}>{step5Node}</div>
       </main>
 
       <nav
-        className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)]"
+        className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-5">
