@@ -132,6 +132,9 @@ export function RoadmapCard({
                   </span>
                   <span className="font-black text-sm text-[color:var(--navy)]">{meta.title}</span>
                 </div>
+                <div className="text-[11px] leading-snug text-slate-800 font-medium">
+                  {meta.oneLiner}
+                </div>
                 <div className="text-[11px] leading-snug text-slate-700 line-clamp-2">
                   {st.detail}
                 </div>
