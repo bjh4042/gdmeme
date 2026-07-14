@@ -39,7 +39,10 @@ export function TeacherGate(props: DashboardProps) {
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 pl-safe pr-safe"
-      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 16px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 16px)" }}
+      style={{
+        paddingTop: "max(env(safe-area-inset-top, 0px), 16px)",
+        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 16px)",
+      }}
     >
       <form
         onSubmit={async (e) => {
@@ -67,7 +70,9 @@ export function TeacherGate(props: DashboardProps) {
             ×
           </button>
         </div>
-        <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">마스터 비밀번호</label>
+        <label className="block text-sm font-bold text-[color:var(--navy)] mb-1">
+          마스터 비밀번호
+        </label>
         <input
           type="password"
           value={pw}
@@ -76,7 +81,9 @@ export function TeacherGate(props: DashboardProps) {
           className="w-full rounded-xl border-2 border-[color:var(--border)] px-3 py-2 outline-none focus:border-[color:var(--mint-deep)]"
         />
         {err && <p className="text-sm text-[color:var(--danger)] mt-2">{err}</p>}
-        <p className="text-xs text-muted-foreground mt-2">초기 비밀번호: 1234 · 창을 닫으면 세션 만료</p>
+        <p className="text-xs text-muted-foreground mt-2">
+          초기 비밀번호: 1234 · 창을 닫으면 세션 만료
+        </p>
         <button
           type="submit"
           disabled={busy}

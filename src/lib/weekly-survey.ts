@@ -58,7 +58,8 @@ export function loadAggregate(classCode: string): Record<string, WeeklySurveyAgg
     const raw = window.localStorage.getItem(AGG_KEY(classCode));
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") return parsed as Record<string, WeeklySurveyAggregate>;
+    if (parsed && typeof parsed === "object")
+      return parsed as Record<string, WeeklySurveyAggregate>;
   } catch {}
   return {};
 }

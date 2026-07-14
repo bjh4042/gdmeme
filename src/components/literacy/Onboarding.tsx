@@ -94,9 +94,7 @@ export function Onboarding({
         window.localStorage.removeItem("last_login_info");
       } catch {}
     }
-    const dup = roster.find(
-      (r) => r.classCode === classCode && r.number === trimmedNumber,
-    );
+    const dup = roster.find((r) => r.classCode === classCode && r.number === trimmedNumber);
     if (dup && dup.name.trim() !== trimmedName) {
       const msg = `이미 등록된 아이디입니다.\n\n학급 ${classCode} · ${trimmedNumber}번은 이미 '${dup.name}' 학생이 사용 중이에요.\n번호를 다르게 입력하거나, 본인이면 등록된 이름 그대로 입력해 주세요.`;
       setErr("중복된 아이디입니다. 번호 또는 이름을 확인해 주세요.");
@@ -119,21 +117,31 @@ export function Onboarding({
         </button>
       )}
       {/* Smartphone frame */}
-      <div
-        className="relative w-full max-w-[360px] min-w-0 h-[min(92dvh,760px)] sm:h-[min(760px,90dvh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40"
-      >
+      <div className="relative w-full max-w-[360px] min-w-0 h-[min(92dvh,760px)] sm:h-[min(760px,90dvh)] rounded-[3rem] bg-slate-900 p-3 shadow-[0_30px_60px_-20px_rgba(15,23,42,0.35),0_15px_30px_-15px_rgba(15,23,42,0.25)] ring-1 ring-slate-800/40">
         {/* Side buttons */}
-        <span aria-hidden className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700" />
-        <span aria-hidden className="absolute -left-[3px] top-40 h-16 w-[3px] rounded-l bg-slate-700" />
-        <span aria-hidden className="absolute -right-[3px] top-32 h-20 w-[3px] rounded-r bg-slate-700" />
+        <span
+          aria-hidden
+          className="absolute -left-[3px] top-24 h-10 w-[3px] rounded-l bg-slate-700"
+        />
+        <span
+          aria-hidden
+          className="absolute -left-[3px] top-40 h-16 w-[3px] rounded-l bg-slate-700"
+        />
+        <span
+          aria-hidden
+          className="absolute -right-[3px] top-32 h-20 w-[3px] rounded-r bg-slate-700"
+        />
 
         {/* Inner screen */}
         <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] bg-white flex flex-col">
-        <div className="absolute top-0 inset-x-0 z-30 bg-gray-50 border-b border-gray-100 text-gray-500 text-[10px] text-center py-1 px-2 rounded-t-[2.25rem]">
-          🖥️ 학교 PC 및 태블릿(가로 모드) 환경 최적화
-        </div>
+          <div className="absolute top-0 inset-x-0 z-30 bg-gray-50 border-b border-gray-100 text-gray-500 text-[10px] text-center py-1 px-2 rounded-t-[2.25rem]">
+            🖥️ 학교 PC 및 태블릿(가로 모드) 환경 최적화
+          </div>
           {/* Dynamic-island / notch */}
-          <div aria-hidden className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20" />
+          <div
+            aria-hidden
+            className="absolute top-2 left-1/2 -translate-x-1/2 h-6 w-28 rounded-full bg-slate-900 z-20"
+          />
           {/* Status bar */}
           <div className="relative z-10 flex items-center justify-between px-6 pt-3 pb-1 text-[11px] font-semibold text-slate-700">
             <span suppressHydrationWarning>{kstTime || "9:41"}</span>
@@ -153,7 +161,10 @@ export function Onboarding({
                     style={{ aspectRatio: "720 / 393" }}
                   >
                     {!logoLoaded && (
-                      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100" aria-hidden="true" />
+                      <div
+                        className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100"
+                        aria-hidden="true"
+                      />
                     )}
                     <img
                       ref={imgRef}
@@ -171,7 +182,9 @@ export function Onboarding({
               </div>
               <form onSubmit={submit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">학급 코드 (4자리)</label>
+                  <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">
+                    학급 코드 (4자리)
+                  </label>
                   <input
                     inputMode="numeric"
                     maxLength={4}
@@ -187,12 +200,16 @@ export function Onboarding({
                     }`}
                   />
                   {touched.classCode && errors.classCode && (
-                    <p className="mt-1 text-[11px] text-[color:var(--danger)]">{errors.classCode}</p>
+                    <p className="mt-1 text-[11px] text-[color:var(--danger)]">
+                      {errors.classCode}
+                    </p>
                   )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">번호</label>
+                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">
+                      번호
+                    </label>
                     <input
                       inputMode="numeric"
                       maxLength={3}
@@ -212,7 +229,9 @@ export function Onboarding({
                     )}
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">이름</label>
+                    <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">
+                      이름
+                    </label>
                     <input
                       value={name}
                       maxLength={20}

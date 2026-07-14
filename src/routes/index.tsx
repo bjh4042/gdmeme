@@ -12,7 +12,15 @@ import { TeacherGate } from "@/components/literacy/TeacherGate";
 import { ProfileModal } from "@/components/literacy/ProfileModal";
 import { ReportModal } from "@/components/literacy/ReportModal";
 import { useEffect } from "react";
-import { useHydrated, useStudent, useDictionary, useClassState, useStudents, studentId, addClassXPFor } from "@/lib/literacy-store";
+import {
+  useHydrated,
+  useStudent,
+  useDictionary,
+  useClassState,
+  useStudents,
+  studentId,
+  addClassXPFor,
+} from "@/lib/literacy-store";
 import { levelOf } from "@/lib/literacy-types";
 import { toast } from "sonner";
 import { useEngagementStore } from "@/stores/engagement";
@@ -26,7 +34,6 @@ import { WeeklySurveyModal } from "@/components/literacy/WeeklySurveyModal";
 import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey";
 import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { stageContextForTab } from "@/lib/stage-context";
-
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -106,7 +113,13 @@ function Index() {
         if (applicantClass === student?.classCode) {
           addXP(5, `승인 · ${applicant?.name ?? applicantId}`, "word-approved", w.word);
         } else if (applicantClass) {
-          addClassXPFor(applicantClass, 5, `승인 · ${applicant?.name ?? applicantId}`, "word-approved", w.word);
+          addClassXPFor(
+            applicantClass,
+            5,
+            `승인 · ${applicant?.name ?? applicantId}`,
+            "word-approved",
+            w.word,
+          );
         }
         // 3) 뱃지 · 사전 편찬자 해금
         markLexicographer(applicantId);
@@ -135,7 +148,7 @@ function Index() {
       }}
       onImportStudents={(rows, mode) => {
         const res = roster.importStudents(rows, mode);
-        const delta = student ? res.classXpDeltas[student.classCode] ?? 0 : 0;
+        const delta = student ? (res.classXpDeltas[student.classCode] ?? 0) : 0;
         if (delta) setXP(Math.max(0, state.xp + delta), `엑셀 업로드 (${mode})`);
         return { added: res.added, updated: res.updated, removed: res.removed };
       }}
@@ -144,7 +157,7 @@ function Index() {
         // 2단계 확인: 실수로 학생 활동이 사라지지 않도록 두 번 확인
         const ok1 = confirm(
           "정말로 사전을 초기 시드 데이터로 되돌릴까요?\n\n" +
-          "삭제 대상: 학생이 제안한 낱말, 승인/거절 상태 변경 내역, 대안 표현 편집 내용",
+            "삭제 대상: 학생이 제안한 낱말, 승인/거절 상태 변경 내역, 대안 표현 편집 내용",
         );
         if (!ok1) return;
         const check = prompt('확인을 위해 아래에 "초기화"를 정확히 입력하세요.');
@@ -155,9 +168,11 @@ function Index() {
     />
   ) : null;
 
-  const teacherReportStudent = reportForId ? roster.students.find((r) => r.id === reportForId) : null;
-  const teacherReportClassState = useClassStore(
-    (s) => (teacherReportStudent ? s.byClass[teacherReportStudent.classCode] ?? EMPTY_CLASS : EMPTY_CLASS),
+  const teacherReportStudent = reportForId
+    ? roster.students.find((r) => r.id === reportForId)
+    : null;
+  const teacherReportClassState = useClassStore((s) =>
+    teacherReportStudent ? (s.byClass[teacherReportStudent.classCode] ?? EMPTY_CLASS) : EMPTY_CLASS,
   );
 
   const who = student
@@ -194,11 +209,7 @@ function Index() {
   // 스크롤/입력/챗 상태가 그대로 살아있는 keep-alive.
   const analyzerNode = useMemo(
     () => (
-      <AnalyzerTab
-        dict={dict}
-        onRegisterNew={onRegisterNew}
-        classCode={student?.classCode ?? ""}
-      />
+      <AnalyzerTab dict={dict} onRegisterNew={onRegisterNew} classCode={student?.classCode ?? ""} />
     ),
     [dict, onRegisterNew, student?.classCode],
   );
@@ -210,20 +221,17 @@ function Index() {
         onXP={awardXP}
         onRoleplayClear={(scenarioId, total) => {
           const master = reportRoleplayClear(activeId, scenarioId, total);
-          if (master) toast.success("🎖️ 예절 마스터 뱃지 획득!", { description: "역할극 전 시나리오 클리어" });
+          if (master)
+            toast.success("🎖️ 예절 마스터 뱃지 획득!", {
+              description: "역할극 전 시나리오 클리어",
+            });
         }}
       />
     ),
     [classLv, activeId, awardXP, reportRoleplayClear],
   );
-  const assistNode = useMemo(
-    () => <AssistantTab onXP={awardXP} />,
-    [awardXP],
-  );
-  const quizNode = useMemo(
-    () => <QuizTab dict={dict} onXP={awardXP} />,
-    [dict, awardXP],
-  );
+  const assistNode = useMemo(() => <AssistantTab onXP={awardXP} />, [awardXP]);
+  const quizNode = useMemo(() => <QuizTab dict={dict} onXP={awardXP} />, [dict, awardXP]);
   const dictNode = useMemo(
     () => (
       <div className="space-y-6">
@@ -265,7 +273,11 @@ function Index() {
     }
     return (
       <>
-        <Onboarding onSubmit={setStudent} onAdmin={() => setTeacherOpen(true)} roster={roster.students} />
+        <Onboarding
+          onSubmit={setStudent}
+          onAdmin={() => setTeacherOpen(true)}
+          roster={roster.students}
+        />
         {teacherView}
       </>
     );
@@ -279,11 +291,16 @@ function Index() {
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
           <div className="flex min-w-0 items-center gap-3">
-            <img src={logoAsset.url} alt="바른말 수호대 로고" className="h-10 w-auto shrink-0 rounded-lg" />
+            <img
+              src={logoAsset.url}
+              alt="바른말 수호대 로고"
+              className="h-10 w-auto shrink-0 rounded-lg"
+            />
             <div className="min-w-0">
               <div className="font-black text-[color:var(--navy)] truncate">바른말 수호대</div>
               <div className="text-[11px] text-muted-foreground truncate">
-                {student.classCode}반 · {student.number}번 {student.name} · Lv.{lv.current.lv} {lv.current.name} · {state.xp} XP
+                {student.classCode}반 · {student.number}번 {student.name} · Lv.{lv.current.lv}{" "}
+                {lv.current.name} · {state.xp} XP
               </div>
             </div>
             <HeaderAreaBadges />
@@ -341,7 +358,8 @@ function Index() {
           return (
             <div className="mb-3 rounded-2xl bg-white/60 border border-white/70 px-3 py-2.5">
               <p className="text-[11px] sm:text-xs text-slate-600 mb-2 leading-snug">
-                디지털 언어의 뜻과 맥락을 살펴보고, 상대를 존중하는 표현을 함께 만들어 가는 학습 공간
+                디지털 언어의 뜻과 맥락을 살펴보고, 상대를 존중하는 표현을 함께 만들어 가는 학습
+                공간
               </p>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <StageChip stage={ctx.stage} />
@@ -385,7 +403,9 @@ function Index() {
             >
               <span className="tabbar-icon text-2xl leading-none">{t.icon}</span>
               <span className="tabbar-label truncate max-w-full px-1">{t.label}</span>
-              {tab === t.id && <span className="w-8 h-1 rounded-full bg-[color:var(--mint-deep)]" />}
+              {tab === t.id && (
+                <span className="w-8 h-1 rounded-full bg-[color:var(--mint-deep)]" />
+              )}
             </button>
           ))}
         </div>
@@ -393,25 +413,27 @@ function Index() {
 
       {teacherView}
 
-      {profileOpen && (() => {
-        const rec = roster.students.find((r) => r.id === activeId);
-        if (!rec) return null;
-        return (
-          <ProfileModal
-            student={rec}
-            dict={dict}
-            classState={state}
-            totalRoleplayScenarios={totalScenarios}
-            onClose={() => setProfileOpen(false)}
-          />
-        );
-      })()}
+      {profileOpen &&
+        (() => {
+          const rec = roster.students.find((r) => r.id === activeId);
+          if (!rec) return null;
+          return (
+            <ProfileModal
+              student={rec}
+              dict={dict}
+              classState={state}
+              totalRoleplayScenarios={totalScenarios}
+              onClose={() => setProfileOpen(false)}
+            />
+          );
+        })()}
 
-      {codexOpen && (() => {
-        const rec = roster.students.find((r) => r.id === activeId);
-        if (!rec) return null;
-        return <BadgeCodexModal student={rec} dict={dict} onClose={() => setCodexOpen(false)} />;
-      })()}
+      {codexOpen &&
+        (() => {
+          const rec = roster.students.find((r) => r.id === activeId);
+          if (!rec) return null;
+          return <BadgeCodexModal student={rec} dict={dict} onClose={() => setCodexOpen(false)} />;
+        })()}
 
       {reportForId && teacherReportStudent && teacherReportClassState && (
         <ReportModal

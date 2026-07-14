@@ -63,7 +63,15 @@ export function useStudents() {
   const removeStudent = useRosterStore((s) => s.removeStudent);
   const importStudents = useRosterStore((s) => s.importStudents);
   const write = useRosterStore((s) => s.write);
-  return { students, upsertActive, addStudentXP, updateStudent, removeStudent, importStudents, write };
+  return {
+    students,
+    upsertActive,
+    addStudentXP,
+    updateStudent,
+    removeStudent,
+    importStudents,
+    write,
+  };
 }
 
 /**

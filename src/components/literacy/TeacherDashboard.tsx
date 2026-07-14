@@ -1,7 +1,19 @@
 import { useMemo, useRef, useState } from "react";
 import type { DictEntry, Evaluation, StudentRecord } from "@/lib/literacy-types";
 import { computeTotal, gradeOf, levelOf } from "@/lib/literacy-types";
-import { Pencil, X, Plus, Trash2, Search, BookOpen, Users, ArrowUp, ArrowDown, Download, Upload } from "lucide-react";
+import {
+  Pencil,
+  X,
+  Plus,
+  Trash2,
+  Search,
+  BookOpen,
+  Users,
+  ArrowUp,
+  ArrowDown,
+  Download,
+  Upload,
+} from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { useDictStore } from "@/stores/dict";
@@ -56,7 +68,10 @@ export function TeacherDashboard({
   onUpdate: (id: number, patch: UpdatePayload) => void;
   onUpdateStudent: (id: string, patch: StudentPatch) => void;
   onDeleteStudent: (id: string) => void;
-  onImportStudents: (rows: StudentImportRow[], mode: "merge" | "replace") => { added: number; updated: number; removed: number };
+  onImportStudents: (
+    rows: StudentImportRow[],
+    mode: "merge" | "replace",
+  ) => { added: number; updated: number; removed: number };
   onClose: () => void;
   onReset: () => void;
   onOpenReport?: (studentId: string) => void;
@@ -92,11 +107,13 @@ export function TeacherDashboard({
   });
   const curriculumOptions = Array.from(new Set(dict.map((d) => d.curriculum_code))).sort();
   const gradeOptions = Array.from(new Set(dict.map((d) => d.grade)));
-  const editing = editingId != null ? dict.find((d) => d.id === editingId) ?? null : null;
+  const editing = editingId != null ? (dict.find((d) => d.id === editingId) ?? null) : null;
 
   const sq = studentQuery.trim().toLowerCase();
   const classOptions = Array.from(new Set(students.map((s) => s.classCode))).sort();
-  const groupOptions = Array.from(new Set(students.map((s) => s.group).filter((g): g is string => !!g))).sort();
+  const groupOptions = Array.from(
+    new Set(students.map((s) => s.group).filter((g): g is string => !!g)),
+  ).sort();
   const studentList = students
     .filter((s) => {
       if (classFilter === "__mine__") {
@@ -104,7 +121,8 @@ export function TeacherDashboard({
       } else if (classFilter !== "all" && s.classCode !== classFilter) {
         return false;
       }
-      if (groupFilter === "__none__" ? !!s.group : groupFilter !== "all" && s.group !== groupFilter) return false;
+      if (groupFilter === "__none__" ? !!s.group : groupFilter !== "all" && s.group !== groupFilter)
+        return false;
       if (!sq) return true;
       return (
         s.name.toLowerCase().includes(sq) ||
@@ -122,13 +140,22 @@ export function TeacherDashboard({
         case "lastActiveAt":
           return dir * a.lastActiveAt.localeCompare(b.lastActiveAt);
         case "group":
-          return dir * ((a.group ?? "").localeCompare(b.group ?? "", "ko") || a.classCode.localeCompare(b.classCode) || Number(a.number) - Number(b.number));
+          return (
+            dir *
+            ((a.group ?? "").localeCompare(b.group ?? "", "ko") ||
+              a.classCode.localeCompare(b.classCode) ||
+              Number(a.number) - Number(b.number))
+          );
         case "id":
         default:
-          return dir * (a.classCode.localeCompare(b.classCode) || Number(a.number) - Number(b.number));
+          return (
+            dir * (a.classCode.localeCompare(b.classCode) || Number(a.number) - Number(b.number))
+          );
       }
     });
-  const editingStudentRec = editingStudent ? students.find((s) => s.id === editingStudent) ?? null : null;
+  const editingStudentRec = editingStudent
+    ? (students.find((s) => s.id === editingStudent) ?? null)
+    : null;
 
   function toggleSort(k: SortKey) {
     if (sortKey === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -220,25 +247,40 @@ export function TeacherDashboard({
       const c = src[i];
       if (inQ) {
         if (c === '"') {
-          if (src[i + 1] === '"') { field += '"'; i++; }
-          else inQ = false;
+          if (src[i + 1] === '"') {
+            field += '"';
+            i++;
+          } else inQ = false;
         } else field += c;
       } else {
         if (c === '"') inQ = true;
-        else if (c === ",") { cur.push(field); field = ""; }
-        else if (c === "\n") { cur.push(field); rows.push(cur); cur = []; field = ""; }
-        else if (c === "\r") { /* skip */ }
-        else field += c;
+        else if (c === ",") {
+          cur.push(field);
+          field = "";
+        } else if (c === "\n") {
+          cur.push(field);
+          rows.push(cur);
+          cur = [];
+          field = "";
+        } else if (c === "\r") {
+          /* skip */
+        } else field += c;
       }
     }
-    if (field.length > 0 || cur.length > 0) { cur.push(field); rows.push(cur); }
+    if (field.length > 0 || cur.length > 0) {
+      cur.push(field);
+      rows.push(cur);
+    }
     if (rows.length === 0) return [];
     const headers = rows[0].map((h) => h.trim());
-    return rows.slice(1)
+    return rows
+      .slice(1)
       .filter((r) => r.some((v) => v.trim() !== ""))
       .map((r) => {
         const obj: Record<string, string> = {};
-        headers.forEach((h, i) => { obj[h] = (r[i] ?? "").trim(); });
+        headers.forEach((h, i) => {
+          obj[h] = (r[i] ?? "").trim();
+        });
         return obj;
       });
   }
@@ -256,13 +298,11 @@ export function TeacherDashboard({
         const wb = XLSX.read(buf, { type: "array" });
         const ws = wb.Sheets[wb.SheetNames[0]];
         if (!ws) return toast.error("시트를 찾을 수 없습니다.");
-        rows = XLSX.utils
-          .sheet_to_json<Record<string, unknown>>(ws, { defval: "" })
-          .map((r) => {
-            const o: Record<string, string> = {};
-            for (const k of Object.keys(r)) o[k] = String(r[k] ?? "").trim();
-            return o;
-          });
+        rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" }).map((r) => {
+          const o: Record<string, string> = {};
+          for (const k of Object.keys(r)) o[k] = String(r[k] ?? "").trim();
+          return o;
+        });
       }
       if (rows.length === 0) return toast.error("유효한 행이 없습니다.");
 
@@ -296,21 +336,15 @@ export function TeacherDashboard({
           aggression: normalizeScore5(
             pick(r, "점수_공격성", "aggression") || prevEval?.aggression || 1,
           ),
-          bullying: normalizeScore5(
-            pick(r, "점수_따돌림", "bullying") || prevEval?.bullying || 1,
-          ),
+          bullying: normalizeScore5(pick(r, "점수_따돌림", "bullying") || prevEval?.bullying || 1),
           discrimination: normalizeScore5(
             pick(r, "점수_혐오성", "점수_차별성", "discrimination") ||
               prevEval?.discrimination ||
               1,
           ),
-          violence: normalizeScore5(
-            pick(r, "점수_폭력성", "violence") || prevEval?.violence || 1,
-          ),
+          violence: normalizeScore5(pick(r, "점수_폭력성", "violence") || prevEval?.violence || 1),
           grammar_destruction: normalizeScore5(
-            pick(r, "점수_문법파괴", "grammar_destruction") ||
-              prevEval?.grammar_destruction ||
-              1,
+            pick(r, "점수_문법파괴", "grammar_destruction") || prevEval?.grammar_destruction || 1,
           ),
         };
         // 종합 점수: 5대 영역 평균 → 100점 만점 비례 환산 (computeTotal와 동치)
@@ -395,7 +429,15 @@ export function TeacherDashboard({
     }
     const ws = XLSX.utils.json_to_sheet(rows);
     ws["!cols"] = [
-      { wch: 10 }, { wch: 6 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 12 }, { wch: 22 }, { wch: 22 },
+      { wch: 10 },
+      { wch: 6 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 8 },
+      { wch: 12 },
+      { wch: 22 },
+      { wch: 22 },
     ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "학생명단");
@@ -453,9 +495,11 @@ export function TeacherDashboard({
         `${rows.length}명의 학생을 불러왔습니다.\n\n[확인] 병합 (기존 유지 + 추가/갱신)\n[취소] 다음 대화상자에서 전체 교체 여부 선택`,
       )
         ? "merge"
-        : confirm("⚠️ 전체 교체를 진행하시겠습니까?\n업로드 파일에 없는 기존 학생은 모두 삭제됩니다.")
-        ? "replace"
-        : null;
+        : confirm(
+              "⚠️ 전체 교체를 진행하시겠습니까?\n업로드 파일에 없는 기존 학생은 모두 삭제됩니다.",
+            )
+          ? "replace"
+          : null;
       if (!mode) return;
       const res = onImportStudents(rows, mode as "merge" | "replace");
       alert(`업로드 완료\n· 추가 ${res.added}명\n· 갱신 ${res.updated}명\n· 삭제 ${res.removed}명`);
@@ -467,22 +511,35 @@ export function TeacherDashboard({
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 overflow-x-hidden overflow-y-auto p-2 sm:p-4 scroll-touch pl-safe pr-safe"
-      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 8px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+      style={{
+        paddingTop: "max(env(safe-area-inset-top, 0px), 8px)",
+        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
+      }}
     >
-      <div className="w-full max-w-4xl min-w-0 mx-auto my-2 sm:my-6 rounded-3xl bg-card p-3 sm:p-6 border-2 border-[color:var(--navy)]"
-           style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}>
+      <div
+        className="w-full max-w-4xl min-w-0 mx-auto my-2 sm:my-6 rounded-3xl bg-card p-3 sm:p-6 border-2 border-[color:var(--navy)]"
+        style={{ marginBottom: "calc(80px + env(safe-area-inset-bottom, 0px))" }}
+      >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4">
           <div className="min-w-0">
-            <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">🧑‍🏫 교사 대시보드</h3>
+            <h3 className="text-2xl font-black text-[color:var(--navy)] truncate">
+              🧑‍🏫 교사 대시보드
+            </h3>
             <p className="text-xs text-muted-foreground">단어 관리 · 학생 회원 관리</p>
           </div>
           <div className="shrink-0 flex gap-2">
             {section === "words" && (
-              <button onClick={onReset} className="text-xs px-3 py-2 rounded-lg bg-[color:var(--muted)] font-bold">
+              <button
+                onClick={onReset}
+                className="text-xs px-3 py-2 rounded-lg bg-[color:var(--muted)] font-bold"
+              >
                 시드로 초기화
               </button>
             )}
-            <button onClick={onClose} className="text-xs px-3 py-2 rounded-lg bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold">
+            <button
+              onClick={onClose}
+              className="text-xs px-3 py-2 rounded-lg bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold"
+            >
               닫기
             </button>
           </div>
@@ -490,8 +547,18 @@ export function TeacherDashboard({
 
         {/* Sub-tabs */}
         <div className="grid grid-cols-2 gap-2 mb-5 p-1 rounded-2xl bg-[color:var(--muted)]">
-          <SubTab active={section === "words"} onClick={() => setSection("words")} icon={<BookOpen size={15} />} label={`단어 관리 (${dict.length})`} />
-          <SubTab active={section === "students"} onClick={() => setSection("students")} icon={<Users size={15} />} label={`학생 회원 관리 (${students.length})`} />
+          <SubTab
+            active={section === "words"}
+            onClick={() => setSection("words")}
+            icon={<BookOpen size={15} />}
+            label={`단어 관리 (${dict.length})`}
+          />
+          <SubTab
+            active={section === "students"}
+            onClick={() => setSection("students")}
+            icon={<Users size={15} />}
+            label={`학생 회원 관리 (${students.length})`}
+          />
         </div>
 
         <RoadmapTeacherPanel students={students} currentClassCode={currentClassCode} dict={dict} />
@@ -508,18 +575,22 @@ export function TeacherDashboard({
           aria-label="예시 데이터 안내"
           className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--amber,#f59e0b)]/60 bg-amber-50 px-3 py-2 text-[12px] text-[color:var(--navy)]"
         >
-          ⓘ 현재 화면에는 <b>기능 확인용 예시(더미) 데이터</b>가 포함되어 있을 수 있어요. 실제 수업 시작 전
-          <b> ‘시드로 초기화’</b> 또는 학생 명단 업로드로 실데이터를 반영해 주세요.
+          ⓘ 현재 화면에는 <b>기능 확인용 예시(더미) 데이터</b>가 포함되어 있을 수 있어요. 실제 수업
+          시작 전<b> ‘시드로 초기화’</b> 또는 학생 명단 업로드로 실데이터를 반영해 주세요.
         </div>
-
 
         {section === "words" ? (
           <>
             {/* 📊 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용) */}
-            <div data-tour="admin-csv" className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3">
+            <div
+              data-tour="admin-csv"
+              className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="text-sm font-black text-[color:var(--navy)]">📊 사전 데이터셋 일괄 관리</div>
+                  <div className="text-sm font-black text-[color:var(--navy)]">
+                    📊 사전 데이터셋 일괄 관리
+                  </div>
                   <div className="text-[11px] text-muted-foreground">
                     CSV로 내려받아 엑셀에서 편집 → 다시 업로드하면 ID 기준으로 Upsert 반영돼요.
                   </div>
@@ -555,7 +626,10 @@ export function TeacherDashboard({
 
             {/* Search bar */}
             <div className="relative mb-4">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -584,7 +658,9 @@ export function TeacherDashboard({
                 >
                   <option value="all">전체</option>
                   {curriculumOptions.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -597,7 +673,9 @@ export function TeacherDashboard({
                 >
                   <option value="all">전체</option>
                   {gradeOptions.map((g) => (
-                    <option key={g} value={g}>{g}</option>
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -616,9 +694,27 @@ export function TeacherDashboard({
             </div>
 
             <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-              <TabStat label="대기" n={pending.length} active={status === "pending"} color="var(--warn)" onClick={() => setStatus("pending")} />
-              <TabStat label="승인" n={approved.length} active={status === "approved"} color="var(--safe)" onClick={() => setStatus("approved")} />
-              <TabStat label="반려" n={rejected.length} active={status === "rejected"} color="var(--danger)" onClick={() => setStatus("rejected")} />
+              <TabStat
+                label="대기"
+                n={pending.length}
+                active={status === "pending"}
+                color="var(--warn)"
+                onClick={() => setStatus("pending")}
+              />
+              <TabStat
+                label="승인"
+                n={approved.length}
+                active={status === "approved"}
+                color="var(--safe)"
+                onClick={() => setStatus("approved")}
+              />
+              <TabStat
+                label="반려"
+                n={rejected.length}
+                active={status === "rejected"}
+                color="var(--danger)"
+                onClick={() => setStatus("rejected")}
+              />
             </div>
 
             <div className="text-xs text-muted-foreground mb-2">
@@ -648,7 +744,10 @@ export function TeacherDashboard({
         ) : (
           <>
             <div className="relative mb-4">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <input
                 value={studentQuery}
                 onChange={(e) => setStudentQuery(e.target.value)}
@@ -666,10 +765,14 @@ export function TeacherDashboard({
                   onChange={(e) => setClassFilter(e.target.value)}
                   className="rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm outline-none focus:border-[color:var(--mint-deep)] bg-white"
                 >
-                  {currentClassCode && <option value="__mine__">우리 반 ({currentClassCode})</option>}
+                  {currentClassCode && (
+                    <option value="__mine__">우리 반 ({currentClassCode})</option>
+                  )}
                   <option value="all">전체 학급</option>
                   {classOptions.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -683,7 +786,9 @@ export function TeacherDashboard({
                   <option value="all">전체</option>
                   <option value="__none__">그룹 미지정</option>
                   {groupOptions.map((g) => (
-                    <option key={g} value={g}>{g}</option>
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -708,7 +813,15 @@ export function TeacherDashboard({
                   onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
                   className="inline-flex items-center justify-center gap-1 rounded-xl border-2 border-[color:var(--border)] px-2 py-2 text-sm font-bold bg-white hover:bg-[color:var(--muted)]"
                 >
-                  {sortDir === "asc" ? <><ArrowUp size={14} /> 오름차순</> : <><ArrowDown size={14} /> 내림차순</>}
+                  {sortDir === "asc" ? (
+                    <>
+                      <ArrowUp size={14} /> 오름차순
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDown size={14} /> 내림차순
+                    </>
+                  )}
                 </button>
               </label>
             </div>
@@ -769,145 +882,181 @@ export function TeacherDashboard({
             </div>
 
             <div className="text-xs text-muted-foreground mb-2">
-              표시 <b className="text-[color:var(--navy)]">{studentList.length}</b>명 / 전체 {students.length}명
+              표시 <b className="text-[color:var(--navy)]">{studentList.length}</b>명 / 전체{" "}
+              {students.length}명
             </div>
 
             {studentList.length === 0 ? (
               <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                {students.length === 0 ? "아직 등록된 학생이 없습니다. XLSX 업로드로 명단을 불러올 수 있어요." : "조건에 맞는 학생이 없습니다."}
+                {students.length === 0
+                  ? "아직 등록된 학생이 없습니다. XLSX 업로드로 명단을 불러올 수 있어요."
+                  : "조건에 맞는 학생이 없습니다."}
               </div>
             ) : (
               <>
-              {/* Desktop table */}
-              <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
-                <table className="w-full text-sm">
-                  <thead className="bg-[color:var(--muted)] text-xs">
-                    <tr>
-                      <SortableTh label="아이디" active={sortKey === "id"} dir={sortDir} onClick={() => toggleSort("id")} />
-                      <SortableTh label="이름" active={sortKey === "name"} dir={sortDir} onClick={() => toggleSort("name")} />
-                      <SortableTh label="그룹" active={sortKey === "group"} dir={sortDir} onClick={() => toggleSort("group")} />
-                      <SortableTh label="누적 XP" active={sortKey === "xp"} dir={sortDir} onClick={() => toggleSort("xp")} className="text-right" />
-                      <Th>레벨</Th>
-                      <Th className="text-right">관리</Th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {studentList.map((s) => {
-                      const lv = levelOf(s.xp);
-                      const mine = s.classCode === currentClassCode;
-                      return (
-                        <tr key={s.id} className={`border-t border-[color:var(--border)] ${mine ? "" : "opacity-70"}`}>
-                          <Td className="font-mono text-xs">{s.id}</Td>
-                          <Td className="font-bold text-[color:var(--navy)]">{s.name}</Td>
-                          <Td>
-                            {s.group ? (
-                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
-                                {s.group}
-                              </span>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">—</span>
-                            )}
-                          </Td>
-                          <Td className="text-right font-black text-[color:var(--navy)]">{s.xp}</Td>
-                          <Td>
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
-                              Lv.{lv.current.lv}
-                            </span>
-                          </Td>
-                          <Td className="text-right">
-                            <div className="flex justify-end gap-1">
-                              <button
-                                onClick={() => setEditingStudent(s.id)}
-                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)] hover:scale-[1.03] transition"
-                              >
-                                <Pencil size={11} /> 정보 수정
-                              </button>
-                              {onOpenReport && (
-                                <button
-                                  onClick={() => onOpenReport(s.id)}
-                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)] hover:scale-[1.03] transition"
-                                  title="언어 수호 리포트 보기"
-                                >
-                                  📄 리포트
-                                </button>
-                              )}
-                              <button
-                                onClick={() => {
-                                  if (
-                                    confirm(
-                                      `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
-                                    )
-                                  ) {
-                                    onDeleteStudent(s.id);
-                                  }
-                                }}
-                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)] hover:bg-red-200 transition"
-                              >
-                                <Trash2 size={11} /> 삭제
-                              </button>
-                            </div>
-                          </Td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              {/* Mobile card list */}
-              <div className="md:hidden space-y-2">
-                {studentList.map((s) => {
-                  const lv = levelOf(s.xp);
-                  const mine = s.classCode === currentClassCode;
-                  return (
-                    <div key={s.id} className={`rounded-2xl border-2 border-[color:var(--border)] p-3 ${mine ? "" : "opacity-70"}`}>
-                      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-                        <div className="min-w-0">
-                          <div className="font-black text-[color:var(--navy)] truncate">{s.name}</div>
-                          <div className="font-mono text-[11px] text-muted-foreground truncate">{s.id}</div>
-                          {s.group && (
-                            <div className="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
-                              {s.group}
-                            </div>
-                          )}
-                        </div>
-                        <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
-                          Lv.{lv.current.lv} · {s.xp}XP
-                        </span>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-1 justify-end">
-                        <button
-                          onClick={() => setEditingStudent(s.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
-                        >
-                          <Pencil size={12} /> 정보 수정
-                        </button>
-                        {onOpenReport && (
-                          <button
-                            onClick={() => onOpenReport(s.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)]"
+                {/* Desktop table */}
+                <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
+                  <table className="w-full text-sm">
+                    <thead className="bg-[color:var(--muted)] text-xs">
+                      <tr>
+                        <SortableTh
+                          label="아이디"
+                          active={sortKey === "id"}
+                          dir={sortDir}
+                          onClick={() => toggleSort("id")}
+                        />
+                        <SortableTh
+                          label="이름"
+                          active={sortKey === "name"}
+                          dir={sortDir}
+                          onClick={() => toggleSort("name")}
+                        />
+                        <SortableTh
+                          label="그룹"
+                          active={sortKey === "group"}
+                          dir={sortDir}
+                          onClick={() => toggleSort("group")}
+                        />
+                        <SortableTh
+                          label="누적 XP"
+                          active={sortKey === "xp"}
+                          dir={sortDir}
+                          onClick={() => toggleSort("xp")}
+                          className="text-right"
+                        />
+                        <Th>레벨</Th>
+                        <Th className="text-right">관리</Th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {studentList.map((s) => {
+                        const lv = levelOf(s.xp);
+                        const mine = s.classCode === currentClassCode;
+                        return (
+                          <tr
+                            key={s.id}
+                            className={`border-t border-[color:var(--border)] ${mine ? "" : "opacity-70"}`}
                           >
-                            📄 리포트
+                            <Td className="font-mono text-xs">{s.id}</Td>
+                            <Td className="font-bold text-[color:var(--navy)]">{s.name}</Td>
+                            <Td>
+                              {s.group ? (
+                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
+                                  {s.group}
+                                </span>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </Td>
+                            <Td className="text-right font-black text-[color:var(--navy)]">
+                              {s.xp}
+                            </Td>
+                            <Td>
+                              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
+                                Lv.{lv.current.lv}
+                              </span>
+                            </Td>
+                            <Td className="text-right">
+                              <div className="flex justify-end gap-1">
+                                <button
+                                  onClick={() => setEditingStudent(s.id)}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)] hover:scale-[1.03] transition"
+                                >
+                                  <Pencil size={11} /> 정보 수정
+                                </button>
+                                {onOpenReport && (
+                                  <button
+                                    onClick={() => onOpenReport(s.id)}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)] hover:scale-[1.03] transition"
+                                    title="언어 수호 리포트 보기"
+                                  >
+                                    📄 리포트
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      confirm(
+                                        `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
+                                      )
+                                    ) {
+                                      onDeleteStudent(s.id);
+                                    }
+                                  }}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)] hover:bg-red-200 transition"
+                                >
+                                  <Trash2 size={11} /> 삭제
+                                </button>
+                              </div>
+                            </Td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Mobile card list */}
+                <div className="md:hidden space-y-2">
+                  {studentList.map((s) => {
+                    const lv = levelOf(s.xp);
+                    const mine = s.classCode === currentClassCode;
+                    return (
+                      <div
+                        key={s.id}
+                        className={`rounded-2xl border-2 border-[color:var(--border)] p-3 ${mine ? "" : "opacity-70"}`}
+                      >
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                          <div className="min-w-0">
+                            <div className="font-black text-[color:var(--navy)] truncate">
+                              {s.name}
+                            </div>
+                            <div className="font-mono text-[11px] text-muted-foreground truncate">
+                              {s.id}
+                            </div>
+                            {s.group && (
+                              <div className="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
+                                {s.group}
+                              </div>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)]">
+                            Lv.{lv.current.lv} · {s.xp}XP
+                          </span>
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1 justify-end">
+                          <button
+                            onClick={() => setEditingStudent(s.id)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                          >
+                            <Pencil size={12} /> 정보 수정
                           </button>
-                        )}
-                        <button
-                          onClick={() => {
-                            if (
-                              confirm(
-                                `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
-                              )
-                            ) {
-                              onDeleteStudent(s.id);
-                            }
-                          }}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)]"
-                        >
-                          <Trash2 size={12} /> 삭제
-                        </button>
+                          {onOpenReport && (
+                            <button
+                              onClick={() => onOpenReport(s.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[color:var(--mint)] text-[color:var(--navy)]"
+                            >
+                              📄 리포트
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  `정말로 이 학생의 계정과 누적 데이터를 삭제하시겠습니까?\n\n[${s.id}] ${s.name} · ${s.xp} XP\n\n(예절 역할극 대화 이력은 유지됩니다)`,
+                                )
+                              ) {
+                                onDeleteStudent(s.id);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-red-100 text-[color:var(--danger)]"
+                          >
+                            <Trash2 size={12} /> 삭제
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
               </>
             )}
           </>
@@ -940,7 +1089,11 @@ export function TeacherDashboard({
 }
 
 function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <th className={`text-left font-bold text-[color:var(--navy)] px-3 py-2 ${className}`}>{children}</th>;
+  return (
+    <th className={`text-left font-bold text-[color:var(--navy)] px-3 py-2 ${className}`}>
+      {children}
+    </th>
+  );
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>;
@@ -966,7 +1119,15 @@ function SortableTh({
         className={`inline-flex items-center gap-1 ${active ? "text-[color:var(--mint-deep)]" : "text-[color:var(--navy)]"}`}
       >
         {label}
-        {active ? (dir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />) : <span className="text-[10px] opacity-40">↕</span>}
+        {active ? (
+          dir === "asc" ? (
+            <ArrowUp size={11} />
+          ) : (
+            <ArrowDown size={11} />
+          )
+        ) : (
+          <span className="text-[10px] opacity-40">↕</span>
+        )}
       </button>
     </th>
   );
@@ -987,7 +1148,9 @@ function SubTab({
     <button
       onClick={onClick}
       className={`inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold transition ${
-        active ? "bg-white text-[color:var(--navy)] shadow-sm" : "text-muted-foreground hover:text-[color:var(--navy)]"
+        active
+          ? "bg-white text-[color:var(--navy)] shadow-sm"
+          : "text-muted-foreground hover:text-[color:var(--navy)]"
       }`}
     >
       {icon}
@@ -1035,7 +1198,8 @@ function EntryRow({
   onEdit: () => void;
 }) {
   const g = gradeOf(entry.total_harmful_score);
-  const bg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
+  const bg =
+    g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
   return (
     <div className="rounded-xl border-2 border-[color:var(--border)] p-3">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 mb-2">
@@ -1045,7 +1209,10 @@ function EntryRow({
             제안 {entry.suggested_by} · 투표 {entry.vote_count ?? 1}
           </div>
         </div>
-        <span className="shrink-0 text-xs font-bold px-2 py-1 rounded-full text-white" style={{ background: bg }}>
+        <span
+          className="shrink-0 text-xs font-bold px-2 py-1 rounded-full text-white"
+          style={{ background: bg }}
+        >
           {g.emoji} {entry.total_harmful_score}
         </span>
       </div>
@@ -1054,10 +1221,14 @@ function EntryRow({
         💡 대안: {entry.alternatives.join(" / ") || "—"}
       </div>
       <div className="mt-3 grid grid-cols-5 gap-1 text-[10px] text-center">
-        {(["aggression", "bullying", "discrimination", "violence", "grammar_destruction"] as const).map((k) => (
+        {(
+          ["aggression", "bullying", "discrimination", "violence", "grammar_destruction"] as const
+        ).map((k) => (
           <div key={k} className="rounded-md bg-[color:var(--muted)] py-1">
             <div className="text-muted-foreground">{k.slice(0, 4)}</div>
-            <div className="font-black text-[color:var(--navy)]">{entry.evaluations[k].toFixed(1)}</div>
+            <div className="font-black text-[color:var(--navy)]">
+              {entry.evaluations[k].toFixed(1)}
+            </div>
           </div>
         ))}
       </div>
@@ -1115,7 +1286,8 @@ function EditModal({
 
   const total = useMemo(() => Math.round(computeTotal(evals)), [evals]);
   const g = gradeOf(total);
-  const badgeBg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
+  const badgeBg =
+    g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
 
   function updateEval(k: keyof Evaluation, v: number) {
     setEvals((prev) => ({ ...prev, [k]: v }));
@@ -1173,7 +1345,9 @@ function EditModal({
         </Field>
         <div>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-bold text-[color:var(--navy)]">5대 리터러시 유해성 점수 (1~5)</div>
+            <div className="text-sm font-bold text-[color:var(--navy)]">
+              5대 리터러시 유해성 점수 (1~5)
+            </div>
             <div
               className="text-xs font-black px-3 py-1.5 rounded-full text-white shadow-sm transition-colors"
               style={{ background: badgeBg }}
@@ -1185,8 +1359,12 @@ function EditModal({
             {EVAL_META.map(({ key, label, emoji }) => (
               <div key={key} className="rounded-xl bg-white/60 border border-white/70 px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
-                  <div className="text-xs font-bold text-[color:var(--navy)]">{emoji} {label}</div>
-                  <div className="text-xs font-black text-[color:var(--navy)]">{evals[key].toFixed(1)}</div>
+                  <div className="text-xs font-bold text-[color:var(--navy)]">
+                    {emoji} {label}
+                  </div>
+                  <div className="text-xs font-black text-[color:var(--navy)]">
+                    {evals[key].toFixed(1)}
+                  </div>
                 </div>
                 <input
                   type="range"
@@ -1203,7 +1381,11 @@ function EditModal({
         </div>
         <Field label="바른 우리말 대안 표현">
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {alts.length === 0 && <span className="text-xs text-muted-foreground">아직 대안이 없어요. 아래에서 추가해 주세요.</span>}
+            {alts.length === 0 && (
+              <span className="text-xs text-muted-foreground">
+                아직 대안이 없어요. 아래에서 추가해 주세요.
+              </span>
+            )}
             {alts.map((a, i) => (
               <span
                 key={`${a}-${i}`}
@@ -1276,7 +1458,11 @@ function StudentEditModal({
   }
 
   return (
-    <GlassModal title="✏️ 학생 정보 수정" subtitle={`${student.id} · ${student.name}`} onClose={onClose}>
+    <GlassModal
+      title="✏️ 학생 정보 수정"
+      subtitle={`${student.id} · ${student.name}`}
+      onClose={onClose}
+    >
       <div className="p-4 sm:p-6 space-y-5 flex-1 min-h-0 overflow-y-auto scroll-touch">
         <Field label="이름">
           <input
@@ -1344,10 +1530,13 @@ function StudentEditModal({
             <span className="px-2 py-0.5 rounded-full bg-[color:var(--mint)] text-[color:var(--navy)] font-bold">
               Lv.{lv.current.lv} {lv.current.name}
             </span>
-            <span className="text-muted-foreground">이전 {student.xp} XP → 새로 {Math.max(0, Math.round(xp))} XP</span>
+            <span className="text-muted-foreground">
+              이전 {student.xp} XP → 새로 {Math.max(0, Math.round(xp))} XP
+            </span>
           </div>
           <div className="text-[10px] text-muted-foreground mt-1">
-            ⚠︎ XP를 조정하면 학급 총합 XP도 그 차이만큼 함께 반영되어 [우리 반 언어 기상도]와 카톡 잠금 해제에 영향을 줍니다.
+            ⚠︎ XP를 조정하면 학급 총합 XP도 그 차이만큼 함께 반영되어 [우리 반 언어 기상도]와 카톡
+            잠금 해제에 영향을 줍니다.
           </div>
         </Field>
       </div>
@@ -1370,7 +1559,10 @@ function GlassModal({
   return (
     <div
       className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm overflow-x-hidden p-2 sm:p-4 flex items-center justify-center animate-fade-in pl-safe pr-safe"
-      style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 8px)", paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)" }}
+      style={{
+        paddingTop: "max(env(safe-area-inset-top, 0px), 8px)",
+        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
+      }}
     >
       <div
         className="w-full max-w-2xl min-w-0 max-h-[calc(100dvh-16px)] sm:max-h-[85vh] rounded-3xl border border-white/60 shadow-2xl overflow-hidden flex flex-col"
@@ -1382,9 +1574,15 @@ function GlassModal({
         <div className="shrink-0 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/50 bg-white/40">
           <div className="min-w-0">
             <div className="text-xs font-bold text-[color:var(--mint-deep)]">{title}</div>
-            {subtitle && <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{subtitle}</h3>}
+            {subtitle && (
+              <h3 className="text-xl font-black text-[color:var(--navy)] truncate">{subtitle}</h3>
+            )}
           </div>
-          <button onClick={onClose} className="shrink-0 w-11 h-11 grid place-items-center rounded-full hover:bg-black/5" aria-label="닫기">
+          <button
+            onClick={onClose}
+            className="shrink-0 w-11 h-11 grid place-items-center rounded-full hover:bg-black/5"
+            aria-label="닫기"
+          >
             <X size={18} />
           </button>
         </div>

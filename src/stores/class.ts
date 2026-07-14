@@ -17,7 +17,8 @@ function migrateLegacy(): Record<string, ClassState> {
       if (!k) continue;
       if (k.startsWith(LEGACY_XP_PREFIX)) codes.add(k.slice(LEGACY_XP_PREFIX.length));
       else if (k.startsWith(LEGACY_ACT_PREFIX)) codes.add(k.slice(LEGACY_ACT_PREFIX.length));
-      else if (k.startsWith(LEGACY_COMBINED_PREFIX)) codes.add(k.slice(LEGACY_COMBINED_PREFIX.length));
+      else if (k.startsWith(LEGACY_COMBINED_PREFIX))
+        codes.add(k.slice(LEGACY_COMBINED_PREFIX.length));
     }
     for (const code of codes) {
       const combinedRaw = window.localStorage.getItem(LEGACY_COMBINED_PREFIX + code);
@@ -33,7 +34,8 @@ function migrateLegacy(): Record<string, ClassState> {
         } catch {}
         window.localStorage.removeItem(LEGACY_COMBINED_PREFIX + code);
       } else {
-        const xp = Number(JSON.parse(window.localStorage.getItem(LEGACY_XP_PREFIX + code) || "0")) || 0;
+        const xp =
+          Number(JSON.parse(window.localStorage.getItem(LEGACY_XP_PREFIX + code) || "0")) || 0;
         const actRaw = window.localStorage.getItem(LEGACY_ACT_PREFIX + code);
         const activityLog = actRaw ? (JSON.parse(actRaw) as ClassState["activityLog"]) : [];
         out[code] = {

@@ -26,7 +26,12 @@ function buildRows(input: {
   return input.students.map((s) => {
     const eng = input.byStudent[s.id];
     const proposals = input.dict.filter((d) => d.suggested_by === s.id);
-    const rm = deriveRoadmap({ studentId: s.id, classCode: s.classCode, engagement: eng, dict: input.dict });
+    const rm = deriveRoadmap({
+      studentId: s.id,
+      classCode: s.classCode,
+      engagement: eng,
+      dict: input.dict,
+    });
     return {
       익명코드: map.get(s.id) ?? s.id,
       검색수: (eng?.likesGivenCount ?? 0) + proposals.length, // 활동량 근사
@@ -65,7 +70,10 @@ export function exportAnonCSV(input: {
 }) {
   const rows = buildRows(input);
   if (rows.length === 0) {
-    downloadBlob(new Blob(["\ufeff익명코드\n"], { type: "text/csv;charset=utf-8;" }), "바른말수호대_익명_학습활동.csv");
+    downloadBlob(
+      new Blob(["\ufeff익명코드\n"], { type: "text/csv;charset=utf-8;" }),
+      "바른말수호대_익명_학습활동.csv",
+    );
     return 0;
   }
   const headers = Object.keys(rows[0]);

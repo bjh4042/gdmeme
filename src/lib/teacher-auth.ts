@@ -2,8 +2,7 @@
 // 브라우저 창을 닫으면 자연 소멸(sessionStorage) → 재입장 시 재인증.
 
 // SHA-256("1234") — 초기 기본 비밀번호. 필요하면 이 상수만 교체하면 된다.
-export const TEACHER_PW_SHA256 =
-  "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
+export const TEACHER_PW_SHA256 = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
 
 const SESSION_KEY = "wt:teacher:session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 2; // 2h
@@ -34,7 +33,9 @@ export async function verifyTeacherPassword(pw: string): Promise<boolean> {
 function randomToken(): string {
   const arr = new Uint8Array(16);
   crypto.getRandomValues(arr);
-  return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(arr)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 export function issueTeacherSession(): Session {

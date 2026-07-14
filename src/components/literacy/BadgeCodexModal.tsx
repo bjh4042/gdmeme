@@ -112,7 +112,8 @@ export function BadgeCodexModal({
               🏆 뱃지 도감 · {student.name}
             </h3>
             <div className="text-[11px] font-bold text-muted-foreground mt-0.5">
-              총 {ownedCount} / {totalCount} 획득 · 영역 {ownedArea.length}/{AREA_BADGES.length} · 트랙 {trackOwnedCount}/{BADGES_SORTED.length}
+              총 {ownedCount} / {totalCount} 획득 · 영역 {ownedArea.length}/{AREA_BADGES.length} ·
+              트랙 {trackOwnedCount}/{BADGES_SORTED.length}
             </div>
           </div>
           <button
@@ -134,7 +135,10 @@ export function BadgeCodexModal({
           <div className="h-2 rounded-full bg-white overflow-hidden">
             <div
               className="h-full transition-all"
-              style={{ width: `${overallPct}%`, background: "linear-gradient(90deg,#38bdf8,#a78bfa)" }}
+              style={{
+                width: `${overallPct}%`,
+                background: "linear-gradient(90deg,#38bdf8,#a78bfa)",
+              }}
             />
           </div>
         </div>
@@ -146,9 +150,7 @@ export function BadgeCodexModal({
               <CheckCircle2 size={16} className="text-emerald-500" />
               획득한 뱃지
             </div>
-            <span className="text-[10px] font-bold text-muted-foreground">
-              {ownedCount} 개
-            </span>
+            <span className="text-[10px] font-bold text-muted-foreground">{ownedCount} 개</span>
           </div>
           {owned.length === 0 ? (
             <div className="text-[11px] text-muted-foreground py-4 text-center">
@@ -199,14 +201,22 @@ export function BadgeCodexModal({
 
         {/* ℹ️ 인포 패널 (선택된 뱃지) */}
         {selected && (
-          <InfoPanel item={selected} areaAvg={areaAvg} stats={stats} onClose={() => setSelected(null)} />
+          <InfoPanel
+            item={selected}
+            areaAvg={areaAvg}
+            stats={stats}
+            onClose={() => setSelected(null)}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function itemKey(it: { kind: string; badge: { key?: string; badgeKey?: string } & Record<string, unknown> }) {
+function itemKey(it: {
+  kind: string;
+  badge: { key?: string; badgeKey?: string } & Record<string, unknown>;
+}) {
   return it.kind + ":" + (it.badge.key ?? it.badge.badgeKey);
 }
 
@@ -228,7 +238,9 @@ function CodexCard({
   const icon = item.badge.icon;
   const name = item.badge.name;
   const sub =
-    item.kind === "area" ? item.badge.area : `Lv.${item.badge.tier} · ${TIER_LABEL[item.badge.tier]}`;
+    item.kind === "area"
+      ? item.badge.area
+      : `Lv.${item.badge.tier} · ${TIER_LABEL[item.badge.tier]}`;
   return (
     <button
       type="button"
@@ -262,7 +274,10 @@ function CodexCard({
           style={{ width: `${pct}%`, background: done ? color : "#94a3b8" }}
         />
       </div>
-      <div className="mt-0.5 text-[9px] font-mono font-bold text-right" style={{ color: done ? color : "#64748b" }}>
+      <div
+        className="mt-0.5 text-[9px] font-mono font-bold text-right"
+        style={{ color: done ? color : "#64748b" }}
+      >
         {pct}%
       </div>
     </button>
@@ -303,10 +318,10 @@ function InfoPanel({
       b.track === "dictionary"
         ? "💡 사전 탭에서 순화어를 제안하고 선생님의 승인을 받아 보세요."
         : b.track === "xp"
-        ? "💡 활동 전반(사전 · 저널 · 공감)으로 누적 XP가 올라가요."
-        : b.track === "reactions"
-        ? "💡 친구들의 바른말 카드에 공감 버튼을 눌러 응원해 보세요."
-        : "💡 매일 성찰 저널을 이어 쓰면 연속 일수가 늘어나요.";
+          ? "💡 활동 전반(사전 · 저널 · 공감)으로 누적 XP가 올라가요."
+          : b.track === "reactions"
+            ? "💡 친구들의 바른말 카드에 공감 버튼을 눌러 응원해 보세요."
+            : "💡 매일 성찰 저널을 이어 쓰면 연속 일수가 늘어나요.";
   }
 
   return (
@@ -323,7 +338,10 @@ function InfoPanel({
         <X size={16} />
       </button>
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl leading-none" style={{ filter: item.done ? undefined : "grayscale(0.2)" }}>
+        <span
+          className="text-2xl leading-none"
+          style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
+        >
           {item.done ? item.badge.icon : "🔒"}
         </span>
         <div className="min-w-0">

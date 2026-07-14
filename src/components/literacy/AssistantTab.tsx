@@ -35,7 +35,11 @@ function makeId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, note?: string) => void }) {
+export function AssistantTab({
+  onXP,
+}: {
+  onXP?: (delta: number, kind: string, note?: string) => void;
+}) {
   const initialGreeting = useMemo<ChatMsg>(
     () => ({ id: "greet", from: "bot", text: ASSISTANT_GREETING, at: stamp() }),
     [],
@@ -180,24 +184,37 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
                 <div className="w-8 h-8 shrink-0" />
               )}
               <div className="max-w-[78%]">
-                {showAvatar && <div className="text-[11px] text-white/70 mb-0.5 ml-1">AI 수호비서</div>}
+                {showAvatar && (
+                  <div className="text-[11px] text-white/70 mb-0.5 ml-1">AI 수호비서</div>
+                )}
                 {m.solution ? (
                   <div className="inline-block max-w-full bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md shadow-sm overflow-hidden border border-emerald-200">
                     <div className="px-3.5 py-2 bg-gradient-to-r from-emerald-50 to-sky-50 text-[13.5px] font-extrabold border-b border-emerald-100">
                       {m.solution.title}
                     </div>
-                    <div className="px-3.5 py-2.5 text-[13px] leading-relaxed" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                    <div
+                      className="px-3.5 py-2.5 text-[13px] leading-relaxed"
+                      style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                    >
                       {m.solution.context}
                     </div>
                     <div className="mx-3 mb-3 rounded-xl bg-emerald-50/70 border border-emerald-200 px-3 py-2">
-                      <div className="text-[12px] font-bold text-emerald-700 mb-1">💡 바른말 실천 방법</div>
-                      <div className="text-[12.5px] text-slate-700 leading-relaxed" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                      <div className="text-[12px] font-bold text-emerald-700 mb-1">
+                        💡 바른말 실천 방법
+                      </div>
+                      <div
+                        className="text-[12.5px] text-slate-700 leading-relaxed"
+                        style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                      >
                         {m.solution.action_guide}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                  <div
+                    className="inline-block bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-2.5 text-[13.5px] shadow-sm"
+                    style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                  >
                     {m.text}
                   </div>
                 )}
@@ -218,12 +235,23 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
         })}
         {typing && (
           <div className="flex items-end gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ffe066] to-[#ffb703] grid place-items-center text-base shrink-0">🤖</div>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ffe066] to-[#ffb703] grid place-items-center text-base shrink-0">
+              🤖
+            </div>
             <div className="bg-white text-[#1c1c1e] rounded-2xl rounded-tl-md px-3.5 py-3 shadow-sm">
               <span className="inline-flex gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "120ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: "240ms" }} />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+                  style={{ animationDelay: "0ms" }}
+                />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+                  style={{ animationDelay: "120ms" }}
+                />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"
+                  style={{ animationDelay: "240ms" }}
+                />
               </span>
             </div>
           </div>
@@ -235,7 +263,10 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
         <div className="text-[10px] text-white/50 font-bold mb-1 ml-1">
           {dynamicChips ? "💡 이 주제와 관련된 추천 질문" : "💡 가이드 질문"}
         </div>
-        <div className="flex flex-nowrap overflow-x-auto gap-2 pb-1" style={{ scrollbarWidth: "none" }}>
+        <div
+          className="flex flex-nowrap overflow-x-auto gap-2 pb-1"
+          style={{ scrollbarWidth: "none" }}
+        >
           <style>{`.assistant-chips::-webkit-scrollbar{display:none}`}</style>
           {(dynamicChips ?? QUICK_REPLIES).map((q, i) => (
             <button
@@ -286,7 +317,8 @@ export function AssistantTab({ onXP }: { onXP?: (delta: number, kind: string, no
 
       {/* Footer note */}
       <div className="px-3 py-2 bg-[#1c1c1e] border-t border-black/40 text-[10px] text-white/40 text-center">
-        데이터 주도형 엔진 · 지식 항목 {AI_KNOWLEDGE.length}개 로드됨 · 교사가 JSON 데이터셋을 확장하면 실시간 반영
+        데이터 주도형 엔진 · 지식 항목 {AI_KNOWLEDGE.length}개 로드됨 · 교사가 JSON 데이터셋을
+        확장하면 실시간 반영
       </div>
     </div>
   );

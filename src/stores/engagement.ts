@@ -14,7 +14,8 @@ export const REACTIONS: { key: ReactionKind; icon: string; label: string; color:
 // 뱃지 키는 문자열(신규 12트랙 · 구 키는 하위 호환용으로만 허용)
 export type BadgeKey = string;
 // 레거시 재수출 — 구 컴포넌트가 참조해도 빈 배열로 안전 분해.
-export const BADGES: { key: BadgeKey; icon: string; name: string; desc: string; color: string }[] = [];
+export const BADGES: { key: BadgeKey; icon: string; name: string; desc: string; color: string }[] =
+  [];
 
 export type JournalEntry = { date: string; text: string };
 
@@ -63,7 +64,10 @@ type EngagementState = {
   markLexicographer: (authorId: string) => void;
   reportRoleplayClear: (studentId: string, scenarioId: string, total: number) => boolean;
   syncBadges: (studentId: string, keys: string[]) => void;
-  logPractice: (studentId: string, note?: string) => { ok: boolean; already?: boolean; total: number };
+  logPractice: (
+    studentId: string,
+    note?: string,
+  ) => { ok: boolean; already?: boolean; total: number };
 };
 
 function today() {
@@ -88,7 +92,16 @@ export const useEngagementStore = create<EngagementState>()(
     (set, get) => ({
       byStudent: {},
       likesByEntry: {},
-      react: ({ entryId, reactorId, reactorClass, authorId, authorClass, authorName, word, kind }) => {
+      react: ({
+        entryId,
+        reactorId,
+        reactorClass,
+        authorId,
+        authorClass,
+        authorName,
+        word,
+        kind,
+      }) => {
         const st = get();
         const already = st.likesByEntry[entryId]?.[reactorId] ?? [];
         const isToggleOff = already.includes(kind);
@@ -135,11 +148,23 @@ export const useEngagementStore = create<EngagementState>()(
         const noteSuffix = isToggleOff ? "취소" : "";
         roster.addStudentXP(reactorId, delta);
         if (reactorClass)
-          cls.addXP(reactorClass, delta, isToggleOff ? "선플 공감 취소" : "선플 공감", "reaction", `${word} · ${kind}${noteSuffix ? " · " + noteSuffix : ""}`);
+          cls.addXP(
+            reactorClass,
+            delta,
+            isToggleOff ? "선플 공감 취소" : "선플 공감",
+            "reaction",
+            `${word} · ${kind}${noteSuffix ? " · " + noteSuffix : ""}`,
+          );
         if (authorId && authorId !== reactorId) {
           roster.addStudentXP(authorId, delta);
           if (authorClass)
-            cls.addXP(authorClass, delta, isToggleOff ? `공감취소 · ${authorName}` : `공감받음 · ${authorName}`, "reaction", word);
+            cls.addXP(
+              authorClass,
+              delta,
+              isToggleOff ? `공감취소 · ${authorName}` : `공감받음 · ${authorName}`,
+              "reaction",
+              word,
+            );
         }
         return true;
       },
@@ -188,7 +213,10 @@ export const useEngagementStore = create<EngagementState>()(
           return {
             byStudent: {
               ...s.byStudent,
-              [authorId]: { ...cur, unlockedBadges: unlockOnce(cur.unlockedBadges, "dictionary_1") },
+              [authorId]: {
+                ...cur,
+                unlockedBadges: unlockOnce(cur.unlockedBadges, "dictionary_1"),
+              },
             },
           };
         });
@@ -226,8 +254,12 @@ export const useEngagementStore = create<EngagementState>()(
         const cur = st.byStudent[studentId] ?? EMPTY_ENGAGEMENT;
         const logs = cur.practiceLogs ?? [];
         const td = today();
-        if (logs.some((l) => l.date === td)) return { ok: false, already: true, total: logs.length };
-        const nextLogs = [...logs, { date: td, note: note?.trim().slice(0, 200) || undefined }].slice(-60);
+        if (logs.some((l) => l.date === td))
+          return { ok: false, already: true, total: logs.length };
+        const nextLogs = [
+          ...logs,
+          { date: td, note: note?.trim().slice(0, 200) || undefined },
+        ].slice(-60);
         set({
           byStudent: { ...st.byStudent, [studentId]: { ...cur, practiceLogs: nextLogs } },
         });

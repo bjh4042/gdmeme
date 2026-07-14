@@ -35,7 +35,8 @@ export function RoadmapTeacherPanel({
   }, [students]);
 
   const scope = useMemo(
-    () => (classFilter === "__all__" ? students : students.filter((s) => s.classCode === classFilter)),
+    () =>
+      classFilter === "__all__" ? students : students.filter((s) => s.classCode === classFilter),
     [students, classFilter],
   );
 
@@ -59,14 +60,20 @@ export function RoadmapTeacherPanel({
 
   const nonActive = scope.length - agg.activeCount;
   const overallRate = scope.length
-    ? Math.round((agg.perStageSummary.reduce((a, s) => a + s.avgProgress, 0) / (agg.perStageSummary.length * 1)) * 100)
+    ? Math.round(
+        (agg.perStageSummary.reduce((a, s) => a + s.avgProgress, 0) /
+          (agg.perStageSummary.length * 1)) *
+          100,
+      )
     : 0;
 
   return (
     <section className="mb-5 rounded-2xl border-2 border-[color:var(--navy)]/15 bg-white">
       <header className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 sm:px-4 sm:py-3 border-b border-slate-100">
         <div className="min-w-0">
-          <div className="text-[10px] font-black uppercase text-[color:var(--mint-deep)] tracking-wider">Roadmap Insights (1차)</div>
+          <div className="text-[10px] font-black uppercase text-[color:var(--mint-deep)] tracking-wider">
+            Roadmap Insights (1차)
+          </div>
           <h4 className="text-base sm:text-lg font-black text-[color:var(--navy)]">
             🛡️ 바른말 수호 5단계 · 학급 학습 현황
           </h4>
@@ -80,7 +87,9 @@ export function RoadmapTeacherPanel({
           >
             <option value="__all__">전체 학급</option>
             {classes.map((c) => (
-              <option key={c} value={c}>{c}반</option>
+              <option key={c} value={c}>
+                {c}반
+              </option>
             ))}
           </select>
           <label className="flex items-center gap-1 text-[11px] font-bold text-slate-600 cursor-pointer">
@@ -105,7 +114,10 @@ export function RoadmapTeacherPanel({
 
       {open && (
         <div className="p-3 sm:p-4 space-y-4">
-          <nav className="inline-flex rounded-xl bg-[color:var(--muted)] p-1 text-xs font-bold gap-1" role="tablist">
+          <nav
+            className="inline-flex rounded-xl bg-[color:var(--muted)] p-1 text-xs font-bold gap-1"
+            role="tablist"
+          >
             {[
               { id: "class", label: "학급 현황" },
               { id: "students", label: "학생별 현황" },
@@ -118,7 +130,9 @@ export function RoadmapTeacherPanel({
                 aria-selected={view === t.id}
                 onClick={() => setView(t.id as typeof view)}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  view === t.id ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]" : "text-slate-600"
+                  view === t.id
+                    ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                    : "text-slate-600"
                 }`}
               >
                 {t.label}
@@ -129,14 +143,27 @@ export function RoadmapTeacherPanel({
           {view === "class" && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <StatCard label="등록 학생" value={`${scope.length}명`} />
-              <StatCard label="참여 학생" value={`${agg.activeCount}명`} sub={`미참여 ${nonActive}명`} />
+              <StatCard
+                label="참여 학생"
+                value={`${agg.activeCount}명`}
+                sub={`미참여 ${nonActive}명`}
+              />
               <StatCard label="최근 7일 활동" value={`${recent7}명`} />
-              <StatCard label="임무 완료" value={`${agg.finishedCount}명`} sub={`전체 진행률 ${overallRate}%`} />
+              <StatCard
+                label="임무 완료"
+                value={`${agg.finishedCount}명`}
+                sub={`전체 진행률 ${overallRate}%`}
+              />
               <div className="col-span-2 sm:col-span-4 rounded-2xl border border-slate-200 p-3">
-                <div className="text-xs font-black text-[color:var(--navy)] mb-2">5단계별 평균 진행률</div>
+                <div className="text-xs font-black text-[color:var(--navy)] mb-2">
+                  5단계별 평균 진행률
+                </div>
                 <ul className="space-y-1.5">
                   {agg.perStageSummary.map((s) => (
-                    <li key={s.key} className="grid grid-cols-[80px_1fr_56px] items-center gap-2 text-xs">
+                    <li
+                      key={s.key}
+                      className="grid grid-cols-[80px_1fr_56px] items-center gap-2 text-xs"
+                    >
                       <span className="font-bold text-slate-700">
                         {s.stage.icon} {s.stage.short}
                       </span>
@@ -147,7 +174,8 @@ export function RoadmapTeacherPanel({
                         />
                       </span>
                       <span className="text-right tabular-nums">
-                        {Math.round(s.avgProgress * 100)}% <span className="text-slate-400">({s.doneCount})</span>
+                        {Math.round(s.avgProgress * 100)}%{" "}
+                        <span className="text-slate-400">({s.doneCount})</span>
                       </span>
                     </li>
                   ))}
@@ -166,7 +194,9 @@ export function RoadmapTeacherPanel({
                     <th className="text-left px-2 py-2 font-black text-slate-700">최근 접속</th>
                     <th className="text-center px-2 py-2 font-black text-slate-700">완료 단계</th>
                     <th className="text-center px-2 py-2 font-black text-slate-700">전체 완료율</th>
-                    <th className="text-center px-2 py-2 font-black text-slate-700">활동(공감/저널)</th>
+                    <th className="text-center px-2 py-2 font-black text-slate-700">
+                      활동(공감/저널)
+                    </th>
                     <th className="text-center px-2 py-2 font-black text-slate-700">실천</th>
                   </tr>
                 </thead>
@@ -180,21 +210,33 @@ export function RoadmapTeacherPanel({
                   )}
                   {agg.perStudent.map((row, i) => {
                     const eng = byStudent[row.student.id] ?? EMPTY_ENGAGEMENT;
-                    const rate = Math.round((row.roadmap.completedCount / row.roadmap.totalCount) * 100);
+                    const rate = Math.round(
+                      (row.roadmap.completedCount / row.roadmap.totalCount) * 100,
+                    );
                     return (
-                      <tr key={row.student.id} className="odd:bg-white even:bg-slate-50/40 border-t border-slate-100">
+                      <tr
+                        key={row.student.id}
+                        className="odd:bg-white even:bg-slate-50/40 border-t border-slate-100"
+                      >
                         <td className="px-2 py-1.5 tabular-nums text-slate-500">{i + 1}</td>
                         <td className="px-2 py-1.5">
                           <div className="font-bold text-slate-800">
                             {anonymize ? `S${String(i + 1).padStart(2, "0")}` : row.student.name}
                           </div>
-                          <div className="text-[10px] text-slate-400">{row.student.classCode}·{row.student.number}</div>
+                          <div className="text-[10px] text-slate-400">
+                            {row.student.classCode}·{row.student.number}
+                          </div>
                         </td>
                         <td className="px-2 py-1.5 text-slate-500">
-                          {row.student.lastActiveAt ? new Date(row.student.lastActiveAt).toLocaleDateString("ko-KR") : "-"}
+                          {row.student.lastActiveAt
+                            ? new Date(row.student.lastActiveAt).toLocaleDateString("ko-KR")
+                            : "-"}
                         </td>
                         <td className="px-2 py-1.5 text-center">
-                          <div className="flex justify-center gap-0.5" aria-label={`완료 단계 ${row.roadmap.completedCount} / ${row.roadmap.totalCount}`}>
+                          <div
+                            className="flex justify-center gap-0.5"
+                            aria-label={`완료 단계 ${row.roadmap.completedCount} / ${row.roadmap.totalCount}`}
+                          >
                             {row.roadmap.stages.map((st) => (
                               <span
                                 key={st.key}
@@ -215,7 +257,7 @@ export function RoadmapTeacherPanel({
                           {eng.likesGivenCount}·{eng.journals.length}
                         </td>
                         <td className="px-2 py-1.5 text-center tabular-nums text-slate-600">
-                          {(eng.practiceLogs?.length ?? 0)}회
+                          {eng.practiceLogs?.length ?? 0}회
                         </td>
                       </tr>
                     );
@@ -233,7 +275,12 @@ export function RoadmapTeacherPanel({
                   .slice(0, 40)
                   .map((s) => ({
                     student: s,
-                    rm: deriveRoadmap({ studentId: s.id, classCode: s.classCode, engagement: byStudent[s.id], dict }),
+                    rm: deriveRoadmap({
+                      studentId: s.id,
+                      classCode: s.classCode,
+                      engagement: byStudent[s.id],
+                      dict,
+                    }),
                   }))
                   .filter((r) => r.rm.stages.find((x) => x.key === stage.key)?.done)
                   .slice(0, 5);
@@ -248,7 +295,10 @@ export function RoadmapTeacherPanel({
                       </div>
                     </div>
                     <div className="text-[11px] text-slate-700 mt-1 leading-snug">{stage.desc}</div>
-                    <div className="h-1.5 rounded-full bg-white/70 mt-2 overflow-hidden" aria-hidden>
+                    <div
+                      className="h-1.5 rounded-full bg-white/70 mt-2 overflow-hidden"
+                      aria-hidden
+                    >
                       <div
                         className="h-full bg-[color:var(--navy)]"
                         style={{ width: `${Math.round(summary.avgProgress * 100)}%` }}
@@ -259,7 +309,9 @@ export function RoadmapTeacherPanel({
                       {samples.length === 0
                         ? "아직 없어요"
                         : samples
-                            .map((s, i) => (anonymize ? `S${String(i + 1).padStart(2, "0")}` : s.student.name))
+                            .map((s, i) =>
+                              anonymize ? `S${String(i + 1).padStart(2, "0")}` : s.student.name,
+                            )
                             .join(", ")}
                     </div>
                   </div>

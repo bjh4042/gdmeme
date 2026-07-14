@@ -20,7 +20,7 @@ export type AssistantEntry = {
   bot_reply: string; // \n 개행 포함 가능
 };
 
-import { AI_KNOWLEDGE_EXTRA } from './ai-assistant-dataset-extra';
+import { AI_KNOWLEDGE_EXTRA } from "./ai-assistant-dataset-extra";
 
 /**
  * 마스터 데이터셋. 교사가 새 객체를 push 하면 즉시 챗봇에 반영된다.
@@ -141,7 +141,12 @@ export function matchAssistantReply(
   knowledge: AssistantEntry[] = AI_KNOWLEDGE,
 ): AssistantMatch {
   const haystack = userText.toLowerCase();
-  const hits: { entry: AssistantEntry; pattern: AssistantPatternTag; matchedKeywords: string[]; order: number }[] = [];
+  const hits: {
+    entry: AssistantEntry;
+    pattern: AssistantPatternTag;
+    matchedKeywords: string[];
+    order: number;
+  }[] = [];
 
   knowledge.forEach((entry, order) => {
     const matched = entry.keywords.filter((k) => haystack.includes(k.toLowerCase()));
@@ -169,7 +174,10 @@ export function matchAssistantReply(
   return { entry: top.entry, pattern: top.pattern, matchedKeywords: top.matchedKeywords };
 }
 
-export function assistantReplyFor(userText: string, knowledge?: AssistantEntry[]): {
+export function assistantReplyFor(
+  userText: string,
+  knowledge?: AssistantEntry[],
+): {
   reply: string;
   match: AssistantMatch;
 } {

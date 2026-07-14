@@ -16,7 +16,11 @@ import {
   type BadgeStats,
 } from "@/lib/badges";
 import { ReportModal } from "./ReportModal";
-import { todaysReflectionPrompt, REFLECTION_AFTER_SAVE, REFLECTION_PROMPTS } from "@/lib/reflection-prompts";
+import {
+  todaysReflectionPrompt,
+  REFLECTION_AFTER_SAVE,
+  REFLECTION_PROMPTS,
+} from "@/lib/reflection-prompts";
 
 export function ProfileModal({
   student,
@@ -49,7 +53,10 @@ export function ProfileModal({
     votedCount: engagement?.likesGivenCount ?? 0,
     journalStreak: engagement?.streak ?? 0,
   };
-  const auto = useMemo(() => derivedUnlocked(stats), [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak]);
+  const auto = useMemo(
+    () => derivedUnlocked(stats),
+    [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak],
+  );
   useEffect(() => {
     if (auto.length) syncBadges(student.id, auto);
   }, [auto, student.id, syncBadges]);
@@ -124,7 +131,8 @@ export function ProfileModal({
           </div>
           {wroteToday ? (
             <div className="text-sm text-muted-foreground rounded-xl bg-white/50 p-3 wt-text">
-              ✅ 오늘의 성찰은 이미 작성했어요. 내일 다시 만나요! 3일 연속 달성 시 폭죽과 함께 +10 XP 보너스가 지급돼요.
+              ✅ 오늘의 성찰은 이미 작성했어요. 내일 다시 만나요! 3일 연속 달성 시 폭죽과 함께 +10
+              XP 보너스가 지급돼요.
             </div>
           ) : (
             <>
@@ -198,7 +206,8 @@ export function ProfileModal({
             })}
           </div>
           <div className="mt-3 text-[10px] text-muted-foreground leading-relaxed">
-            💡 뱃지 아이콘을 눌러 미션 조건과 진척도를 확인해요. 한 번 얻은 칭호는 XP가 줄어도 유지됩니다.
+            💡 뱃지 아이콘을 눌러 미션 조건과 진척도를 확인해요. 한 번 얻은 칭호는 XP가 줄어도
+            유지됩니다.
           </div>
         </section>
 
@@ -262,7 +271,9 @@ function BadgeTile({
         >
           {done ? b.icon : "🔒"}
         </div>
-        <div className={`mt-1 text-[10px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}>
+        <div
+          className={`mt-1 text-[10px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}
+        >
           {b.name}
         </div>
         <div className="mt-1 text-[9px] font-bold text-muted-foreground">
@@ -275,8 +286,12 @@ function BadgeTile({
             style={{ width: `${p.pct}%`, background: done ? b.color : "#94a3b8" }}
           />
         </div>
-        <div className="mt-1 text-[9px] font-mono font-bold" style={{ color: done ? b.color : "#64748b" }}>
-          {p.current}/{p.target}{b.unit}
+        <div
+          className="mt-1 text-[9px] font-mono font-bold"
+          style={{ color: done ? b.color : "#64748b" }}
+        >
+          {p.current}/{p.target}
+          {b.unit}
         </div>
       </button>
       {open && (
@@ -284,14 +299,18 @@ function BadgeTile({
           role="tooltip"
           className="absolute z-20 left-1/2 -translate-x-1/2 mt-2 w-56 max-w-[80vw] rounded-2xl bg-[color:var(--navy)] text-white p-3 shadow-xl text-left animate-scale-in"
         >
-          <div className="text-[11px] font-bold opacity-80">{TRACK_LABEL[b.track]} · {TIER_LABEL[b.tier]}</div>
+          <div className="text-[11px] font-bold opacity-80">
+            {TRACK_LABEL[b.track]} · {TIER_LABEL[b.tier]}
+          </div>
           <div className="text-sm font-black flex items-center gap-1.5">
             <span className="text-lg leading-none">{b.icon}</span> {b.name}
           </div>
           <div className="mt-1 text-[11px] opacity-90 leading-snug">{b.desc}</div>
           <div className="mt-2 flex items-center justify-between text-[11px] font-bold">
             <span>진척도</span>
-            <span className="font-mono">{p.current} / {p.target} {b.unit}</span>
+            <span className="font-mono">
+              {p.current} / {p.target} {b.unit}
+            </span>
           </div>
           <div className="mt-1 h-2 rounded-full bg-white/20 overflow-hidden">
             <div
@@ -300,7 +319,9 @@ function BadgeTile({
             />
           </div>
           <div className="mt-1.5 text-[10px] opacity-80">
-            {done ? "✅ 미션 완수! 대표 칭호 후보로 자동 반영돼요." : `앞으로 ${Math.max(0, p.target - p.current)}${b.unit} 더 하면 해금!`}
+            {done
+              ? "✅ 미션 완수! 대표 칭호 후보로 자동 반영돼요."
+              : `앞으로 ${Math.max(0, p.target - p.current)}${b.unit} 더 하면 해금!`}
           </div>
         </div>
       )}

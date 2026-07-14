@@ -65,7 +65,15 @@ export const useRosterStore = create<RosterState>()(
         } else {
           set({
             students: [
-              { id, classCode: s.classCode, number: s.number, name: s.name, xp: 0, joinedAt: now, lastActiveAt: now },
+              {
+                id,
+                classCode: s.classCode,
+                number: s.number,
+                name: s.name,
+                xp: 0,
+                joinedAt: now,
+                lastActiveAt: now,
+              },
               ...prev,
             ],
           });
@@ -147,7 +155,8 @@ export const useRosterStore = create<RosterState>()(
             const before = next[idx];
             const newXp = r.xp != null ? r.xp : before.xp;
             const delta = newXp - before.xp;
-            if (delta) classXpDeltas[before.classCode] = (classXpDeltas[before.classCode] ?? 0) + delta;
+            if (delta)
+              classXpDeltas[before.classCode] = (classXpDeltas[before.classCode] ?? 0) + delta;
             next[idx] = {
               ...before,
               name: r.name,

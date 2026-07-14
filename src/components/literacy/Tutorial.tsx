@@ -170,10 +170,7 @@ export function Tutorial({
   const bubbleH = 220;
   const showBelow = holeTop + holeH + bubbleH + 24 < vp.h;
   let bubbleTop = showBelow ? holeTop + holeH + 12 : Math.max(12, holeTop - bubbleH - 12);
-  let bubbleLeft = Math.min(
-    Math.max(12, r.left + r.width / 2 - bubbleW / 2),
-    vp.w - bubbleW - 12,
-  );
+  let bubbleLeft = Math.min(Math.max(12, r.left + r.width / 2 - bubbleW / 2), vp.w - bubbleW - 12);
   if (!rect) {
     bubbleTop = Math.max(24, vp.h / 2 - bubbleH / 2);
     bubbleLeft = Math.max(12, vp.w / 2 - bubbleW / 2);
@@ -210,14 +207,7 @@ export function Tutorial({
           <mask id="tour-mask">
             <rect x="0" y="0" width={vp.w} height={vp.h} fill="white" />
             {rect && (
-              <rect
-                x={holeLeft}
-                y={holeTop}
-                width={holeW}
-                height={holeH}
-                rx={16}
-                fill="black"
-              />
+              <rect x={holeLeft} y={holeTop} width={holeW} height={holeH} rx={16} fill="black" />
             )}
           </mask>
         </defs>
@@ -261,12 +251,8 @@ export function Tutorial({
             건너뛰기 ✕
           </button>
         </div>
-        <div className="text-base font-black text-[color:var(--navy)] mb-1">
-          {cur.title}
-        </div>
-        <p className="text-sm text-[color:var(--navy)] leading-relaxed mb-3">
-          {cur.body}
-        </p>
+        <div className="text-base font-black text-[color:var(--navy)] mb-1">{cur.title}</div>
+        <p className="text-sm text-[color:var(--navy)] leading-relaxed mb-3">{cur.body}</p>
         <div className="flex items-center justify-between gap-2">
           <button
             type="button"
