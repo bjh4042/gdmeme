@@ -123,6 +123,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preload", as: "image", href: logoAsset.url, fetchpriority: "high" },
       { rel: "preload", as: "image", href: level1.url },
