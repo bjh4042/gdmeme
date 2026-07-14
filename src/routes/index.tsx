@@ -26,6 +26,8 @@ import { WeeklySurveyModal } from "@/components/literacy/WeeklySurveyModal";
 import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey";
 import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { STAGES, type StageKey } from "@/lib/roadmap";
+import { PrePostSurveyModal } from "@/components/literacy/PrePostSurveyModal";
+import type { SurveyStage } from "@/lib/pre-post-survey";
 
 function tabToStage(tab: Tab): StageKey {
   const meta = STAGES.find((s) => s.tabHint === tab);
@@ -54,6 +56,7 @@ function Index() {
   const [reportForId, setReportForId] = useState<string | null>(null);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);
+  const [prePostStage, setPrePostStage] = useState<SurveyStage | null>(null);
   const markLexicographer = useEngagementStore((s) => s.markLexicographer);
   const reportRoleplayClear = useEngagementStore((s) => s.reportRoleplayClear);
   const totalScenarios = SCENARIOS.length;
@@ -230,6 +233,7 @@ function Index() {
             classCode={student.classCode}
             dict={dict}
             onStageJump={(t) => setTab(t)}
+            onOpenSurvey={(s) => setPrePostStage(s)}
           />
         )}
         <DashboardTab dict={dict} state={state} classCode={student?.classCode} />
