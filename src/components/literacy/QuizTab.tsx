@@ -92,6 +92,7 @@ export function QuizTab({
     if (timeLeft <= 0) {
       setResult("timeup");
       setCombo(0);
+      setResults((prev) => [...prev, { domain: q?.domain, correct: false }]);
       return;
     }
     const t = setTimeout(() => setTimeLeft((v) => v - 0.1), 100);
@@ -174,6 +175,7 @@ export function QuizTab({
 
   if (phase === "done") {
     const total = deck.length;
+    const summary = summarizeQuiz(results);
     return (
       <div className="animate-scale-in max-w-2xl mx-auto glass-card p-8 text-center space-y-4">
         <div className="text-6xl">🏆</div>
@@ -189,6 +191,26 @@ export function QuizTab({
           </div>
         </div>
         <p className="text-sm text-muted-foreground">총 {total}문제 도전 완료. 학급 XP에 반영되었어요.</p>
+        <div className="rounded-2xl bg-white/60 p-4 text-left text-sm space-y-2">
+          <div className="font-black text-[color:var(--navy)] text-center">
+            정답 {summary.total.correct}/{summary.total.count}
+          </div>
+          {summary.byDomain.length === 0 ? (
+            <p className="text-xs text-slate-500 text-center">
+              오늘의 문제는 영역이 지정되지 않았어요. 사전 · 밈 분석기에서 다양한 표현을 더 살펴봐요.
+            </p>
+          ) : (
+            <ul className="space-y-1">
+              {summary.byDomain.map((d) => (
+                <li key={d.domain} className="grid grid-cols-[110px_1fr_auto] items-center gap-2 text-[12px]">
+                  <span className="font-bold text-[color:var(--navy)]">{DOMAIN_LABEL[d.domain]}</span>
+                  <span className="text-slate-600 truncate">{d.hint}</span>
+                  <span className="tabular-nums text-slate-500">{d.correct}/{d.count}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <button
           onClick={start}
           className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-6 py-3 font-black shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
