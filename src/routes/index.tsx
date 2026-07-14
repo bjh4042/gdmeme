@@ -389,13 +389,13 @@ function Index() {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-5">
-          {[
-            { id: "analyze", icon: "🔎", label: "밈 분석기" },
-            { id: "chat", icon: "💬", label: "예절 역할극" },
-            { id: "assist", icon: "🤖", label: "AI 수호비서" },
-            { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
-            { id: "dict", icon: "📚", label: "우리말 사전" },
-          ].map((t) => (
+        {[
+          { id: "analyze", icon: "🔎", label: "밈 분석기" },
+          { id: "dict", icon: "📚", label: "우리말 사전" },
+          { id: "assist", icon: "🤖", label: "AI 수호비서" },
+          { id: "chat", icon: "💬", label: "예절 역할극" },
+          { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
+        ].map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id as Tab)}
