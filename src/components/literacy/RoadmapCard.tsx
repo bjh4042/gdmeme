@@ -1,9 +1,76 @@
 import { useEffect, useState } from "react";
+import { Search, Compass, Heart, Pencil, Sprout, Check, Lock, type LucideIcon } from "lucide-react";
 import type { DictEntry } from "@/lib/literacy-types";
 import { STAGES, deriveRoadmap, type StageKey } from "@/lib/roadmap";
 import { useEngagementStore } from "@/stores/engagement";
 import { toast } from "sonner";
 import { REFLECTION_AFTER_SAVE } from "@/lib/reflection-prompts";
+
+// 시안 컬러 팔레트 · 단계별 원형 아이콘/보더/글로우 톤을 한 곳에서 관리.
+const STAGE_STYLE: Record<
+  StageKey,
+  {
+    icon: LucideIcon;
+    ring: string; // 현재 단계 accent ring
+    bg: string; // 원형 배경 (미완료)
+    fg: string; // 원형 아이콘 색
+    doneBg: string; // 완료 원형 배경
+    line: string; // 오른쪽 연결선 (완료 이후 색)
+    label: string; // 단계명 색
+    glow: string; // 현재 단계 glow shadow
+  }
+> = {
+  discover: {
+    icon: Search,
+    ring: "ring-sky-300",
+    bg: "bg-sky-50 border-sky-200",
+    fg: "text-sky-600",
+    doneBg: "bg-sky-100 border-sky-400",
+    line: "border-sky-300",
+    label: "text-sky-700",
+    glow: "shadow-[0_0_0_6px_rgba(56,189,248,0.18)]",
+  },
+  dissect: {
+    icon: Compass,
+    ring: "ring-emerald-300",
+    bg: "bg-emerald-50 border-emerald-200",
+    fg: "text-emerald-600",
+    doneBg: "bg-emerald-100 border-emerald-400",
+    line: "border-emerald-300",
+    label: "text-emerald-700",
+    glow: "shadow-[0_0_0_6px_rgba(16,185,129,0.18)]",
+  },
+  empathize: {
+    icon: Heart,
+    ring: "ring-rose-300",
+    bg: "bg-rose-50 border-rose-200",
+    fg: "text-rose-500",
+    doneBg: "bg-rose-100 border-rose-400",
+    line: "border-rose-300",
+    label: "text-rose-600",
+    glow: "shadow-[0_0_0_6px_rgba(244,114,182,0.22)]",
+  },
+  rewrite: {
+    icon: Pencil,
+    ring: "ring-amber-300",
+    bg: "bg-amber-50 border-amber-200",
+    fg: "text-amber-600",
+    doneBg: "bg-amber-100 border-amber-400",
+    line: "border-amber-300",
+    label: "text-amber-700",
+    glow: "shadow-[0_0_0_6px_rgba(251,191,36,0.22)]",
+  },
+  practice: {
+    icon: Sprout,
+    ring: "ring-violet-300",
+    bg: "bg-violet-50 border-violet-200",
+    fg: "text-violet-600",
+    doneBg: "bg-violet-100 border-violet-400",
+    line: "border-violet-300",
+    label: "text-violet-700",
+    glow: "shadow-[0_0_0_6px_rgba(139,92,246,0.22)]",
+  },
+};
 
 /**
  * 학생 대시보드 상단 「바른말 수호 5단계」 로드맵 카드.
@@ -88,59 +155,105 @@ export function RoadmapCard({
         </div>
       </div>
 
-      <ol className="grid gap-2 sm:grid-cols-5 sm:gap-3" role="list">
+      <ol className="grid gap-3 sm:gap-2 sm:grid-cols-5" role="list">
         {rm.stages.map((st, idx) => {
           const meta = STAGES[idx];
+          const style = STAGE_STYLE[st.key];
+          const Icon = style.icon;
           const isCurrent = idx === rm.currentIndex && !st.done;
+          const isLocked = !st.done && !isCurrent;
+          const nextDone = rm.stages[idx + 1]?.done ?? false;
+          const showConnectorActive = st.done && (nextDone || idx + 1 === rm.currentIndex);
           return (
-            <li key={st.key}>
+            <li key={st.key} className="relative">
               <button
                 type="button"
                 onClick={() => handleClickStage(st.key)}
                 aria-label={`${meta.order}단계 ${meta.title}. ${st.done ? "완료" : isCurrent ? "진행 중" : "잠금"}. ${st.detail}`}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`w-full text-left rounded-2xl border-2 p-3 transition min-h-[92px] flex flex-col gap-1 hover:-translate-y-0.5 hover:shadow ${
-                  st.done
-                    ? "bg-emerald-50 border-emerald-300"
-                    : isCurrent
-                      ? `${meta.color} ring-2 ring-[color:var(--navy)]/40`
-                      : "bg-slate-50 border-slate-200 opacity-80"
-                }`}
+                className="group w-full flex flex-col items-center text-center px-1 pt-2 pb-3 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--navy)]/40"
               >
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black text-slate-500">STEP {meta.order}</span>
-                  {st.done && (
+                {/* 원형 아이콘 */}
+                <div className="relative">
+                  {/* 연결선 (오른쪽) — 마지막 아이템 제외, sm 이상에서만 */}
+                  {idx < rm.stages.length - 1 && (
                     <span
                       aria-hidden
-                      className="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-1.5 py-0.5"
-                    >
-                      ✓ 완료
-                    </span>
+                      className={`hidden sm:block absolute top-1/2 left-full h-0 w-[calc(100%+0.5rem)] border-t-2 border-dashed -translate-y-1/2 ${
+                        showConnectorActive ? style.line : "border-slate-200"
+                      }`}
+                    />
                   )}
-                  {isCurrent && (
-                    <span
+                  <div
+                    className={`relative h-14 w-14 rounded-full border-2 grid place-items-center transition-all duration-200 group-hover:scale-105 ${
+                      st.done
+                        ? `${style.doneBg} ${style.fg}`
+                        : isCurrent
+                          ? `bg-white ${style.fg} border-current ring-4 ${style.ring} ${style.glow}`
+                          : "bg-slate-50 border-slate-200 text-slate-300"
+                    }`}
+                  >
+                    <Icon
+                      className="h-6 w-6"
+                      strokeWidth={isCurrent ? 2.4 : 2}
                       aria-hidden
-                      className="text-[10px] font-black text-[color:var(--navy)] bg-white/70 border border-[color:var(--navy)]/30 rounded-full px-1.5 py-0.5"
-                    >
-                      진행 중
-                    </span>
-                  )}
+                    />
+                    {st.done && (
+                      <span
+                        aria-hidden
+                        className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 text-white grid place-items-center shadow"
+                      >
+                        <Check className="h-3 w-3" strokeWidth={3} />
+                      </span>
+                    )}
+                    {isLocked && (
+                      <span
+                        aria-hidden
+                        className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-slate-200 text-slate-500 grid place-items-center"
+                      >
+                        <Lock className="h-3 w-3" strokeWidth={2.5} />
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xl leading-none" aria-hidden>
-                    {meta.icon}
-                  </span>
-                  <span className="font-black text-sm text-[color:var(--navy)]">{meta.title}</span>
+
+                {/* 단계명 */}
+                <div
+                  className={`mt-3 text-sm font-black ${
+                    st.done ? style.label : isCurrent ? style.label : "text-slate-400"
+                  }`}
+                >
+                  {meta.title}
                 </div>
-                <div className="text-[11px] leading-snug text-slate-800 font-medium">
+
+                {/* 한 줄 설명 */}
+                <div className="mt-1 text-[11px] leading-snug text-slate-600 min-h-[2.6em] px-1">
                   {meta.oneLiner}
                 </div>
-                <div className="text-[11px] leading-snug text-slate-700 line-clamp-2">
-                  {st.detail}
+
+                {/* 진행 상태 라벨 */}
+                <div
+                  className={`mt-1.5 text-[10px] font-bold uppercase tracking-wider ${
+                    st.done
+                      ? "text-emerald-600"
+                      : isCurrent
+                        ? style.label
+                        : "text-slate-400"
+                  }`}
+                >
+                  {st.done ? "완료" : isCurrent ? "진행 중" : "잠금"}
                 </div>
-                <div className="mt-auto h-1.5 rounded-full bg-white/70 overflow-hidden">
+
+                {/* Progress */}
+                <div className="mt-1.5 w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                   <div
-                    className={`h-full ${st.done ? "bg-emerald-500" : "bg-[color:var(--navy)]/70"}`}
+                    className={`h-full transition-all duration-300 ${
+                      st.done
+                        ? "bg-emerald-500"
+                        : isCurrent
+                          ? "bg-current"
+                          : "bg-slate-300"
+                    } ${isCurrent ? style.fg : ""}`}
                     style={{ width: `${Math.round(st.progress * 100)}%` }}
                   />
                 </div>
@@ -149,6 +262,27 @@ export function RoadmapCard({
           );
         })}
       </ol>
+
+      {/* 전체 진행률 */}
+      <div className="mt-4 flex items-center gap-3">
+        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-rose-50 border border-rose-200 px-2.5 py-1 text-[11px] font-black text-rose-600">
+          현재 단계
+          <span className="text-slate-700">
+            {rm.allDone ? "완료" : `${STAGES[rm.currentIndex]?.title} 단계에요!`}
+          </span>
+        </span>
+        <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-sky-400 via-rose-400 to-violet-500 transition-all duration-500"
+            style={{
+              width: `${Math.round((rm.completedCount / rm.totalCount) * 100)}%`,
+            }}
+          />
+        </div>
+        <span className="shrink-0 text-sm font-black text-[color:var(--navy)]">
+          {Math.round((rm.completedCount / rm.totalCount) * 100)}%
+        </span>
+      </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px]">
         <div className="text-slate-600">
