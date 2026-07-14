@@ -2,29 +2,88 @@ import {
   Home,
   Search,
   BookOpen,
-  Gamepad2,
-  NotebookPen,
+  Heart,
+  Pencil,
+  Sprout,
   Award,
   LogOut,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
+import type { StageKey } from "@/lib/roadmap";
 
-export type SidebarKey = "home" | "analyze" | "dict" | "quiz" | "reflect" | "roadmap" | "badges";
+export type SidebarKey =
+  | "home"
+  | "step1"
+  | "step2"
+  | "step3"
+  | "step4"
+  | "step5"
+  | "badges"
+  // legacy keys kept for type-compat with older callers
+  | "analyze"
+  | "dict"
+  | "quiz"
+  | "reflect"
+  | "roadmap";
 
-type Item = {
+type StepItem = {
   key: SidebarKey;
+  step: number;
+  stageKey: StageKey;
   label: string;
+  sub: string;
   icon: LucideIcon;
+  emoji: string;
 };
 
-const ITEMS: Item[] = [
-  { key: "home", label: "홈", icon: Home },
-  { key: "analyze", label: "표현 찾아보기", icon: Search },
-  { key: "dict", label: "참여 사전", icon: BookOpen },
-  { key: "quiz", label: "퀴즈 놀이터", icon: Gamepad2 },
-  { key: "reflect", label: "나의 표현 돌아보기", icon: NotebookPen },
-  { key: "badges", label: "배지", icon: Award },
+const STEP_ITEMS: StepItem[] = [
+  {
+    key: "step1",
+    step: 1,
+    stageKey: "discover",
+    label: "발견하기",
+    sub: "디지털 언어 탐색",
+    icon: Search,
+    emoji: "🔍",
+  },
+  {
+    key: "step2",
+    step: 2,
+    stageKey: "dissect",
+    label: "파헤치기",
+    sub: "우리말 사전 만들기",
+    icon: BookOpen,
+    emoji: "📖",
+  },
+  {
+    key: "step3",
+    step: 3,
+    stageKey: "empathize",
+    label: "공감하기",
+    sub: "AI 수호비서",
+    icon: Heart,
+    emoji: "❤️",
+  },
+  {
+    key: "step4",
+    step: 4,
+    stageKey: "rewrite",
+    label: "바꾸기",
+    sub: "예절 역할극",
+    icon: Pencil,
+    emoji: "✏️",
+  },
+  {
+    key: "step5",
+    step: 5,
+    stageKey: "practice",
+    label: "실천하기",
+    sub: "퀴즈 · 표현 돌아보기",
+    icon: Sprout,
+    emoji: "🌱",
+  },
 ];
 
 type Props = {
@@ -34,6 +93,7 @@ type Props = {
   studentMeta: string;
   onLogout: () => void;
   onOpenProfile: () => void;
+  stageDone?: Partial<Record<StageKey, boolean>>;
 };
 
 export function AppSidebar({
@@ -43,6 +103,7 @@ export function AppSidebar({
   studentMeta,
   onLogout,
   onOpenProfile,
+  stageDone,
 }: Props) {
   return (
     <aside
@@ -66,37 +127,113 @@ export function AppSidebar({
         </div>
       </div>
 
-      {/* Middle: Nav */}
+      {/* Middle: Nav — 학습 5단계 중심 IA */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 scroll-touch">
         <ul className="flex flex-col gap-1">
-          {ITEMS.map((it) => {
+          <li>
+            <button
+              type="button"
+              onClick={() => onSelect("home")}
+              aria-current={activeKey === "home" ? "page" : undefined}
+              className={`group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                activeKey === "home"
+                  ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                  : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
+              }`}
+            >
+              <Home
+                className={`h-5 w-5 shrink-0 ${activeKey === "home" ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"}`}
+                strokeWidth={activeKey === "home" ? 2.4 : 2}
+              />
+              <span className="truncate">홈</span>
+            </button>
+          </li>
+
+          <li className="mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            학습 단계
+          </li>
+
+          {STEP_ITEMS.map((it) => {
             const Icon = it.icon;
             const active = activeKey === it.key;
+            const done = !!stageDone?.[it.stageKey];
             return (
               <li key={it.key}>
                 <button
                   type="button"
                   onClick={() => onSelect(it.key)}
                   aria-current={active ? "page" : undefined}
-                  className={`group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card ${
+                  className={`group w-full flex items-start gap-3 rounded-xl px-3 py-2 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     active
                       ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
-                      : "text-foreground/80 hover:bg-primary/10 hover:text-primary hover:translate-x-0.5"
+                      : done
+                        ? "text-foreground/90 hover:bg-primary/10 hover:text-primary"
+                        : "text-foreground/70 hover:bg-primary/10 hover:text-primary hover:translate-x-0.5"
                   }`}
                 >
-                  <Icon
-                    className={`h-5 w-5 shrink-0 transition-transform duration-200 ${
+                  <span
+                    className={`mt-0.5 h-8 w-8 shrink-0 grid place-items-center rounded-lg text-sm font-black ${
                       active
-                        ? "text-primary-foreground"
-                        : "text-muted-foreground group-hover:text-primary group-hover:scale-110"
+                        ? "bg-white/20 text-primary-foreground"
+                        : done
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-muted text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary"
                     }`}
-                    strokeWidth={active ? 2.4 : 2}
-                  />
-                  <span className="truncate">{it.label}</span>
+                    aria-hidden
+                  >
+                    {done && !active ? (
+                      <Check className="h-4 w-4" strokeWidth={3} />
+                    ) : (
+                      <Icon className="h-4 w-4" strokeWidth={active ? 2.6 : 2.2} />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1 py-0.5">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[10px] font-black tracking-wider ${active ? "text-primary-foreground/80" : "text-primary/70"}`}
+                      >
+                        STEP {it.step}
+                      </span>
+                      {done && !active && (
+                        <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 rounded-full px-1.5 py-px">
+                          완료
+                        </span>
+                      )}
+                    </span>
+                    <span className="block text-sm font-black leading-tight truncate">
+                      {it.emoji} {it.label}
+                    </span>
+                    <span
+                      className={`block text-[11px] font-medium leading-tight truncate ${active ? "text-primary-foreground/85" : "text-muted-foreground"}`}
+                    >
+                      {it.sub}
+                    </span>
+                  </span>
                 </button>
               </li>
             );
           })}
+
+          <li className="mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            보상
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => onSelect("badges")}
+              className={`group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                activeKey === "badges"
+                  ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                  : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
+              }`}
+            >
+              <Award
+                className={`h-5 w-5 shrink-0 ${activeKey === "badges" ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"}`}
+                strokeWidth={activeKey === "badges" ? 2.4 : 2}
+              />
+              <span className="truncate">🏅 배지</span>
+            </button>
+          </li>
         </ul>
       </nav>
 
