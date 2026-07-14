@@ -87,7 +87,7 @@ export function TeacherGate(props: DashboardProps) {
         <button
           type="submit"
           disabled={busy}
-          className="mt-4 w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-2 font-bold disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-primary text-primary-foreground py-2 font-bold disabled:opacity-60"
         >
           {busy ? "확인 중…" : "입장"}
         </button>

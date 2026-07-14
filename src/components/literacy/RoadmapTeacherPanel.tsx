@@ -131,7 +131,7 @@ export function RoadmapTeacherPanel({
                 onClick={() => setView(t.id as typeof view)}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   view === t.id
-                    ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                    ? "bg-primary text-primary-foreground"
                     : "text-slate-600"
                 }`}
               >
