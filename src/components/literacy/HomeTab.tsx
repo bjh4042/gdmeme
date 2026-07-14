@@ -4,6 +4,7 @@ import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import type { DictEntry } from "@/lib/literacy-types";
 import { useEngagementStore } from "@/stores/engagement";
 import { RoadmapCard } from "./RoadmapCard";
+import { DailyMissionCard } from "./DailyMissionCard";
 
 type QuickTab = "analyze" | "chat" | "assist" | "quiz" | "dict";
 
@@ -14,9 +15,10 @@ type Props = {
   activeId: string;
   dict: DictEntry[];
   onJump: (tab: QuickTab) => void;
+  onXP?: (delta: number, kind: string, note?: string) => void;
 };
 
-export function HomeTab({ studentName, classCode, studentNumber, activeId, dict, onJump }: Props) {
+export function HomeTab({ studentName, classCode, studentNumber, activeId, dict, onJump, onXP }: Props) {
   const engagement = useEngagementStore((s) => s.byStudent[activeId]);
 
   const stats = useMemo(() => {
@@ -179,6 +181,9 @@ export function HomeTab({ studentName, classCode, studentNumber, activeId, dict,
             </div>
           </div>
         </section>
+
+        {/* 오늘의 상황 미션 */}
+        <DailyMissionCard activeId={activeId} onXP={onXP} />
 
         {/* Roadmap */}
         <RoadmapCard
