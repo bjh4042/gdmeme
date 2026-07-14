@@ -141,7 +141,15 @@ function Index() {
       }}
       onClose={() => setTeacherOpen(false)}
       onReset={() => {
-        if (confirm("사전을 초기 시드 데이터로 되돌릴까요? (학생 제안은 사라집니다)")) resetSeed();
+        // 2단계 확인: 실수로 학생 활동이 사라지지 않도록 두 번 확인
+        const ok1 = confirm(
+          "정말로 사전을 초기 시드 데이터로 되돌릴까요?\n\n" +
+          "삭제 대상: 학생이 제안한 낱말, 승인/거절 상태 변경 내역, 대안 표현 편집 내용",
+        );
+        if (!ok1) return;
+        const check = prompt('확인을 위해 아래에 "초기화"를 정확히 입력하세요.');
+        if (check?.trim() !== "초기화") return;
+        resetSeed();
       }}
       onOpenReport={(id) => setReportForId(id)}
     />
