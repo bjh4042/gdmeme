@@ -604,49 +604,12 @@ export function TeacherDashboard({
 
         {section === "words" ? (
           <>
-            {/* 📊 사전 데이터 CSV 내보내기 / 업로드 (관리자 전용) */}
-            <div
-              data-tour="admin-csv"
-              className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--mint-deep)]/40 bg-[color:var(--mint)]/20 p-3"
+            {/* 5) 승인 대기 · 단어 관리 */}
+            <DashboardCard
+              title="승인 대기 · 단어 관리"
+              subtitle="검색·필터·상태별 승인 처리"
+              className="mb-4"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="text-sm font-black text-[color:var(--navy)]">
-                    📊 사전 데이터셋 일괄 관리
-                  </div>
-                  <div className="text-[11px] text-muted-foreground">
-                    CSV로 내려받아 엑셀에서 편집 → 다시 업로드하면 ID 기준으로 Upsert 반영돼요.
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={downloadDictCSV}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-3 py-2 text-xs font-bold hover:scale-[1.03] transition"
-                  >
-                    <Download size={14} /> 사전 데이터 엑셀 다운로드
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => dictFileRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border-2 border-[color:var(--navy)] text-[color:var(--navy)] px-3 py-2 text-xs font-bold hover:bg-[color:var(--mint)] transition"
-                  >
-                    <Upload size={14} /> 엑셀 파일 선택
-                  </button>
-                  <input
-                    ref={dictFileRef}
-                    type="file"
-                    accept=".csv,.xlsx,.xls,text/csv"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) void handleDictUpload(f);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Search bar */}
             <div className="relative mb-4">
               <Search
@@ -657,7 +620,7 @@ export function TeacherDashboard({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="🔍 대시보드 내 단어 검색 (단어명·뜻풀이·출처)"
-                className="w-full rounded-xl border-2 border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none focus:border-[color:var(--mint-deep)]"
+                className="w-full rounded-xl border border-[color:var(--border)] pl-9 pr-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
               />
               {query && (
                 <button
@@ -763,6 +726,44 @@ export function TeacherDashboard({
                 ))}
               </div>
             )}
+            </DashboardCard>
+
+            {/* 6) CSV · 사전 데이터셋 일괄 관리 */}
+            <DashboardCard
+              title="CSV · 사전 데이터셋 일괄 관리"
+              subtitle="CSV로 내려받아 편집 후 업로드 (ID 기준 Upsert)"
+              className="mb-4"
+            >
+              <div
+                data-tour="admin-csv"
+                className="flex flex-wrap items-center justify-end gap-2"
+              >
+                <button
+                  type="button"
+                  onClick={downloadDictCSV}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-2 text-xs font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] transition"
+                >
+                  <Download size={14} /> 사전 데이터 엑셀 다운로드
+                </button>
+                <button
+                  type="button"
+                  onClick={() => dictFileRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white border-2 border-primary text-primary px-3 py-2 text-xs font-bold hover:bg-primary/5 transition"
+                >
+                  <Upload size={14} /> 엑셀 파일 선택
+                </button>
+                <input
+                  ref={dictFileRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls,text/csv"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void handleDictUpload(f);
+                  }}
+                />
+              </div>
+            </DashboardCard>
           </>
         ) : (
           <>
