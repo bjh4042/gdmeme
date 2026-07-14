@@ -580,10 +580,7 @@ export function TeacherDashboard({
           subtitle="학생별 오늘 상황 미션 완료 여부와 응답"
           className="mb-4"
         >
-          <TeacherDailyMissionPanel
-            students={students}
-            currentClassCode={currentClassCode}
-          />
+          <TeacherDailyMissionPanel students={students} currentClassCode={currentClassCode} />
         </DashboardCard>
 
         {/* 2) 로드맵 */}

@@ -75,9 +75,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
         <div className="mt-1 text-sm sm:text-base font-black text-[color:var(--navy)] leading-snug">
           “{mission.situation}”
         </div>
-        <div className="mt-2 text-[13px] text-slate-700">
-          이 상황에서 어떻게 말하면 좋을까요?
-        </div>
+        <div className="mt-2 text-[13px] text-slate-700">이 상황에서 어떻게 말하면 좋을까요?</div>
       </div>
 
       {!done && !open && (
@@ -142,9 +140,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
 
           {showAgain || !state.completedAt ? (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 px-3 py-3">
-              <div className="text-[11px] font-black text-emerald-700 mb-1">
-                💡 바른말 피드백
-              </div>
+              <div className="text-[11px] font-black text-emerald-700 mb-1">💡 바른말 피드백</div>
               <div
                 className="text-[13px] text-slate-800 leading-relaxed"
                 style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
@@ -162,9 +158,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
             </button>
           )}
 
-          <div className="text-[11px] text-slate-500">
-            내일 새로운 미션이 열려요.
-          </div>
+          <div className="text-[11px] text-slate-500">내일 새로운 미션이 열려요.</div>
         </div>
       )}
     </section>

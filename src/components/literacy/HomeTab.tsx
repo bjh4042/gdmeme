@@ -18,7 +18,15 @@ type Props = {
   onXP?: (delta: number, kind: string, note?: string) => void;
 };
 
-export function HomeTab({ studentName, classCode, studentNumber, activeId, dict, onJump, onXP }: Props) {
+export function HomeTab({
+  studentName,
+  classCode,
+  studentNumber,
+  activeId,
+  dict,
+  onJump,
+  onXP,
+}: Props) {
   const engagement = useEngagementStore((s) => s.byStudent[activeId]);
 
   const stats = useMemo(() => {

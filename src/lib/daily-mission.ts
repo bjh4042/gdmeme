@@ -93,7 +93,7 @@ function pickMissionIndex(studentId: string, date: string): number {
   if (total === 0) return 0;
   const recent = new Set(loadRecent(studentId));
   const seed = hashStr(`${studentId}|${date}`);
-  let idx = seed % total;
+  const idx = seed % total;
   for (let step = 0; step < total; step++) {
     const candidate = (idx + step) % total;
     if (!recent.has(candidate)) return candidate;
@@ -149,8 +149,7 @@ export function getTodayMission(studentId: string): {
     };
     saveMissionState(studentId, state);
   }
-  const entry =
-    AI_KNOWLEDGE_SCENARIO[state.missionIndex] ?? AI_KNOWLEDGE_SCENARIO[0];
+  const entry = AI_KNOWLEDGE_SCENARIO[state.missionIndex] ?? AI_KNOWLEDGE_SCENARIO[0];
   const mission: DailyMission = {
     index: state.missionIndex,
     entry,

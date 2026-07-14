@@ -2,11 +2,7 @@ import { useMemo, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { StudentRecord } from "@/lib/literacy-types";
 import { studentId as makeStudentId } from "@/lib/literacy-store";
-import {
-  missionEntryAt,
-  readMissionForStudent,
-  type DailyMissionState,
-} from "@/lib/daily-mission";
+import { missionEntryAt, readMissionForStudent, type DailyMissionState } from "@/lib/daily-mission";
 
 type Row = {
   student: StudentRecord;
@@ -50,9 +46,7 @@ export function TeacherDailyMissionPanel({
   const [openId, setOpenId] = useState<string | null>(null);
 
   if (rows.length === 0) {
-    return (
-      <div className="text-[12px] text-slate-500">현재 학급에 등록된 학생이 없습니다.</div>
-    );
+    return <div className="text-[12px] text-slate-500">현재 학급에 등록된 학생이 없습니다.</div>;
   }
 
   return (
@@ -78,9 +72,7 @@ export function TeacherDailyMissionPanel({
             const entry = state ? missionEntryAt(state.missionIndex) : null;
             return (
               <li key={sid}>
-                <div
-                  className="grid grid-cols-[60px_1fr_90px_90px_40px] items-center gap-2 px-3 py-2 text-[12px]"
-                >
+                <div className="grid grid-cols-[60px_1fr_90px_90px_40px] items-center gap-2 px-3 py-2 text-[12px]">
                   <div className="font-mono text-slate-700">{student.number}</div>
                   <div className="text-slate-800 truncate">{student.name}</div>
                   <div>
@@ -123,14 +115,12 @@ export function TeacherDailyMissionPanel({
                   <div className="bg-slate-50/70 px-3 py-3 border-t border-slate-100 space-y-2">
                     {entry && (
                       <div className="text-[11px] text-slate-500">
-                        <span className="font-bold text-slate-600">오늘의 상황:</span>{" "}
-                        “{entry.keywords[0] ?? "-"}”
+                        <span className="font-bold text-slate-600">오늘의 상황:</span> “
+                        {entry.keywords[0] ?? "-"}”
                       </div>
                     )}
                     <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                      <div className="text-[10px] font-bold text-slate-500 mb-1">
-                        학생 응답
-                      </div>
+                      <div className="text-[10px] font-bold text-slate-500 mb-1">학생 응답</div>
                       <div
                         className="text-[12px] text-slate-800"
                         style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
