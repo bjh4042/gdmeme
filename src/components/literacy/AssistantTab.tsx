@@ -48,6 +48,14 @@ export function AssistantTab({
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [dynamicChips, setDynamicChips] = useState<GuideChip[] | null>(null);
+  const rotatingQuickReplies = useMemo(() => {
+    const pool = [...QUICK_REPLIES];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, 4);
+  }, []);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
