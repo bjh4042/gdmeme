@@ -44,5 +44,7 @@ export const useAuthStore = create<AuthState>()(
 if (typeof window !== "undefined") {
   try {
     window.localStorage.removeItem("wtmeme:student:v1");
-  } catch { /* storage/parse 실패 무시 */ }
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 }

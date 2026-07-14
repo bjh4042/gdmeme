@@ -42,7 +42,9 @@ export function issueTeacherSession(): Session {
   const s: Session = { token: randomToken(), exp: Date.now() + SESSION_TTL_MS };
   try {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));
-  } catch { /* storage/parse 실패 무시 */ }
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
   return s;
 }
 
@@ -64,5 +66,7 @@ export function readTeacherSession(): Session | null {
 export function clearTeacherSession() {
   try {
     sessionStorage.removeItem(SESSION_KEY);
-  } catch { /* storage/parse 실패 무시 */ }
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 }

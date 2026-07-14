@@ -79,7 +79,9 @@ function Index() {
         const t = setTimeout(() => setTutorialOpen(true), 400);
         return () => clearTimeout(t);
       }
-    } catch { /* storage/parse 실패 무시 */ }
+    } catch {
+      /* storage/parse 실패 무시 */
+    }
   }, [hydrated, student]);
 
   // 주간 성찰 설문 트리거 (월/금 접속 시, 이번 주 미응답이면 팝업).

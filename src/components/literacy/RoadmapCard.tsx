@@ -38,7 +38,9 @@ export function RoadmapCard({
         return;
       }
       window.localStorage.setItem(key, "true");
-    } catch { /* storage/parse 실패 무시 */ }
+    } catch {
+      /* storage/parse 실패 무시 */
+    }
     setCelebrated(true);
     setShowCelebrate(true);
     const t = setTimeout(() => setShowCelebrate(false), 5000);

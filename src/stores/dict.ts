@@ -24,7 +24,9 @@ if (typeof window !== "undefined") {
         window.localStorage.removeItem(LEGACY_KEY);
       }
     }
-  } catch { /* storage/parse 실패 무시 */ }
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 }
 
 type DictState = {

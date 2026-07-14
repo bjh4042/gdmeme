@@ -179,7 +179,9 @@ export function Tutorial({
   const finish = () => {
     try {
       window.localStorage.setItem(TUTORIAL_STORAGE_KEY, "true");
-    } catch { /* storage/parse 실패 무시 */ }
+    } catch {
+      /* storage/parse 실패 무시 */
+    }
     onClose();
   };
   const skip = finish;
