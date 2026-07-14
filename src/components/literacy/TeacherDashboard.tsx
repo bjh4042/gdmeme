@@ -895,9 +895,9 @@ export function TeacherDashboard({
             ) : (
               <>
                 {/* Desktop table */}
-                <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-[color:var(--border)]">
+                <div className="hidden md:block overflow-auto rounded-2xl border-2 border-[color:var(--border)] max-h-[60vh]">
                   <table className="w-full text-sm">
-                    <thead className="bg-[color:var(--muted)] text-xs">
+                    <thead className="bg-[color:var(--muted)] text-xs sticky top-0 z-10 shadow-[0_1px_0_var(--border)]">
                       <tr>
                         <SortableTh
                           label="아이디"
@@ -938,7 +938,7 @@ export function TeacherDashboard({
                             className={`border-t border-[color:var(--border)] ${mine ? "" : "opacity-70"}`}
                           >
                             <Td className="font-mono text-xs">{s.id}</Td>
-                            <Td className="font-bold text-[color:var(--navy)]">{s.name}</Td>
+                            <Td className="font-bold text-[color:var(--navy)] max-w-[16ch] truncate" title={s.name}>{s.name}</Td>
                             <Td>
                               {s.group ? (
                                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--navy)]">
@@ -1095,8 +1095,20 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
     </th>
   );
 }
-function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-3 py-2 align-middle ${className}`}>{children}</td>;
+function Td({
+  children,
+  className = "",
+  title,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  title?: string;
+}) {
+  return (
+    <td className={`px-3 py-2 align-middle ${className}`} title={title}>
+      {children}
+    </td>
+  );
 }
 
 function SortableTh({
