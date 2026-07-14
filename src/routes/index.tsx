@@ -438,7 +438,9 @@ function Index() {
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
         {tab !== "home" &&
           (() => {
-            const ctx = stageContextForTab(tab);
+            // step5 = 실천하기 → 하위에 quiz+reflect를 담고 있어 stage-context는 quiz로 대응.
+            const ctxTab = tab === "step5" ? "quiz" : tab;
+            const ctx = stageContextForTab(ctxTab);
             return (
               <div className="mb-3 rounded-2xl bg-white/60 border border-white/70 px-3 py-2.5">
                 <p className="text-[11px] sm:text-xs text-slate-600 mb-2 leading-snug">
