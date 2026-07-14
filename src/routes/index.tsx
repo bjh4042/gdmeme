@@ -34,6 +34,7 @@ import { WeeklySurveyModal } from "@/components/literacy/WeeklySurveyModal";
 import { isSurveyDayToday, isoWeekKey, loadMyAnswer } from "@/lib/weekly-survey";
 import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { stageContextForTab } from "@/lib/stage-context";
+import { AppSidebar, type SidebarKey } from "@/components/literacy/AppSidebar";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -290,6 +291,44 @@ function Index() {
       className="min-h-screen w-full max-w-full overflow-x-hidden pastel-bg"
       style={{ paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))" }}
     >
+      <AppSidebar
+        activeKey={((): SidebarKey => {
+          if (tab === "analyze") return "analyze";
+          if (tab === "dict") return "dict";
+          if (tab === "quiz") return "quiz";
+          if (tab === "assist") return "reflect";
+          return "home";
+        })()}
+        onSelect={(key) => {
+          switch (key) {
+            case "home":
+            case "analyze":
+              setTab("analyze");
+              break;
+            case "dict":
+              setTab("dict");
+              break;
+            case "quiz":
+              setTab("quiz");
+              break;
+            case "reflect":
+              setTab("assist");
+              break;
+            case "roadmap":
+              setTab("dict");
+              break;
+            case "badges":
+              setCodexOpen(true);
+              break;
+          }
+        }}
+        studentName={student.name}
+        studentMeta={`${student.classCode}반 · ${student.number}번 · Lv.${lv.current.lv}`}
+        onOpenProfile={() => setProfileOpen(true)}
+        onLogout={() => {
+          if (confirm("세션을 종료하고 새 학생으로 다시 시작할까요?")) setStudent(null);
+        }}
+      />
       <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/60 border-b border-white/60">
         <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
           <div className="flex min-w-0 items-center gap-3">
