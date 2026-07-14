@@ -502,6 +502,16 @@ export function TeacherDashboard({
           dict={dict}
         />
 
+        {/* 데모 데이터 안내 배너 (교사 화면 전용) */}
+        <div
+          role="note"
+          aria-label="예시 데이터 안내"
+          className="mb-4 rounded-2xl border-2 border-dashed border-[color:var(--amber,#f59e0b)]/60 bg-amber-50 px-3 py-2 text-[12px] text-[color:var(--navy)]"
+        >
+          ⓘ 현재 화면에는 <b>기능 확인용 예시(더미) 데이터</b>가 포함되어 있을 수 있어요. 실제 수업 시작 전
+          <b> ‘시드로 초기화’</b> 또는 학생 명단 업로드로 실데이터를 반영해 주세요.
+        </div>
+
 
         {section === "words" ? (
           <>
