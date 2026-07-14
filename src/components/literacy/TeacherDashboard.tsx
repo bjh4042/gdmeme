@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useDictStore } from "@/stores/dict";
 import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
 import { TeacherEducationalSummary } from "./TeacherEducationalSummary";
+import { TeacherDailyMissionPanel } from "./TeacherDailyMissionPanel";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
 import { useClassStore } from "@/stores/class";
@@ -571,6 +572,15 @@ export function TeacherDashboard({
             pending={pending.length}
             approved={approved.length}
           />
+        </DashboardCard>
+
+        {/* 1-a) 오늘의 상황 미션 참여 현황 */}
+        <DashboardCard
+          title="오늘의 미션 참여 현황"
+          subtitle="학생별 오늘 상황 미션 완료 여부와 응답"
+          className="mb-4"
+        >
+          <TeacherDailyMissionPanel students={students} currentClassCode={currentClassCode} />
         </DashboardCard>
 
         {/* 2) 로드맵 */}

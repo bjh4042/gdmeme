@@ -239,7 +239,12 @@ function Index() {
   const assistNode = useMemo(() => <AssistantTab onXP={awardXP} />, [awardXP]);
   const quizNode = useMemo(() => <QuizTab dict={dict} onXP={awardXP} />, [dict, awardXP]);
   const step5Node = useMemo(
-    () => <Step5Tab quiz={<QuizTab dict={dict} onXP={awardXP} />} reflect={<AssistantTab onXP={awardXP} />} />,
+    () => (
+      <Step5Tab
+        quiz={<QuizTab dict={dict} onXP={awardXP} />}
+        reflect={<AssistantTab onXP={awardXP} />}
+      />
+    ),
     [dict, awardXP],
   );
   const dictNode = useMemo(
@@ -278,9 +283,10 @@ function Index() {
           activeId={activeId}
           dict={dict}
           onJump={(t) => setTab(t)}
+          onXP={awardXP}
         />
       ) : null,
-    [student, activeId, dict],
+    [student, activeId, dict, awardXP],
   );
 
   if (!student || !hydrated) {
