@@ -4,7 +4,6 @@ import {
   BookOpen,
   Gamepad2,
   NotebookPen,
-  Map,
   Award,
   LogOut,
   type LucideIcon,
@@ -25,7 +24,6 @@ const ITEMS: Item[] = [
   { key: "dict", label: "참여 사전", icon: BookOpen },
   { key: "quiz", label: "퀴즈 놀이터", icon: Gamepad2 },
   { key: "reflect", label: "나의 표현 돌아보기", icon: NotebookPen },
-  { key: "roadmap", label: "로드맵", icon: Map },
   { key: "badges", label: "배지", icon: Award },
 ];
 
