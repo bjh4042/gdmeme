@@ -21,6 +21,7 @@ export type AssistantEntry = {
 };
 
 import { AI_KNOWLEDGE_EXTRA } from "./ai-assistant-dataset-extra";
+import { AI_KNOWLEDGE_SCENARIO } from "./ai-assistant-dataset-scenario";
 
 /**
  * 마스터 데이터셋. 교사가 새 객체를 push 하면 즉시 챗봇에 반영된다.
@@ -63,6 +64,7 @@ export const AI_KNOWLEDGE: AssistantEntry[] = [
       "🤖 [누리망 에티켓 안내]\n가상 공간에서 익명성에 숨어 무심코 던진 한 줄의 댓글이나 인터넷 밈은 다른 사람의 마음에 깊은 칼날이 되어 돌아옵니다. 도덕적인 '시민 책임'을 다하기 위해, 글을 전송하기 전 '내가 이 말을 눈앞에서 친구에게 직접 할 수 있는가?'를 꼭 점검해 보세요.",
   },
   ...AI_KNOWLEDGE_EXTRA,
+  ...AI_KNOWLEDGE_SCENARIO,
 ];
 
 // 돌발 질문 대응 랜덤 풀 — 단일 반복 답변 방지, 자연스러운 대화 흐름 연출.
