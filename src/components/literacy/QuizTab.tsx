@@ -181,7 +181,7 @@ export function QuizTab({
         </div>
         <button
           onClick={start}
-          className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-8 py-3 font-black shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition text-lg"
+          className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-8 py-3 font-black shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition text-lg"
         >
           <Play size={18} /> 우리말 수호 퀴즈 시작!
         </button>
@@ -239,7 +239,7 @@ export function QuizTab({
         </div>
         <button
           onClick={start}
-          className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-6 py-3 font-black shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+          className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-black shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
         >
           <RefreshCw size={16} /> 다시 도전
         </button>
@@ -353,7 +353,7 @@ export function QuizTab({
             <button
               type="submit"
               disabled={result !== null}
-              className="rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-5 py-3 font-bold disabled:opacity-40"
+              className="rounded-2xl bg-primary text-primary-foreground px-5 py-3 font-bold disabled:opacity-40"
             >
               제출
             </button>
@@ -381,7 +381,7 @@ export function QuizTab({
           <button
             onClick={next}
             disabled={!result}
-            className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-5 py-2 font-bold disabled:opacity-40 shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+            className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-5 py-2 font-bold disabled:opacity-40 shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
           >
             <RefreshCw size={14} /> {idx + 1 >= deck.length ? "결과 보기" : "다음 문제"}
           </button>

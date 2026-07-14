@@ -298,7 +298,7 @@ export function Onboarding({
                 <button
                   ref={submitRef}
                   type="submit"
-                  className="w-full rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] py-4 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
+                  className="w-full rounded-xl bg-primary text-primary-foreground py-4 font-bold text-base hover:opacity-90 transition shadow-[var(--shadow-pop)]"
                 >
                   수업 시작하기 →
                 </button>

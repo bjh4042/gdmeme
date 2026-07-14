@@ -178,7 +178,7 @@ export function WeeklySurveyModal({
               type="button"
               onClick={handleSubmit}
               disabled={heard === null}
-              className="mt-4 w-full py-3 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-black text-sm shadow-lg disabled:opacity-40 hover:opacity-90 transition"
+              className="mt-4 w-full py-3 rounded-2xl bg-primary text-primary-foreground font-black text-sm shadow-lg disabled:opacity-40 hover:opacity-90 transition"
             >
               응답 제출하기
             </button>

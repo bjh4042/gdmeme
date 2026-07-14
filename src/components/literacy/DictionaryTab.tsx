@@ -128,7 +128,7 @@ export function DictionaryTab({
         </div>
         <button
           onClick={() => setOpenModal(true)}
-          className="inline-flex items-center gap-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] px-4 py-2.5 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+          className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-4 py-2.5 font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
         >
           <Plus size={18} /> 사전 등록 신청
         </button>
@@ -169,7 +169,7 @@ export function DictionaryTab({
                 onClick={() => setField(f.id as typeof field)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] ${
                   field === f.id
-                    ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                    ? "bg-primary text-primary-foreground"
                     : "text-[color:var(--navy)] hover:bg-white"
                 }`}
               >
@@ -198,7 +198,7 @@ export function DictionaryTab({
                 onClick={() => setRisk(r.id as typeof risk)}
                 className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] ${
                   risk === r.id
-                    ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)]"
+                    ? "bg-primary text-primary-foreground"
                     : "text-[color:var(--navy)] hover:bg-white"
                 }`}
                 style={
@@ -219,7 +219,7 @@ export function DictionaryTab({
               aria-label={`초성 ${f} 필터`}
               className={`min-w-[36px] px-2.5 py-1.5 rounded-xl text-sm font-bold transition ${
                 filter === f
-                  ? "bg-[color:var(--navy)] text-[color:var(--navy-foreground)] shadow-[var(--shadow-soft)]"
+                  ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
                   : "bg-white/60 text-[color:var(--navy)] hover:bg-[color:var(--mint)]"
               } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)]`}
             >
@@ -717,7 +717,7 @@ function ProposalModal({
           </button>
           <button
             type="submit"
-            className="px-5 py-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
+            className="px-5 py-2 rounded-2xl bg-primary text-primary-foreground font-bold shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition"
           >
             교사 승인 요청 보내기
           </button>

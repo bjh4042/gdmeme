@@ -267,7 +267,7 @@ export function ReportModal({
             type="button"
             onClick={download}
             disabled={busy}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-bold text-sm shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-primary text-primary-foreground font-bold text-sm shadow-[var(--shadow-soft)] hover:scale-[1.03] active:scale-95 transition disabled:opacity-60"
           >
             {busy ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
             💾 부모님께 자랑하기 (이미지 저장)

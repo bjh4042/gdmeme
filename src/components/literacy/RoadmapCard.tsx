@@ -325,7 +325,7 @@ export function RoadmapCard({
             <button
               type="button"
               onClick={() => setShowCelebrate(false)}
-              className="rounded-xl bg-[color:var(--navy)] text-[color:var(--navy-foreground)] font-black px-4 py-2 text-sm"
+              className="rounded-xl bg-primary text-primary-foreground font-black px-4 py-2 text-sm"
             >
               계속하기
             </button>
