@@ -2189,6 +2189,8 @@ export type QuizItem = {
   choices: string[];
   answer: number;
   explain: string;
+  /** 선택: 문항이 다루는 학습 영역. 없으면 결과 화면 영역별 피드백에서 제외된다. */
+  domain?: "meaning" | "context" | "empathy" | "expression";
 };
 
 export const QUIZZES: QuizItem[] = [
