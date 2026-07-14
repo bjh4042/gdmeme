@@ -49,32 +49,78 @@ const CONCEPTS: Record<string, string[][]> = {
 const CASUAL_SCENARIOS = new Set(["new-friend", "slang-master"]);
 
 const EVASIVE_STANDALONE = [
-  "몰라", "몰라요", "글쎄", "글쎄요", "그러게", "그러게요",
-  "대박", "음", "어", "왜요", "왜", "어떻게요", "어떻게",
-  "네", "넹", "ㅇㅇ", "ㄴㄴ", "ㅋ", "ㅎ",
+  "몰라",
+  "몰라요",
+  "글쎄",
+  "글쎄요",
+  "그러게",
+  "그러게요",
+  "대박",
+  "음",
+  "어",
+  "왜요",
+  "왜",
+  "어떻게요",
+  "어떻게",
+  "네",
+  "넹",
+  "ㅇㅇ",
+  "ㄴㄴ",
+  "ㅋ",
+  "ㅎ",
 ];
 
 const HONORIFIC_ENDINGS = [
-  "습니다", "입니다", "ㅂ니다",
-  "겠습니다", "겠어요",
-  "해요", "예요", "이에요", "에요",
-  "할게요", "할래요", "볼게요", "볼래요", "드릴게요", "드려요",
-  "주세요", "주십시오", "바랍니다",
-  "감사합니다", "고맙습니다", "죄송합니다", "미안합니다",
+  "습니다",
+  "입니다",
+  "ㅂ니다",
+  "겠습니다",
+  "겠어요",
+  "해요",
+  "예요",
+  "이에요",
+  "에요",
+  "할게요",
+  "할래요",
+  "볼게요",
+  "볼래요",
+  "드릴게요",
+  "드려요",
+  "주세요",
+  "주십시오",
+  "바랍니다",
+  "감사합니다",
+  "고맙습니다",
+  "죄송합니다",
+  "미안합니다",
   "요",
 ];
 
 const CASUAL_ENDINGS = [
-  "하자", "가자", "보자", "만나자", "놀자",
-  "할게", "볼게", "줄게",
-  "이야", "야",
-  "반가워", "고마워", "미안해", "미안",
-  "좋아", "그래", "응",
-  "해", "해봐", "해줘",
+  "하자",
+  "가자",
+  "보자",
+  "만나자",
+  "놀자",
+  "할게",
+  "볼게",
+  "줄게",
+  "이야",
+  "야",
+  "반가워",
+  "고마워",
+  "미안해",
+  "미안",
+  "좋아",
+  "그래",
+  "응",
+  "해",
+  "해봐",
+  "해줘",
 ];
 
 function stripTail(s: string) {
-  return s.replace(/[\s\.\!\?~]+$/g, "");
+  return s.replace(/[\s.!?~]+$/g, "");
 }
 
 function endsWithAny(text: string, arr: string[]) {
@@ -104,7 +150,7 @@ function isSarcasticMockery(text: string) {
 function isEvasiveQuestion(text: string) {
   const t = text.trim();
   if (/[?？]\s*$/.test(t)) return true;
-  const bare = t.replace(/[\s\.\!\?~]+/g, "");
+  const bare = t.replace(/[\s.!?~]+/g, "");
   return EVASIVE_STANDALONE.includes(bare);
 }
 
@@ -191,14 +237,22 @@ export function xpForStageClear(wrongCount: number) {
 
 export function reasonLabel(r: EvalReason) {
   switch (r) {
-    case "evasive-question": return "역질문/회피";
-    case "low-effort": return "단답/성의 부족";
-    case "sarcastic-mockery": return "감정 모순(조롱성 결합)";
-    case "slang": return "유행어/비속어";
-    case "missing-concept": return "핵심 개념 누락";
-    case "too-short": return "문장 길이 부족";
-    case "no-honorific": return "존댓말 어미 미충족";
-    default: return "통과";
+    case "evasive-question":
+      return "역질문/회피";
+    case "low-effort":
+      return "단답/성의 부족";
+    case "sarcastic-mockery":
+      return "감정 모순(조롱성 결합)";
+    case "slang":
+      return "유행어/비속어";
+    case "missing-concept":
+      return "핵심 개념 누락";
+    case "too-short":
+      return "문장 길이 부족";
+    case "no-honorific":
+      return "존댓말 어미 미충족";
+    default:
+      return "통과";
   }
 }
 

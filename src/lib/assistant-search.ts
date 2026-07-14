@@ -1,9 +1,20 @@
-import { AI_KNOWLEDGE, type AssistantEntry, type AssistantPatternTag } from "./ai-assistant-dataset";
+import {
+  AI_KNOWLEDGE,
+  type AssistantEntry,
+  type AssistantPatternTag,
+} from "./ai-assistant-dataset";
 import { CYBER_ETHICS_DATASET, type CyberEthicsEntry } from "./cyber-ethics-dataset";
 
 export type UnifiedHit =
   | { kind: "cyber"; entry: CyberEthicsEntry; score: number; matched: string[]; category: string }
-  | { kind: "meme"; entry: AssistantEntry; score: number; matched: string[]; category: string; pattern: AssistantPatternTag };
+  | {
+      kind: "meme";
+      entry: AssistantEntry;
+      score: number;
+      matched: string[];
+      category: string;
+      pattern: AssistantPatternTag;
+    };
 
 type LookupItem = {
   kind: "cyber" | "meme";
@@ -42,7 +53,7 @@ function detectPattern(category: string): AssistantPatternTag {
 export function tokenize(query: string): { raw: string; tokens: string[] } {
   const cleaned = query
     .toLowerCase()
-    .replace(/[?？!！.。,·:;()\[\]{}<>"'`~@#$%^&*+=\\/|_-]+/g, " ")
+    .replace(/[?？!！.。,·:;()[\]{}<>"'`~@#$%^&*+=\\/|_-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   const tokens = cleaned.length === 0 ? [] : cleaned.split(" ").filter((t) => t.length > 0);

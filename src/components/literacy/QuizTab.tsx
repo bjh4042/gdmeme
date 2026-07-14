@@ -121,7 +121,7 @@ export function QuizTab({
         setMaxCombo((m) => Math.max(m, n));
         return n;
       });
-      onXP(10 + Math.floor(timeLeft / 3), "quiz", q?.kind === "mc" ? q.q : q?.q ?? "");
+      onXP(10 + Math.floor(timeLeft / 3), "quiz", q?.kind === "mc" ? q.q : (q?.q ?? ""));
     } else {
       setCombo(0);
     }
@@ -152,16 +152,32 @@ export function QuizTab({
 
   if (phase === "intro") {
     return (
-      <div data-tour="quiz" className="animate-fade-in max-w-2xl mx-auto glass-card p-8 text-center space-y-4">
+      <div
+        data-tour="quiz"
+        className="animate-fade-in max-w-2xl mx-auto glass-card p-8 text-center space-y-4"
+      >
         <div className="text-6xl">⚡</div>
         <h2 className="text-3xl font-black text-[color:var(--navy)]">스피드 퀴즈</h2>
         <p className="text-sm text-muted-foreground">
-          내장 사전과 밈 순화 문제를 무작위로 출제해요. 시간이 흐르기 전 정답을 맞혀 학급 XP를 모아보세요!
+          내장 사전과 밈 순화 문제를 무작위로 출제해요. 시간이 흐르기 전 정답을 맞혀 학급 XP를
+          모아보세요!
         </p>
         <div className="grid grid-cols-3 gap-2 text-xs font-bold text-[color:var(--navy)] max-w-md mx-auto">
-          <div className="rounded-xl bg-white/70 p-3"><Timer className="inline text-[color:var(--warn)]" size={16} /><br />15초 타이머</div>
-          <div className="rounded-xl bg-white/70 p-3"><Zap className="inline text-[color:var(--mint-deep)]" size={16} /><br />콤보 보너스</div>
-          <div className="rounded-xl bg-white/70 p-3"><Trophy className="inline text-[color:var(--warn)]" size={16} /><br />학급 XP 누적</div>
+          <div className="rounded-xl bg-white/70 p-3">
+            <Timer className="inline text-[color:var(--warn)]" size={16} />
+            <br />
+            15초 타이머
+          </div>
+          <div className="rounded-xl bg-white/70 p-3">
+            <Zap className="inline text-[color:var(--mint-deep)]" size={16} />
+            <br />
+            콤보 보너스
+          </div>
+          <div className="rounded-xl bg-white/70 p-3">
+            <Trophy className="inline text-[color:var(--warn)]" size={16} />
+            <br />
+            학급 XP 누적
+          </div>
         </div>
         <button
           onClick={start}
@@ -190,22 +206,32 @@ export function QuizTab({
             <div className="text-3xl font-black text-[color:var(--warn)]">x{maxCombo}</div>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">총 {total}문제 도전 완료. 학급 XP에 반영되었어요.</p>
+        <p className="text-sm text-muted-foreground">
+          총 {total}문제 도전 완료. 학급 XP에 반영되었어요.
+        </p>
         <div className="rounded-2xl bg-white/60 p-4 text-left text-sm space-y-2">
           <div className="font-black text-[color:var(--navy)] text-center">
             정답 {summary.total.correct}/{summary.total.count}
           </div>
           {summary.byDomain.length === 0 ? (
             <p className="text-xs text-slate-500 text-center">
-              오늘의 문제는 영역이 지정되지 않았어요. 사전 · 밈 분석기에서 다양한 표현을 더 살펴봐요.
+              오늘의 문제는 영역이 지정되지 않았어요. 사전 · 밈 분석기에서 다양한 표현을 더
+              살펴봐요.
             </p>
           ) : (
             <ul className="space-y-1">
               {summary.byDomain.map((d) => (
-                <li key={d.domain} className="grid grid-cols-[110px_1fr_auto] items-center gap-2 text-[12px]">
-                  <span className="font-bold text-[color:var(--navy)]">{DOMAIN_LABEL[d.domain]}</span>
+                <li
+                  key={d.domain}
+                  className="grid grid-cols-[110px_1fr_auto] items-center gap-2 text-[12px]"
+                >
+                  <span className="font-bold text-[color:var(--navy)]">
+                    {DOMAIN_LABEL[d.domain]}
+                  </span>
                   <span className="text-slate-600 truncate">{d.hint}</span>
-                  <span className="tabular-nums text-slate-500">{d.correct}/{d.count}</span>
+                  <span className="tabular-nums text-slate-500">
+                    {d.correct}/{d.count}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -232,7 +258,9 @@ export function QuizTab({
       <div className="grid grid-cols-3 gap-3">
         <div className="glass-soft px-3 py-2 text-center">
           <div className="text-[10px] text-muted-foreground font-bold">문제</div>
-          <div className="text-lg font-black text-[color:var(--navy)]">{idx + 1}/{deck.length}</div>
+          <div className="text-lg font-black text-[color:var(--navy)]">
+            {idx + 1}/{deck.length}
+          </div>
         </div>
         <div className="glass-soft px-3 py-2 text-center">
           <div className="text-[10px] text-muted-foreground font-bold">점수</div>
@@ -255,11 +283,23 @@ export function QuizTab({
       {/* Question card */}
       <div
         className={`glass-card p-6 space-y-4 transition ${
-          flash === "right" ? "ring-4 ring-[color:var(--safe)]" : flash === "wrong" ? "ring-4 ring-[color:var(--danger)]" : ""
+          flash === "right"
+            ? "ring-4 ring-[color:var(--safe)]"
+            : flash === "wrong"
+              ? "ring-4 ring-[color:var(--danger)]"
+              : ""
         }`}
       >
         <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide px-2 py-1 rounded-full bg-[color:var(--mint)]/50 text-[color:var(--mint-deep)]">
-          {q.kind === "mc" ? <><Sparkles size={12} /> 뜻 매칭 · 객관식</> : <><Zap size={12} /> 순화어 · 단답형</>}
+          {q.kind === "mc" ? (
+            <>
+              <Sparkles size={12} /> 뜻 매칭 · 객관식
+            </>
+          ) : (
+            <>
+              <Zap size={12} /> 순화어 · 단답형
+            </>
+          )}
         </div>
         <h3 className="text-xl font-black text-[color:var(--navy)]">{q.q}</h3>
 
@@ -279,15 +319,17 @@ export function QuizTab({
                     isRight
                       ? "border-[color:var(--safe)] bg-[color:var(--safe)]/20 text-[color:var(--navy)]"
                       : isWrong
-                      ? "border-[color:var(--danger)] bg-[color:var(--danger)]/10 text-[color:var(--navy)]"
-                      : isChosen
-                      ? "border-indigo-600 bg-indigo-600 text-white shadow-md scale-[1.01]"
-                      : "border-white/70 bg-white/60 hover:border-[color:var(--mint-deep)] hover:bg-white active:border-indigo-600 active:bg-indigo-50"
+                        ? "border-[color:var(--danger)] bg-[color:var(--danger)]/10 text-[color:var(--navy)]"
+                        : isChosen
+                          ? "border-indigo-600 bg-indigo-600 text-white shadow-md scale-[1.01]"
+                          : "border-white/70 bg-white/60 hover:border-[color:var(--mint-deep)] hover:bg-white active:border-indigo-600 active:bg-indigo-50"
                   }`}
                 >
                   {isRight && <CheckCircle2 size={16} className="text-[color:var(--safe)]" />}
                   {isWrong && <XCircle size={16} className="text-[color:var(--danger)]" />}
-                  <span>{i + 1}. {c}</span>
+                  <span>
+                    {i + 1}. {c}
+                  </span>
                 </button>
               );
             })}
@@ -320,8 +362,16 @@ export function QuizTab({
 
         {result && (
           <div className="rounded-2xl bg-white/70 p-4 text-sm text-[color:var(--navy)] animate-fade-in">
-            <b className={result === "right" ? "text-[color:var(--safe)]" : "text-[color:var(--danger)]"}>
-              {result === "right" ? "🎉 정답! +XP" : result === "timeup" ? "⏰ 시간 초과!" : "❌ 아쉬워요"}
+            <b
+              className={
+                result === "right" ? "text-[color:var(--safe)]" : "text-[color:var(--danger)]"
+              }
+            >
+              {result === "right"
+                ? "🎉 정답! +XP"
+                : result === "timeup"
+                  ? "⏰ 시간 초과!"
+                  : "❌ 아쉬워요"}
             </b>{" "}
             — {q.explain}
           </div>

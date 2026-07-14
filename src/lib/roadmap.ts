@@ -121,7 +121,9 @@ export function deriveRoadmap(input: {
   try {
     const ans = loadMyAnswer(classCode, studentId);
     surveyThisWeek = !!ans && ans.weekKey === isoWeekKey();
-  } catch {}
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 
   // 1) 발견하기 — 사전 열람/제안 or 로그인만으로도 시작. 첫 제안 있으면 100%.
   const discoverProg = proposedByMe.length > 0 ? 1 : likesGiven > 0 || journals > 0 ? 0.5 : 0;
@@ -132,14 +134,18 @@ export function deriveRoadmap(input: {
   // 4) 바꾸기 — 성찰 저널 1편 이상 (본인이 표현을 다시 쓰는 활동)
   const rewriteProg = clamp01(journals / 1);
   // 5) 실천하기 — 주간 설문 응답 또는 실천 로그 1건 이상 또는 3일 연속 저널
-  const practiceProg = surveyThisWeek || practiceLogs > 0 || streak >= 3 ? 1 : Math.min(0.5, streak / 3);
+  const practiceProg =
+    surveyThisWeek || practiceLogs > 0 || streak >= 3 ? 1 : Math.min(0.5, streak / 3);
 
   const stages: StageStatus[] = [
     {
       key: "discover",
       progress: discoverProg,
       done: discoverProg >= 1,
-      detail: proposedByMe.length > 0 ? `사전에 ${proposedByMe.length}개 제안했어요` : "사전에서 낯선 말을 하나 살펴봐요",
+      detail:
+        proposedByMe.length > 0
+          ? `사전에 ${proposedByMe.length}개 제안했어요`
+          : "사전에서 낯선 말을 하나 살펴봐요",
     },
     {
       key: "dissect",

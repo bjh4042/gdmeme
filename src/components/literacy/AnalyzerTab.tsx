@@ -1,14 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, Sparkles, ShieldAlert, ShieldCheck, ShieldQuestion, Radio, ArrowRight, BookOpen } from "lucide-react";
+import {
+  Search,
+  Sparkles,
+  ShieldAlert,
+  ShieldCheck,
+  ShieldQuestion,
+  Radio,
+  ArrowRight,
+  BookOpen,
+} from "lucide-react";
 import type { DictEntry } from "@/lib/literacy-types";
 import { gradeOf } from "@/lib/literacy-types";
 
 const DEFAULT_TRENDS: Record<string, number> = {
-  "어쩔티비": 10,
-  "누칼협": 8,
-  "핑프": 6,
-  "킹받네": 4,
-  "뇌절": 2,
+  어쩔티비: 10,
+  누칼협: 8,
+  핑프: 6,
+  킹받네: 4,
+  뇌절: 2,
 };
 
 function storageKey(classCode: string) {
@@ -25,14 +34,18 @@ function readCounts(classCode: string): Record<string, number> {
     }
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === "object") return parsed as Record<string, number>;
-  } catch {}
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
   return { ...DEFAULT_TRENDS };
 }
 
 function writeCounts(classCode: string, next: Record<string, number>) {
   try {
     window.localStorage.setItem(storageKey(classCode), JSON.stringify(next));
-  } catch {}
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 }
 
 export function AnalyzerTab({
@@ -127,7 +140,9 @@ export function AnalyzerTab({
           </div>
           {!submitted && topKeywords.length > 0 && (
             <div className="mt-4 flex flex-row flex-wrap gap-2 justify-center items-center">
-              <span className="text-xs text-muted-foreground mr-1 self-center">🔥 실시간 인기 검색어:</span>
+              <span className="text-xs text-muted-foreground mr-1 self-center">
+                🔥 실시간 인기 검색어:
+              </span>
               {topKeywords.map((w, i) => (
                 <button
                   key={w}
@@ -151,7 +166,8 @@ export function AnalyzerTab({
           {results.length > 0 ? (
             <>
               <div className="text-sm font-bold text-[color:var(--navy)] mb-3 px-1">
-                🔎 <span className="text-[color:var(--mint-deep)]">"{submitted}"</span> 검색 결과 {results.length}건
+                🔎 <span className="text-[color:var(--mint-deep)]">"{submitted}"</span> 검색 결과{" "}
+                {results.length}건
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {results.map((d) => (
@@ -166,7 +182,8 @@ export function AnalyzerTab({
                 아직 사전에 없는 단어예요!
               </div>
               <div className="text-sm text-muted-foreground">
-                우리가 직접 분석해서 등록해 볼까요? 함께 뜻과 유해성을 살펴보고 바른 대안을 만들어요.
+                우리가 직접 분석해서 등록해 볼까요? 함께 뜻과 유해성을 살펴보고 바른 대안을
+                만들어요.
               </div>
               <button
                 onClick={() => onRegisterNew(submitted)}
@@ -184,7 +201,8 @@ export function AnalyzerTab({
 
 function AnalyzerCard({ entry }: { entry: DictEntry }) {
   const g = gradeOf(entry.total_harmful_score);
-  const bg = g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
+  const bg =
+    g.tone === "safe" ? "var(--safe)" : g.tone === "warn" ? "var(--warn)" : "var(--danger)";
   const Icon = g.tone === "safe" ? ShieldCheck : g.tone === "warn" ? ShieldQuestion : ShieldAlert;
   return (
     <div className="glass-card p-5">

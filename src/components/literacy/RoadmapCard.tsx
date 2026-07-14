@@ -38,7 +38,9 @@ export function RoadmapCard({
         return;
       }
       window.localStorage.setItem(key, "true");
-    } catch {}
+    } catch {
+      /* storage/parse 실패 무시 */
+    }
     setCelebrated(true);
     setShowCelebrate(true);
     const t = setTimeout(() => setShowCelebrate(false), 5000);
@@ -80,7 +82,8 @@ export function RoadmapCard({
         <div className="text-right shrink-0">
           <div className="text-[10px] text-muted-foreground">완료</div>
           <div className="text-lg font-black text-[color:var(--navy)]">
-            {rm.completedCount} <span className="text-sm text-muted-foreground">/ {rm.totalCount}</span>
+            {rm.completedCount}{" "}
+            <span className="text-sm text-muted-foreground">/ {rm.totalCount}</span>
           </div>
         </div>
       </div>
@@ -107,21 +110,31 @@ export function RoadmapCard({
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-black text-slate-500">STEP {meta.order}</span>
                   {st.done && (
-                    <span aria-hidden className="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-1.5 py-0.5">
+                    <span
+                      aria-hidden
+                      className="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-1.5 py-0.5"
+                    >
                       ✓ 완료
                     </span>
                   )}
                   {isCurrent && (
-                    <span aria-hidden className="text-[10px] font-black text-[color:var(--navy)] bg-white/70 border border-[color:var(--navy)]/30 rounded-full px-1.5 py-0.5">
+                    <span
+                      aria-hidden
+                      className="text-[10px] font-black text-[color:var(--navy)] bg-white/70 border border-[color:var(--navy)]/30 rounded-full px-1.5 py-0.5"
+                    >
                       진행 중
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xl leading-none" aria-hidden>{meta.icon}</span>
+                  <span className="text-xl leading-none" aria-hidden>
+                    {meta.icon}
+                  </span>
                   <span className="font-black text-sm text-[color:var(--navy)]">{meta.title}</span>
                 </div>
-                <div className="text-[11px] leading-snug text-slate-700 line-clamp-2">{st.detail}</div>
+                <div className="text-[11px] leading-snug text-slate-700 line-clamp-2">
+                  {st.detail}
+                </div>
                 <div className="mt-auto h-1.5 rounded-full bg-white/70 overflow-hidden">
                   <div
                     className={`h-full ${st.done ? "bg-emerald-500" : "bg-[color:var(--navy)]/70"}`}
@@ -136,7 +149,8 @@ export function RoadmapCard({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px]">
         <div className="text-slate-600">
-          💡 지금 도전: <b>{STAGES[rm.currentIndex]?.title ?? "완료"}</b> — {STAGES[rm.currentIndex]?.hint ?? "5단계 모두 완료했어요!"}
+          💡 지금 도전: <b>{STAGES[rm.currentIndex]?.title ?? "완료"}</b> —{" "}
+          {STAGES[rm.currentIndex]?.hint ?? "5단계 모두 완료했어요!"}
         </div>
         <div className="flex flex-wrap gap-1.5">
           <button
@@ -158,12 +172,18 @@ export function RoadmapCard({
           onClick={() => setShowCelebrate(false)}
         >
           <div className="max-w-sm w-full rounded-3xl bg-white p-6 text-center shadow-2xl border-2 border-emerald-300 animate-scale-in">
-            <div className="text-6xl mb-3" aria-hidden>🎉🛡️</div>
-            <div className="text-xs font-bold text-emerald-700 uppercase mb-1">MISSION COMPLETE</div>
-            <h4 className="text-xl font-black text-[color:var(--navy)] mb-2">바른말 수호 임무 완료!</h4>
+            <div className="text-6xl mb-3" aria-hidden>
+              🎉🛡️
+            </div>
+            <div className="text-xs font-bold text-emerald-700 uppercase mb-1">
+              MISSION COMPLETE
+            </div>
+            <h4 className="text-xl font-black text-[color:var(--navy)] mb-2">
+              바른말 수호 임무 완료!
+            </h4>
             <p className="text-sm text-slate-600 mb-4">
-              5단계를 모두 성공했어요. 오늘도 우리 반 언어를 지켜줘서 고마워요.
-              내일은 더 많은 친구를 도와줄 수 있을 거예요.
+              5단계를 모두 성공했어요. 오늘도 우리 반 언어를 지켜줘서 고마워요. 내일은 더 많은
+              친구를 도와줄 수 있을 거예요.
             </p>
             <button
               type="button"
@@ -190,7 +210,9 @@ export function StageChip({ stage }: { stage: StageKey }) {
       aria-label={`현재 학습 단계: ${meta.order}단계 ${meta.title}`}
     >
       <span aria-hidden>{meta.icon}</span>
-      <span>STEP {meta.order} · {meta.title}</span>
+      <span>
+        STEP {meta.order} · {meta.title}
+      </span>
     </div>
   );
 }

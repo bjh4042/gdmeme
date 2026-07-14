@@ -1,12 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Lightbulb, Send, ChevronLeft, Menu, Search, Lock, MessageSquarePlus, Music2, Settings, Users, MessagesSquare, Radio, ShoppingBag, MoreHorizontal, Plus, ArrowDown } from "lucide-react";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import {
-  SCENARIOS,
-  MEME_TRIGGERS,
-  type Scenario,
-} from "@/lib/literacy-seed";
-import { evaluateReply, rejectionLine, xpForStageClear, reasonLabel, stageHintWords } from "@/lib/literacy-evaluator";
+  Lightbulb,
+  Send,
+  ChevronLeft,
+  Menu,
+  Search,
+  Lock,
+  MessageSquarePlus,
+  Music2,
+  Settings,
+  Users,
+  MessagesSquare,
+  Radio,
+  ShoppingBag,
+  MoreHorizontal,
+  Plus,
+  ArrowDown,
+} from "lucide-react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { SCENARIOS, MEME_TRIGGERS, type Scenario } from "@/lib/literacy-seed";
+import {
+  evaluateReply,
+  rejectionLine,
+  xpForStageClear,
+  reasonLabel,
+  stageHintWords,
+} from "@/lib/literacy-evaluator";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
 
 const MAX_MSGS_PER_ROOM = 100; // GC: 방당 최근 100개만 유지
@@ -14,7 +33,12 @@ function capMsgs(arr: Msg[]): Msg[] {
   return arr.length > MAX_MSGS_PER_ROOM ? arr.slice(-MAX_MSGS_PER_ROOM) : arr;
 }
 
-type Msg = { from: "npc" | "me" | "sys"; text: string; tone?: "safe" | "warn" | "danger"; at?: string };
+type Msg = {
+  from: "npc" | "me" | "sys";
+  text: string;
+  tone?: "safe" | "warn" | "danger";
+  at?: string;
+};
 
 function containsMeme(text: string) {
   return MEME_TRIGGERS.find((m) => text.includes(m));
@@ -105,7 +129,6 @@ export function ChatbotTab({
     const map: Record<string, Date> = {};
     SCENARIOS.forEach((s, i) => (map[s.id] = times[i]));
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Backfill the initial NPC message's timestamp with the assigned yesterday time.
@@ -149,7 +172,9 @@ export function ChatbotTab({
           }
           setRooms(merged);
         }
-      } catch {}
+      } catch {
+        /* storage/parse 실패 무시 */
+      }
     }
     setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,7 +185,9 @@ export function ChatbotTab({
     if (!hydrated) return;
     try {
       window.localStorage.setItem(storageKey, JSON.stringify(rooms));
-    } catch {}
+    } catch {
+      /* storage/parse 실패 무시 */
+    }
   }, [rooms, hydrated, storageKey]);
 
   const unlockedIds = useMemo(
@@ -214,17 +241,20 @@ export function ChatbotTab({
     }
   }, [unlockedIds, activeId, firstUnlocked, studentKey]);
 
-  const scenario = useMemo(() => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0], [activeId]);
+  const scenario = useMemo(
+    () => SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0],
+    [activeId],
+  );
   const isLocked = !unlockedIds.includes(scenario.id);
   const room = rooms[scenario.id];
   const currentStage = scenario.stages[Math.min(room.stage, scenario.stages.length - 1)];
-  const guideText = room.done ? "🎉 모든 대화를 완료했어요! 목록에서 다른 인물과 대화해보세요." : currentStage.guide;
-  const hintText = room.done ? scenario.completeBadge ?? "예절 배지 획득!" : currentStage.hint;
+  const guideText = room.done
+    ? "🎉 모든 대화를 완료했어요! 목록에서 다른 인물과 대화해보세요."
+    : currentStage.guide;
+  const hintText = room.done ? (scenario.completeBadge ?? "예절 배지 획득!") : currentStage.hint;
 
   // 가상 리스트 아이템: [날짜 구분선, ...메시지들]
-  type FeedItem =
-    | { kind: "divider" }
-    | { kind: "msg"; m: Msg };
+  type FeedItem = { kind: "divider" } | { kind: "msg"; m: Msg };
   const items = useMemo<FeedItem[]>(
     () => [{ kind: "divider" }, ...room.msgs.map((m) => ({ kind: "msg" as const, m }))],
     [room.msgs],
@@ -293,7 +323,9 @@ export function ChatbotTab({
     if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
       try {
         window.history.pushState({ wtChat: true, id }, "");
-      } catch {}
+      } catch {
+        /* storage/parse 실패 무시 */
+      }
     }
   }
 
@@ -367,11 +399,16 @@ export function ChatbotTab({
             ...prev,
             [scenario.id]: {
               ...prev[scenario.id],
-              msgs: capMsgs([...prev[scenario.id].msgs, { from: "npc", text: nextPrompt, at: nowStamp() }]),
+              msgs: capMsgs([
+                ...prev[scenario.id].msgs,
+                { from: "npc", text: nextPrompt, at: nowStamp() },
+              ]),
             },
           }));
         }, 900);
-        pushSys(`✅ ${nextStageIdx}단계 통과! +${xp} XP${wrongBefore > 0 ? ` (반려 ${wrongBefore}회 후 통과)` : ""}`);
+        pushSys(
+          `✅ ${nextStageIdx}단계 통과! +${xp} XP${wrongBefore > 0 ? ` (반려 ${wrongBefore}회 후 통과)` : ""}`,
+        );
         onXP(xp, "roleplay", `${scenario.id} · Stg${nextStageIdx} · 반려${wrongBefore}회`);
       } else {
         const bonus = scenario.correctionMode ? 40 : 20;
@@ -387,14 +424,16 @@ export function ChatbotTab({
     const nextWrong = room.wrong + 1;
     const delta =
       result.reason === "slang"
-        ? scenario.correctionMode ? -10 : -25
+        ? scenario.correctionMode
+          ? -10
+          : -25
         : result.reason === "sarcastic-mockery"
-        ? -20
-        : result.reason === "evasive-question"
-        ? -12
-        : result.reason === "low-effort" || result.reason === "too-short"
-        ? -8
-        : -10;
+          ? -20
+          : result.reason === "evasive-question"
+            ? -12
+            : result.reason === "low-effort" || result.reason === "too-short"
+              ? -8
+              : -10;
     setRooms((prev) => ({
       ...prev,
       [scenario.id]: {
@@ -488,19 +527,27 @@ export function ChatbotTab({
                   </div>
                   <div className="min-w-0">
                     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2">
-                      <div className={`font-bold truncate text-[15px] ${locked ? "text-white/40" : "text-white"}`}>
+                      <div
+                        className={`font-bold truncate text-[15px] ${locked ? "text-white/40" : "text-white"}`}
+                      >
                         {s.npc}
                       </div>
                       <div className="shrink-0 text-[10px] text-white/40">
                         {locked ? "" : r.done ? "완료" : yesterdayWeekday}
                       </div>
                     </div>
-                    <div className={`text-[12px] truncate ${locked ? "text-white/35" : "text-white/55"}`}>
-                      {locked ? `🔒 학급 레벨 ${s.unlockLevel} 달성 시 오픈` : lastPreview(r) || s.subtitle}
+                    <div
+                      className={`text-[12px] truncate ${locked ? "text-white/35" : "text-white/55"}`}
+                    >
+                      {locked
+                        ? `🔒 학급 레벨 ${s.unlockLevel} 달성 시 오픈`
+                        : lastPreview(r) || s.subtitle}
                     </div>
                   </div>
                   <div className="shrink-0 flex flex-col items-end gap-1">
-                    <span className="text-[10px] text-white/40">{r.msgs[r.msgs.length - 1]?.at ?? ""}</span>
+                    <span className="text-[10px] text-white/40">
+                      {r.msgs[r.msgs.length - 1]?.at ?? ""}
+                    </span>
                     {!locked && r.unread > 0 && !active && (
                       <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-black grid place-items-center">
                         {r.unread}
@@ -524,7 +571,10 @@ export function ChatbotTab({
           ].map((n) => {
             const Icon = n.icon;
             return (
-              <div key={n.label} className={`flex flex-col items-center gap-0.5 py-2 ${n.active ? "text-white" : "text-white/45"}`}>
+              <div
+                key={n.label}
+                className={`flex flex-col items-center gap-0.5 py-2 ${n.active ? "text-white" : "text-white/45"}`}
+              >
                 <Icon size={18} />
                 <span className="text-[10px]">{n.label}</span>
               </div>
@@ -562,8 +612,8 @@ export function ChatbotTab({
               {isLocked
                 ? `🔒 학급 레벨 ${scenario.unlockLevel} 달성 시 오픈`
                 : room.done
-                ? "🎖️ 대화 완료"
-                : `Stg ${room.stage + 1}/${scenario.stages.length}`}
+                  ? "🎖️ 대화 완료"
+                  : `Stg ${room.stage + 1}/${scenario.stages.length}`}
             </div>
           </div>
           <div className="flex items-center gap-2 text-white/80">
@@ -572,12 +622,24 @@ export function ChatbotTab({
               <div className="w-14 h-1.5 rounded-full bg-white/15 overflow-hidden">
                 <div
                   className="h-full transition-all duration-500"
-                  style={{ width: `${room.mood}%`, background: room.mood >= 40 ? "#22c55e" : "#ef4444" }}
+                  style={{
+                    width: `${room.mood}%`,
+                    background: room.mood >= 40 ? "#22c55e" : "#ef4444",
+                  }}
                 />
               </div>
             </div>
-            <button className="p-1 rounded hover:bg-white/5 hidden sm:block" aria-label="검색"><Search size={18} /></button>
-            <button onClick={resetRoom} className="p-1 rounded hover:bg-white/5" title="대화 초기화" aria-label="메뉴"><Menu size={18} /></button>
+            <button className="p-1 rounded hover:bg-white/5 hidden sm:block" aria-label="검색">
+              <Search size={18} />
+            </button>
+            <button
+              onClick={resetRoom}
+              className="p-1 rounded hover:bg-white/5"
+              title="대화 초기화"
+              aria-label="메뉴"
+            >
+              <Menu size={18} />
+            </button>
           </div>
         </div>
 
@@ -591,7 +653,9 @@ export function ChatbotTab({
               <div className="text-white font-bold text-lg">🔒 잠긴 채팅방</div>
               <div className="text-white/60 text-sm max-w-xs">
                 <b className="text-white/85">{scenario.npc}</b>과의 대화는
-                <br />학급 공동 레벨 <b className="text-white/85">Lv.{scenario.unlockLevel}</b> 달성 시 열려요.
+                <br />
+                학급 공동 레벨 <b className="text-white/85">Lv.{scenario.unlockLevel}</b> 달성 시
+                열려요.
               </div>
               <div className="text-white/45 text-xs">
                 우리 반이 함께 XP를 모으면 다음 채팅방이 열립니다.
@@ -606,7 +670,13 @@ export function ChatbotTab({
               onScroll={handleFeedScroll}
               className="flex-1 min-h-0 overflow-y-auto scroll-touch relative"
             >
-              <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
+              <div
+                style={{
+                  height: rowVirtualizer.getTotalSize(),
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
                 {rowVirtualizer.getVirtualItems().map((v) => {
                   const item = items[v.index];
                   return (
@@ -625,13 +695,20 @@ export function ChatbotTab({
                     >
                       {item.kind === "divider" ? (
                         <div className="mx-auto w-fit text-[10px] px-3 py-1 rounded-full bg-[#FEE500] text-black font-bold shadow-sm">
-                          {yesterday.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
+                          {yesterday.toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            weekday: "long",
+                          })}
                         </div>
                       ) : (
                         (() => {
                           const m = item.m;
                           return (
-                            <div className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}>
+                            <div
+                              className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}
+                            >
                               {m.from === "sys" ? (
                                 <div className="mx-auto text-[11px] px-3 py-1 rounded-full bg-white/10 text-white/80 font-bold">
                                   {m.text}
@@ -642,26 +719,32 @@ export function ChatbotTab({
                                     {scenario.emoji}
                                   </div>
                                   <div className="min-w-0">
-                                    <div className="text-[11px] text-white/60 mb-0.5 ml-1">{scenario.npc}</div>
+                                    <div className="text-[11px] text-white/60 mb-0.5 ml-1">
+                                      {scenario.npc}
+                                    </div>
                                     <div className="flex items-end gap-1">
                                       <div
                                         className={`wt-text px-3 py-2 rounded-2xl rounded-tl-md text-sm shadow-sm ${
                                           m.tone === "danger"
                                             ? "bg-red-500/25 text-white border border-red-400/40"
                                             : m.tone === "warn"
-                                            ? "bg-amber-400/25 text-white border border-amber-300/40"
-                                            : "bg-white text-[#111]"
+                                              ? "bg-amber-400/25 text-white border border-amber-300/40"
+                                              : "bg-white text-[#111]"
                                         }`}
                                       >
                                         {m.text}
                                       </div>
-                                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                      <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">
+                                        {m.at}
+                                      </span>
                                     </div>
                                   </div>
                                 </div>
                               ) : (
                                 <div className="flex items-end gap-1 max-w-[80%]">
-                                  <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">{m.at}</span>
+                                  <span className="text-[10px] text-white/40 whitespace-nowrap mb-0.5">
+                                    {m.at}
+                                  </span>
                                   <div
                                     className="wt-text px-3 py-2 rounded-2xl rounded-tr-md text-sm shadow-sm text-[#111]"
                                     style={{ background: "#FEE500" }}
@@ -690,7 +773,10 @@ export function ChatbotTab({
             </div>
 
             {/* Guide */}
-            <div className="shrink-0 mx-3 mb-2 flex items-start gap-2 rounded-2xl bg-white/10 backdrop-blur border border-white/10 px-3 py-2 text-xs text-white shadow-sm animate-fade-in max-h-[30vh] overflow-y-auto scroll-touch" key={`g-${scenario.id}-${room.stage}-${room.done}`}>
+            <div
+              className="shrink-0 mx-3 mb-2 flex items-start gap-2 rounded-2xl bg-white/10 backdrop-blur border border-white/10 px-3 py-2 text-xs text-white shadow-sm animate-fade-in max-h-[30vh] overflow-y-auto scroll-touch"
+              key={`g-${scenario.id}-${room.stage}-${room.done}`}
+            >
               <Lightbulb size={14} className="mt-0.5 shrink-0 text-[#FEE500]" />
               <div className="min-w-0">
                 <b>💡 가이드:</b> {guideText}
@@ -698,7 +784,10 @@ export function ChatbotTab({
                 {npcMemes.length > 0 && !room.done && (
                   <div className="mt-1 flex flex-wrap gap-1">
                     {npcMemes.map((w) => (
-                      <span key={w} className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/25 text-red-100 border border-red-400/40">
+                      <span
+                        key={w}
+                        className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/25 text-red-100 border border-red-400/40"
+                      >
                         ⚠︎ {w}
                       </span>
                     ))}
@@ -706,16 +795,22 @@ export function ChatbotTab({
                 )}
                 {room.wrong >= 3 && !room.done && (
                   <div className="mt-2">
-                    <div className="text-[11px] text-[#FEE500] font-bold mb-1">🔑 결정적 단어 힌트</div>
+                    <div className="text-[11px] text-[#FEE500] font-bold mb-1">
+                      🔑 결정적 단어 힌트
+                    </div>
                     <div className="flex flex-wrap gap-1">
                       {stageHintWords(scenario.id, room.stage).map((w) => (
-                        <span key={w} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FEE500]/25 text-yellow-100 border border-[#FEE500]/40">
+                        <span
+                          key={w}
+                          className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FEE500]/25 text-yellow-100 border border-[#FEE500]/40"
+                        >
                           #{w}
                         </span>
                       ))}
                     </div>
                     <div className="text-[10px] text-white/60 mt-1">
-                      위 단어 중 하나 이상을 포함하고, 존댓말 어미(~요/~습니다)로 8자 이상 말해보세요.
+                      위 단어 중 하나 이상을 포함하고, 존댓말 어미(~요/~습니다)로 8자 이상
+                      말해보세요.
                     </div>
                   </div>
                 )}
@@ -724,12 +819,23 @@ export function ChatbotTab({
 
             {/* Input bar */}
             <div className="shrink-0 p-2 bg-[#111] grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center border-t border-white/5">
-              <button className="shrink-0 w-11 h-11 grid place-items-center rounded-full text-white/60 hover:bg-white/5" aria-label="추가"><Plus size={18} /></button>
+              <button
+                className="shrink-0 w-11 h-11 grid place-items-center rounded-full text-white/60 hover:bg-white/5"
+                aria-label="추가"
+              >
+                <Plus size={18} />
+              </button>
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendDebounced()}
-                placeholder={room.done ? "대화가 완료되었어요. 다른 인물과 대화해보세요!" : scenario.correctionMode ? "친구의 유행어를 바른 말로 고쳐 주세요..." : "바른 말로 답장해 보세요..."}
+                placeholder={
+                  room.done
+                    ? "대화가 완료되었어요. 다른 인물과 대화해보세요!"
+                    : scenario.correctionMode
+                      ? "친구의 유행어를 바른 말로 고쳐 주세요..."
+                      : "바른 말로 답장해 보세요..."
+                }
                 disabled={room.done}
                 className="min-w-0 rounded-full bg-[#2a2a2c] text-white placeholder:text-white/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#FEE500]/60 transition"
               />

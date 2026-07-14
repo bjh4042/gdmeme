@@ -24,7 +24,9 @@ if (typeof window !== "undefined") {
         window.localStorage.removeItem(LEGACY_KEY);
       }
     }
-  } catch {}
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
 }
 
 type DictState = {
@@ -71,7 +73,8 @@ export const useDictStore = create<DictState>()(
               bullying: base.bullying + payload.evaluations.bullying,
               discrimination: base.discrimination + payload.evaluations.discrimination,
               violence: base.violence + payload.evaluations.violence,
-              grammar_destruction: base.grammar_destruction + payload.evaluations.grammar_destruction,
+              grammar_destruction:
+                base.grammar_destruction + payload.evaluations.grammar_destruction,
             };
             const avg: Evaluation = {
               aggression: sum.aggression / vc,
@@ -86,7 +89,9 @@ export const useDictStore = create<DictState>()(
               evaluations: avg,
               total_harmful_score: total,
               grade: gradeOf(total).label,
-              alternatives: Array.from(new Set([...existing.alternatives, ...payload.alternatives])).slice(0, 6),
+              alternatives: Array.from(
+                new Set([...existing.alternatives, ...payload.alternatives]),
+              ).slice(0, 6),
               source: existing.source || payload.source,
               context_note: existing.context_note || payload.context_note,
               listener_effect: existing.listener_effect || payload.listener_effect,

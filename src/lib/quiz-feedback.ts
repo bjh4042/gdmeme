@@ -16,9 +16,10 @@ const DOMAIN_HINT: Record<QuizDomain, string> = {
   expression: "예절 역할극에서 존중을 담은 대체 표현을 연습해 보세요.",
 };
 
-export function summarizeQuiz(
-  results: { domain?: QuizDomain; correct: boolean }[],
-): { total: { correct: number; count: number }; byDomain: { domain: QuizDomain; correct: number; count: number; hint: string }[] } {
+export function summarizeQuiz(results: { domain?: QuizDomain; correct: boolean }[]): {
+  total: { correct: number; count: number };
+  byDomain: { domain: QuizDomain; correct: number; count: number; hint: string }[];
+} {
   const total = { correct: results.filter((r) => r.correct).length, count: results.length };
   const map = new Map<QuizDomain, { correct: number; count: number }>();
   for (const r of results) {
@@ -31,7 +32,10 @@ export function summarizeQuiz(
   const byDomain = Array.from(map.entries()).map(([domain, v]) => ({
     domain,
     ...v,
-    hint: v.correct / Math.max(1, v.count) < 0.6 ? DOMAIN_HINT[domain] : `잘 이해하고 있어요. 계속 유지해 보세요.`,
+    hint:
+      v.correct / Math.max(1, v.count) < 0.6
+        ? DOMAIN_HINT[domain]
+        : `잘 이해하고 있어요. 계속 유지해 보세요.`,
   }));
   return { total, byDomain };
 }

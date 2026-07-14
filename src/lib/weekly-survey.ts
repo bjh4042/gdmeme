@@ -58,8 +58,11 @@ export function loadAggregate(classCode: string): Record<string, WeeklySurveyAgg
     const raw = window.localStorage.getItem(AGG_KEY(classCode));
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") return parsed as Record<string, WeeklySurveyAggregate>;
-  } catch {}
+    if (parsed && typeof parsed === "object")
+      return parsed as Record<string, WeeklySurveyAggregate>;
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
   return {};
 }
 
@@ -85,7 +88,9 @@ export function submitAnswer(
     }
     agg[answer.weekKey] = cur;
     window.localStorage.setItem(AGG_KEY(classCode), JSON.stringify(agg));
-  } catch {}
+  } catch {
+    /* storage/parse 실패 무시 */
+  }
   return answer;
 }
 

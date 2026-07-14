@@ -12,16 +12,51 @@ export const AREA_BADGES: {
   desc: string;
   color: string;
 }[] = [
-  { key: "aggression", badgeKey: "area_aggression", icon: "🛡️", name: "평화의 방패", area: "공격성 제어",
-    desc: "거친 공격성 말을 멋지게 참아낸 학생", color: "#38bdf8" },
-  { key: "bullying", badgeKey: "area_bullying", icon: "🤝", name: "포용의 악수", area: "따돌림 예방",
-    desc: "친구를 소외시키지 않고 모두를 감싸안은 학생", color: "#f472b6" },
-  { key: "discrimination", badgeKey: "area_discrimination", icon: "🧡", name: "존중의 물결", area: "혐오성 제어",
-    desc: "차별과 혐오 단어 대신 평등의 가치를 실천한 학생", color: "#fb923c" },
-  { key: "violence", badgeKey: "area_violence", icon: "🕊️", name: "화해의 비둘기", area: "폭력성 제어",
-    desc: "사이버 언어폭력을 예방하고 평화를 수호한 학생", color: "#10b981" },
-  { key: "grammar_destruction", badgeKey: "area_grammar_destruction", icon: "✍️", name: "우리말 지킴이", area: "문법파괴 순화",
-    desc: "파괴된 외계어 밈 대신 고운 표준어를 솔선수범해 쓴 학생", color: "#a78bfa" },
+  {
+    key: "aggression",
+    badgeKey: "area_aggression",
+    icon: "🛡️",
+    name: "평화의 방패",
+    area: "공격성 제어",
+    desc: "거친 공격성 말을 멋지게 참아낸 학생",
+    color: "#38bdf8",
+  },
+  {
+    key: "bullying",
+    badgeKey: "area_bullying",
+    icon: "🤝",
+    name: "포용의 악수",
+    area: "따돌림 예방",
+    desc: "친구를 소외시키지 않고 모두를 감싸안은 학생",
+    color: "#f472b6",
+  },
+  {
+    key: "discrimination",
+    badgeKey: "area_discrimination",
+    icon: "🧡",
+    name: "존중의 물결",
+    area: "혐오성 제어",
+    desc: "차별과 혐오 단어 대신 평등의 가치를 실천한 학생",
+    color: "#fb923c",
+  },
+  {
+    key: "violence",
+    badgeKey: "area_violence",
+    icon: "🕊️",
+    name: "화해의 비둘기",
+    area: "폭력성 제어",
+    desc: "사이버 언어폭력을 예방하고 평화를 수호한 학생",
+    color: "#10b981",
+  },
+  {
+    key: "grammar_destruction",
+    badgeKey: "area_grammar_destruction",
+    icon: "✍️",
+    name: "우리말 지킴이",
+    area: "문법파괴 순화",
+    desc: "파괴된 외계어 밈 대신 고운 표준어를 솔선수범해 쓴 학생",
+    color: "#a78bfa",
+  },
 ];
 
 export const AREA_BADGE_KEYS = AREA_BADGES.map((b) => b.badgeKey);
@@ -82,13 +117,7 @@ export function AreaBadgeChips({
   );
 }
 
-function BadgeChip({
-  badge,
-  size,
-}: {
-  badge: (typeof AREA_BADGES)[number];
-  size: "sm" | "md";
-}) {
+function BadgeChip({ badge, size }: { badge: (typeof AREA_BADGES)[number]; size: "sm" | "md" }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLSpanElement | null>(null);
   useEffect(() => {

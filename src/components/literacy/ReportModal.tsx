@@ -33,11 +33,15 @@ export function ReportModal({
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const contributed = useMemo(() => dict.filter((d) => d.suggested_by === student.id), [dict, student.id]);
+  const contributed = useMemo(
+    () => dict.filter((d) => d.suggested_by === student.id),
+    [dict, student.id],
+  );
   const approvedCount = contributed.filter((d) => d.status === "approved").length;
   const proposedCount = contributed.length;
   const cleared = engagement?.roleplayCleared.length ?? 0;
-  const roleplayRate = totalRoleplayScenarios > 0 ? Math.round((cleared / totalRoleplayScenarios) * 100) : 0;
+  const roleplayRate =
+    totalRoleplayScenarios > 0 ? Math.round((cleared / totalRoleplayScenarios) * 100) : 0;
   const avgClass = useMemo(() => {
     const approved = dict.filter((d) => d.status === "approved");
     if (!approved.length) return 0;
@@ -51,7 +55,10 @@ export function ReportModal({
     votedCount: engagement?.likesGivenCount ?? 0,
     journalStreak: engagement?.streak ?? 0,
   };
-  const auto = useMemo(() => derivedUnlocked(stats), [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak]);
+  const auto = useMemo(
+    () => derivedUnlocked(stats),
+    [stats.approvedWords, stats.totalXP, stats.votedCount, stats.journalStreak],
+  );
   useEffect(() => {
     if (auto.length) syncBadges(student.id, auto);
   }, [auto, student.id, syncBadges]);
@@ -114,7 +121,9 @@ export function ReportModal({
             <div className="rounded-2xl bg-white/95 shadow-2xl px-6 py-5 flex items-center gap-3">
               <Loader2 className="animate-spin text-[color:var(--navy)]" size={22} />
               <div className="min-w-0">
-                <div className="text-sm font-black text-[color:var(--navy)]">📸 멋진 리포트를 이미지로 굽고 있어요...</div>
+                <div className="text-sm font-black text-[color:var(--navy)]">
+                  📸 멋진 리포트를 이미지로 굽고 있어요...
+                </div>
                 <div className="text-[11px] text-muted-foreground">
                   폰트와 이모지를 준비하는 중이에요. 잠시만 기다려 주세요.
                 </div>
@@ -167,7 +176,8 @@ export function ReportModal({
                   style={{ background: rep.color }}
                   title={`대표 칭호 · Lv.${rep.tier} ${TIER_LABEL[rep.tier]}`}
                 >
-                  <span className="text-xs leading-none">{rep.icon}</span> {rep.name} · Lv.{rep.tier}
+                  <span className="text-xs leading-none">{rep.icon}</span> {rep.name} · Lv.
+                  {rep.tier}
                 </div>
               )}
               {student.group && (
@@ -178,7 +188,9 @@ export function ReportModal({
             </div>
             <div className="text-right shrink-0">
               <div className="text-[11px] text-muted-foreground font-bold">개인 누적 XP</div>
-              <div className="text-3xl font-black text-[color:var(--mint-deep)] font-mono">{student.xp}</div>
+              <div className="text-3xl font-black text-[color:var(--mint-deep)] font-mono">
+                {student.xp}
+              </div>
               <div className="text-[11px] font-bold text-[color:var(--navy)]">
                 Lv.{lv.current.lv} {lv.current.name}
               </div>
@@ -186,14 +198,28 @@ export function ReportModal({
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <MetricCard label="사전 등재 승인" value={`${approvedCount}건`} sub={`제안 총 ${proposedCount}건`} />
-            <MetricCard label="역할극 통과율" value={`${roleplayRate}%`} sub={`${cleared} / ${totalRoleplayScenarios} 시나리오`} />
-            <MetricCard label="선플 공감" value={`${engagement?.likesGivenCount ?? 0}회`} sub={`받은 공감 ${engagement?.likesReceivedCount ?? 0}회`} />
+            <MetricCard
+              label="사전 등재 승인"
+              value={`${approvedCount}건`}
+              sub={`제안 총 ${proposedCount}건`}
+            />
+            <MetricCard
+              label="역할극 통과율"
+              value={`${roleplayRate}%`}
+              sub={`${cleared} / ${totalRoleplayScenarios} 시나리오`}
+            />
+            <MetricCard
+              label="선플 공감"
+              value={`${engagement?.likesGivenCount ?? 0}회`}
+              sub={`받은 공감 ${engagement?.likesReceivedCount ?? 0}회`}
+            />
           </div>
 
           <div className="mt-4 rounded-2xl bg-white/60 p-4 border border-white/80">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-[11px] text-muted-foreground font-bold">획득 뱃지 도감 · 12대 칭호</div>
+              <div className="text-[11px] text-muted-foreground font-bold">
+                획득 뱃지 도감 · 12대 칭호
+              </div>
               <div className="text-[10px] font-bold text-[color:var(--mint-deep)]">
                 {unlocked.filter((k) => BADGES_SORTED.some((b) => b.key === k)).length} / 12
               </div>
@@ -205,14 +231,15 @@ export function ReportModal({
             </div>
           </div>
 
-          <div className="mt-4 rounded-2xl p-4 text-white shadow-[var(--shadow-soft)]"
+          <div
+            className="mt-4 rounded-2xl p-4 text-white shadow-[var(--shadow-soft)]"
             style={{
               background:
                 weather.tone === "safe"
                   ? "linear-gradient(135deg, oklch(0.85 0.11 180), oklch(0.72 0.14 210))"
                   : weather.tone === "warn"
-                  ? "linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.72 0.14 60))"
-                  : "linear-gradient(135deg, oklch(0.55 0.18 260), oklch(0.42 0.22 25))",
+                    ? "linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.72 0.14 60))"
+                    : "linear-gradient(135deg, oklch(0.55 0.18 260), oklch(0.42 0.22 25))",
             }}
           >
             <div className="text-xs opacity-90 font-bold">최근 우리 반 언어 기상도</div>
@@ -220,9 +247,7 @@ export function ReportModal({
               {weather.icon} {weather.label} · 평균 유해도 {avgClass}
             </div>
             <div className="text-xs opacity-90">{weather.desc}</div>
-            <div className="text-[11px] mt-1 opacity-80">
-              학급 공유 경험치 {classState.xp} XP
-            </div>
+            <div className="text-[11px] mt-1 opacity-80">학급 공유 경험치 {classState.xp} XP</div>
           </div>
 
           <div className="mt-5 text-center text-[10px] text-muted-foreground">
@@ -280,12 +305,17 @@ function BadgeCell({ b, stats, unlocked }: { b: BadgeDef; stats: BadgeStats; unl
       >
         {done ? b.icon : "🔒"}
       </div>
-      <div className={`mt-0.5 text-[9px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}>
+      <div
+        className={`mt-0.5 text-[9px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}
+      >
         {b.name}
       </div>
       <div className="text-[8px] font-bold text-muted-foreground">Lv.{b.tier}</div>
       <div className="mt-1 h-1 rounded-full bg-white/70 overflow-hidden">
-        <div className="h-full" style={{ width: `${p.pct}%`, background: done ? b.color : "#94a3b8" }} />
+        <div
+          className="h-full"
+          style={{ width: `${p.pct}%`, background: done ? b.color : "#94a3b8" }}
+        />
       </div>
       <div className="mt-0.5 text-[8px] font-mono" style={{ color: done ? b.color : "#64748b" }}>
         {p.current}/{p.target}

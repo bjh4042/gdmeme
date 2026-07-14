@@ -10,7 +10,15 @@ import level5 from "@/assets/level5.webp.asset.json";
 
 const LEVEL_IMAGES = [level1.url, level2.url, level3.url, level4.url, level5.url];
 
-export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; state: ClassState; classCode?: string }) {
+export function DashboardTab({
+  dict,
+  state,
+  classCode,
+}: {
+  dict: DictEntry[];
+  state: ClassState;
+  classCode?: string;
+}) {
   const approved = dict.filter((d) => d.status === "approved");
   const [aggTick, setAggTick] = useState(0);
   // localStorage에 저장된 이번 주 설문 집계를 반영 (설문 제출 후 재계산 트리거).
@@ -40,14 +48,18 @@ export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; st
     weather.tone === "safe"
       ? "linear-gradient(135deg, oklch(0.85 0.11 180), oklch(0.72 0.14 210))"
       : weather.tone === "warn"
-      ? "linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.72 0.14 60))"
-      : "linear-gradient(135deg, oklch(0.55 0.18 260), oklch(0.42 0.22 25))";
+        ? "linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.72 0.14 60))"
+        : "linear-gradient(135deg, oklch(0.55 0.18 260), oklch(0.42 0.22 25))";
 
   const levelImg = LEVEL_IMAGES[Math.min(Math.max(lv.current.lv, 1), 5) - 1];
 
   return (
     <div className="space-y-5">
-      <div data-tour="weather" className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]" style={{ background: wbg }}>
+      <div
+        data-tour="weather"
+        className="rounded-3xl p-6 text-white shadow-[var(--shadow-soft)]"
+        style={{ background: wbg }}
+      >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -78,7 +90,9 @@ export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; st
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6">
-          <div className="text-xs font-bold text-muted-foreground uppercase">우리말 수호대 · 학급 공동 등급</div>
+          <div className="text-xs font-bold text-muted-foreground uppercase">
+            우리말 수호대 · 학급 공동 등급
+          </div>
           <div className="text-2xl font-black text-[color:var(--navy)] mt-1">
             Lv.{lv.current.lv} {lv.current.name}
           </div>
@@ -116,7 +130,9 @@ export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; st
               <div
                 key={l.lv}
                 className={`p-2 rounded-lg ${
-                  l.lv <= lv.current.lv ? "bg-[color:var(--mint)] text-[color:var(--navy)]" : "bg-[color:var(--muted)] text-muted-foreground"
+                  l.lv <= lv.current.lv
+                    ? "bg-[color:var(--mint)] text-[color:var(--navy)]"
+                    : "bg-[color:var(--muted)] text-muted-foreground"
                 }`}
               >
                 <div className="font-black">Lv{l.lv}</div>
@@ -126,7 +142,10 @@ export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; st
           </div>
         </div>
 
-        <div data-tour="reflection-log" className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6">
+        <div
+          data-tour="reflection-log"
+          className="rounded-3xl bg-card border-2 border-[color:var(--border)] p-6"
+        >
           <div className="text-xs font-bold text-muted-foreground uppercase">최근 활동 기록</div>
           <div className="mt-2 space-y-1 max-h-80 overflow-y-auto">
             {state.activityLog.length === 0 && (
@@ -141,7 +160,8 @@ export function DashboardTab({ dict, state, classCode }: { dict: DictEntry[]; st
               >
                 <div className="min-w-0">
                   <div className="font-bold text-[color:var(--navy)] truncate">
-                    {a.who} · <span className="text-[color:var(--mint-deep)]">{kindLabel(a.kind)}</span>
+                    {a.who} ·{" "}
+                    <span className="text-[color:var(--mint-deep)]">{kindLabel(a.kind)}</span>
                   </div>
                   {a.note && <div className="text-xs text-muted-foreground truncate">{a.note}</div>}
                 </div>
@@ -181,9 +201,13 @@ function WeatherInfoModal({ avg, onClose }: { avg: number; onClose: () => void }
       >
         <div className="flex items-start justify-between gap-3 p-5 border-b border-white/60">
           <div className="min-w-0">
-            <div className="text-lg sm:text-xl font-black text-[color:var(--navy)]">🌈 우리 반 언어 기상도란?</div>
+            <div className="text-lg sm:text-xl font-black text-[color:var(--navy)]">
+              🌈 우리 반 언어 기상도란?
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
-              현재 평균 유해 점수 <span className="font-mono font-bold text-[color:var(--navy)]">{avg}</span>점 · 7단계 자동 판정
+              현재 평균 유해 점수{" "}
+              <span className="font-mono font-bold text-[color:var(--navy)]">{avg}</span>점 · 7단계
+              자동 판정
             </div>
           </div>
           <button
@@ -196,10 +220,13 @@ function WeatherInfoModal({ avg, onClose }: { avg: number; onClose: () => void }
           </button>
         </div>
 
-        <div className="px-5 py-4 overflow-y-auto pr-2 max-h-[75vh]" style={{ WebkitOverflowScrolling: "touch" }}>
+        <div
+          className="px-5 py-4 overflow-y-auto pr-2 max-h-[75vh]"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           <p className="text-sm text-[color:var(--navy)] leading-relaxed mb-3">
-            학급의 <b>평균 유해 점수(0~100)</b>를 실시간으로 계산해 오늘의 교실 언어 날씨를 알려줘요.
-            점수가 낮을수록 맑고, 높을수록 험악해집니다.
+            학급의 <b>평균 유해 점수(0~100)</b>를 실시간으로 계산해 오늘의 교실 언어 날씨를
+            알려줘요. 점수가 낮을수록 맑고, 높을수록 험악해집니다.
           </p>
           <div className="space-y-2">
             {WEATHER_MATRIX.map((t, i) => {
@@ -228,9 +255,9 @@ function WeatherInfoModal({ avg, onClose }: { avg: number; onClose: () => void }
           </div>
 
           <div className="mt-4 rounded-xl bg-white/70 border border-white/80 p-3 text-xs leading-relaxed text-[color:var(--navy)]">
-            💡 <b>우리 반 날씨가 맑아지는 비법</b>: 친구들이 사전에 유해 점수가 높은 단어 대신 '바른 대안 표현'을 사용하고,
-            고운 말 카드에 <b>[👍 바른말 최고야]</b> 공감을 누를 때마다 우리 반의 평균 유해 점수가 소수점 단위로
-            쏙쏙 내려가며 날씨가 실시간으로 환하게 개어납니다!
+            💡 <b>우리 반 날씨가 맑아지는 비법</b>: 친구들이 사전에 유해 점수가 높은 단어 대신 '바른
+            대안 표현'을 사용하고, 고운 말 카드에 <b>[👍 바른말 최고야]</b> 공감을 누를 때마다 우리
+            반의 평균 유해 점수가 소수점 단위로 쏙쏙 내려가며 날씨가 실시간으로 환하게 개어납니다!
           </div>
         </div>
 
@@ -249,10 +276,16 @@ function WeatherInfoModal({ avg, onClose }: { avg: number; onClose: () => void }
 }
 
 function PixelKing({ size, level }: { size: number; level: number }) {
-  const robeColor = level >= 4 ? "#7c3aed" : level >= 3 ? "#0369a1" : level >= 2 ? "#14b8a6" : "#94a3b8";
+  const robeColor =
+    level >= 4 ? "#7c3aed" : level >= 3 ? "#0369a1" : level >= 2 ? "#14b8a6" : "#94a3b8";
   return (
     <div className="relative flex flex-col items-center" style={{ imageRendering: "pixelated" }}>
-      <svg width={size} height={size * 1.4} viewBox="0 0 20 28" style={{ imageRendering: "pixelated" }}>
+      <svg
+        width={size}
+        height={size * 1.4}
+        viewBox="0 0 20 28"
+        style={{ imageRendering: "pixelated" }}
+      >
         {/* crown */}
         {level >= 2 && (
           <>
@@ -290,7 +323,12 @@ function PixelTree({ size, level }: { size: number; level: number }) {
   const h = size * 2;
   return (
     <div className="flex flex-col items-center">
-      <svg width={size * 1.5} height={h} viewBox="0 0 30 40" style={{ imageRendering: "pixelated" }}>
+      <svg
+        width={size * 1.5}
+        height={h}
+        viewBox="0 0 30 40"
+        style={{ imageRendering: "pixelated" }}
+      >
         {/* layers of leaves depending on level */}
         {level >= 1 && <rect x="10" y="20" width="10" height="8" fill="#10b981" />}
         {level >= 2 && <rect x="7" y="14" width="16" height="8" fill="#059669" />}

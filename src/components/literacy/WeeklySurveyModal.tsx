@@ -66,7 +66,9 @@ export function WeeklySurveyModal({
       <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-white/60 p-6 animate-scale-in">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="text-xs font-bold text-[color:var(--mint-deep)] uppercase">주간 성찰 설문</div>
+            <div className="text-xs font-bold text-[color:var(--mint-deep)] uppercase">
+              주간 성찰 설문
+            </div>
             <h2 className="text-lg font-black text-[color:var(--navy)] mt-1">
               🗓️ 이번 주 우리 반 언어생활 성찰
             </h2>
@@ -87,7 +89,9 @@ export function WeeklySurveyModal({
         {done ? (
           <div className="py-8 text-center">
             <div className="text-5xl mb-2">🌤️</div>
-            <div className="text-sm font-bold text-[color:var(--navy)]">응답이 반영되었어요. 고마워요!</div>
+            <div className="text-sm font-bold text-[color:var(--navy)]">
+              응답이 반영되었어요. 고마워요!
+            </div>
           </div>
         ) : (
           <>
@@ -124,10 +128,14 @@ export function WeeklySurveyModal({
             {heard === true && (
               <div className="mt-3 space-y-3 animate-fade-in">
                 <div className="rounded-2xl bg-white border border-slate-200 p-3">
-                  <div className="text-xs font-bold text-[color:var(--navy)] mb-2">어떤 말을 들었나요?</div>
+                  <div className="text-xs font-bold text-[color:var(--navy)] mb-2">
+                    어떤 말을 들었나요?
+                  </div>
                   <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                     {options.length === 0 && (
-                      <span className="text-[11px] text-muted-foreground">등록된 단어가 아직 없어요.</span>
+                      <span className="text-[11px] text-muted-foreground">
+                        등록된 단어가 아직 없어요.
+                      </span>
                     )}
                     {options.map((w) => (
                       <button

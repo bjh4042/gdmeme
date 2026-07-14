@@ -14,5 +14,4 @@ export function todaysReflectionPrompt(): { label: string; hint: string } {
   return { label: p.label, hint: p.hint };
 }
 
-export const REFLECTION_AFTER_SAVE =
-  "오늘 생각한 바른 표현을 실제 대화에서도 실천해 보세요.";
+export const REFLECTION_AFTER_SAVE = "오늘 생각한 바른 표현을 실제 대화에서도 실천해 보세요.";
