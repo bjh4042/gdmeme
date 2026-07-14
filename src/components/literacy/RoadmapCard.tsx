@@ -3,6 +3,7 @@ import type { DictEntry } from "@/lib/literacy-types";
 import { STAGES, deriveRoadmap, type StageKey } from "@/lib/roadmap";
 import { useEngagementStore } from "@/stores/engagement";
 import { toast } from "sonner";
+import { REFLECTION_AFTER_SAVE } from "@/lib/reflection-prompts";
 
 /**
  * 학생 대시보드 상단 「바른말 수호 5단계」 로드맵 카드.
@@ -53,7 +54,10 @@ export function RoadmapCard({
   function handlePracticeCheck() {
     const res = logPractice(studentId, "오늘의 바른말 실천 체크");
     if (res.already) toast("오늘은 이미 실천 체크를 남겼어요. 내일 또 만나요!", { icon: "🌱" });
-    else if (res.ok) toast.success("실천 체크 완료! 5단계 실천하기가 채워졌어요.", { description: `누적 ${res.total}회` });
+    else if (res.ok)
+      toast.success("실천 체크 완료! 5단계 실천하기가 채워졌어요.", {
+        description: `누적 ${res.total}회 · ${REFLECTION_AFTER_SAVE}`,
+      });
   }
 
   return (
