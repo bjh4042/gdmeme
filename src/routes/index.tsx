@@ -425,6 +425,16 @@ function Index() {
           onClose={() => setSurveyOpen(false)}
         />
       )}
+
+      {prePostStage && student && (
+        <PrePostSurveyModal
+          open
+          stage={prePostStage}
+          studentId={activeId}
+          classCode={student.classCode}
+          onClose={() => setPrePostStage(null)}
+        />
+      )}
     </div>
   );
 }
