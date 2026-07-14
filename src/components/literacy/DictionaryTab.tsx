@@ -509,6 +509,37 @@ function ProposalModal({
               placeholder="네 생각을 존중해, 그렇게 생각할 수도 있겠구나"
             />
           </label>
+          <details className="rounded-2xl bg-white/40 border border-white/60 px-3 py-2">
+            <summary className="cursor-pointer text-xs font-black text-[color:var(--navy)] select-none">
+              💭 함께 생각해 보기 (선택) — 상황·듣는 사람의 마음
+            </summary>
+            <div className="mt-2 grid gap-2">
+              <label className="block">
+                <span className="text-[11px] font-bold text-[color:var(--navy)]">
+                  🎬 어떤 상황에서 본 말인가요? <span className="text-slate-500">(선택 · 출처와 다르게 &lsquo;장면&rsquo;을 적어요)</span>
+                </span>
+                <textarea
+                  value={contextNote}
+                  onChange={(e) => setContextNote(e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-xl border border-white/70 bg-white/70 px-2.5 py-1.5 text-sm outline-none focus:border-[color:var(--mint-deep)] transition"
+                  placeholder="예: 쉬는 시간에 친구가 게임에서 지고 나서 툭 내뱉었어요."
+                />
+              </label>
+              <label className="block">
+                <span className="text-[11px] font-bold text-[color:var(--navy)]">
+                  💗 이 말을 들은 친구는 어떻게 느낄 수 있을까요? <span className="text-slate-500">(선택)</span>
+                </span>
+                <textarea
+                  value={listenerEffect}
+                  onChange={(e) => setListenerEffect(e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full rounded-xl border border-white/70 bg-white/70 px-2.5 py-1.5 text-sm outline-none focus:border-[color:var(--mint-deep)] transition"
+                  placeholder="예: 무시당한다고 느껴서 속상하고 대화가 끊어질 수 있어요."
+                />
+              </label>
+            </div>
+          </details>
         </div>
         <div className="mt-5">
           <h4 className="text-sm font-black text-[color:var(--navy)] mb-2">리터러시 유해성 5대 척도 (1~5점)</h4>
