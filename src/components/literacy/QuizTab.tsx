@@ -4,6 +4,7 @@ import { QUIZZES, type QuizItem } from "@/lib/literacy-seed";
 import type { DictEntry } from "@/lib/literacy-types";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
 import QUIZ_BANK_50 from "@/lib/quiz-bank-50.json";
+import { summarizeQuiz, DOMAIN_LABEL, type QuizDomain } from "@/lib/quiz-feedback";
 
 type BankItem = {
   id: number;
@@ -11,6 +12,7 @@ type BankItem = {
   options: string[];
   answer: string;
   explanation: string;
+  domain?: QuizDomain;
 };
 
 type Question = {
@@ -19,6 +21,7 @@ type Question = {
   choices: string[];
   answerText: string;
   explain: string;
+  domain?: QuizDomain;
 };
 
 const TIME_LIMIT = 15; // seconds per question
@@ -42,6 +45,7 @@ function buildDeck(_dict: DictEntry[]): Question[] {
     choices: shuffle(item.options),
     answerText: item.answer,
     explain: item.explanation,
+    domain: item.domain,
   }));
 }
 
@@ -63,6 +67,7 @@ export function QuizTab({
   const [result, setResult] = useState<null | "right" | "wrong" | "timeup">(null);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [flash, setFlash] = useState<null | "right" | "wrong">(null);
+  const [results, setResults] = useState<{ domain?: QuizDomain; correct: boolean }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const q = deck[idx];
@@ -77,6 +82,7 @@ export function QuizTab({
     setTyped("");
     setResult(null);
     setTimeLeft(TIME_LIMIT);
+    setResults([]);
     setPhase("play");
   }
 
@@ -105,6 +111,7 @@ export function QuizTab({
     setResult(ok ? "right" : "wrong");
     setFlash(ok ? "right" : "wrong");
     setTimeout(() => setFlash(null), 500);
+    setResults((prev) => [...prev, { domain: q?.domain, correct: ok }]);
     if (ok) {
       const bonus = 10 + Math.floor(timeLeft) + combo * 2;
       setScore((s) => s + bonus);
