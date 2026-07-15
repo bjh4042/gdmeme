@@ -5,6 +5,7 @@ import type { DictEntry } from "@/lib/literacy-types";
 import { useEngagementStore } from "@/stores/engagement";
 import { RoadmapCard } from "./RoadmapCard";
 import { DailyMissionCard } from "./DailyMissionCard";
+import { EmptyState } from "./ui/primitives";
 
 type QuickTab = "analyze" | "chat" | "assist" | "quiz" | "dict";
 
@@ -270,9 +271,15 @@ export function HomeTab({
         >
           <h3 className="text-sm font-black text-[color:var(--navy)] mb-3">최근 활동</h3>
           {recent.length === 0 ? (
-            <p className="text-xs text-slate-500 leading-relaxed">
-              아직 기록된 활동이 없어요. 왼쪽 <b>바로 시작하기</b>에서 첫 활동을 시작해 보세요!
-            </p>
+            <EmptyState
+              icon={<Sparkles className="h-5 w-5" />}
+              title="아직 활동 기록이 없어요"
+              description={
+                <>
+                  왼쪽 <b>바로 시작하기</b> 에서 첫 활동을 시작해 보세요!
+                </>
+              }
+            />
           ) : (
             <ul className="flex flex-col gap-2">
               {recent.map((r, i) => (

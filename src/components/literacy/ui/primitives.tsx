@@ -142,3 +142,67 @@ export function ProgressBar({
     </div>
   );
 }
+
+/**
+ * 학생·교사 화면 공용 빈 상태 컴포넌트.
+ * 검색 결과 없음, 활동 기록 없음, 학생 없음 등 모든 Empty State 를 통일한다.
+ */
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  className = "",
+}: {
+  icon?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      role="status"
+      className={`flex flex-col items-center justify-center text-center gap-2 rounded-2xl border border-dashed border-slate-200 bg-white/60 px-4 py-6 ${className}`}
+    >
+      {icon && (
+        <div className="w-10 h-10 rounded-2xl grid place-items-center bg-primary/10 text-primary">
+          {icon}
+        </div>
+      )}
+      <div className="text-sm font-black text-[color:var(--navy)]">{title}</div>
+      {description && (
+        <div className="text-xs text-muted-foreground leading-relaxed max-w-sm">{description}</div>
+      )}
+      {action && <div className="mt-1">{action}</div>}
+    </div>
+  );
+}
+
+/**
+ * 공용 로딩 스피너. 프로젝트 전역 로딩 표시를 하나의 스타일로 통일한다.
+ */
+export function LoadingSpinner({
+  size = 20,
+  label,
+  className = "",
+}: {
+  size?: 16 | 18 | 20 | 24;
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <span
+      role="status"
+      aria-label={label ?? "로딩 중"}
+      className={`inline-flex items-center gap-2 text-muted-foreground ${className}`}
+    >
+      <span
+        aria-hidden
+        className="inline-block rounded-full border-2 border-primary/30 border-t-primary animate-spin"
+        style={{ width: size, height: size }}
+      />
+      {label && <span className="text-xs font-bold">{label}</span>}
+    </span>
+  );
+}
