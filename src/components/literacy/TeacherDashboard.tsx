@@ -928,11 +928,19 @@ export function TeacherDashboard({
             </div>
 
             {studentList.length === 0 ? (
-              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                {students.length === 0
-                  ? "아직 등록된 학생이 없습니다. XLSX 업로드로 명단을 불러올 수 있어요."
-                  : "조건에 맞는 학생이 없습니다."}
-              </div>
+              <EmptyState
+                icon={<UserSearch className="h-5 w-5" />}
+                title={
+                  students.length === 0
+                    ? "아직 등록된 학생이 없습니다"
+                    : "조건에 맞는 학생이 없습니다"
+                }
+                description={
+                  students.length === 0
+                    ? "XLSX 업로드로 명단을 불러올 수 있어요."
+                    : undefined
+                }
+              />
             ) : (
               <>
                 {/* Desktop table */}
