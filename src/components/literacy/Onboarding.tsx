@@ -218,6 +218,17 @@ export function Onboarding({
                     </li>
                   ))}
                 </ol>
+                <div className="mt-4 mx-auto max-w-[260px] sm:max-w-[320px]">
+                  <img
+                    src={heroIllustration.url}
+                    alt="태블릿과 책으로 바른말을 배우는 두 학생 일러스트"
+                    width={1600}
+                    height={1024}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-auto select-none"
+                  />
+                </div>
               </div>
               <form onSubmit={submit} className="space-y-4">
                 <div>
