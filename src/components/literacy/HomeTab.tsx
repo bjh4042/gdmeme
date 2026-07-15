@@ -274,7 +274,11 @@ export function HomeTab({
             <EmptyState
               icon={<Sparkles className="h-5 w-5" />}
               title="아직 활동 기록이 없어요"
-              description={<>왼쪽 <b>바로 시작하기</b> 에서 첫 활동을 시작해 보세요!</>}
+              description={
+                <>
+                  왼쪽 <b>바로 시작하기</b> 에서 첫 활동을 시작해 보세요!
+                </>
+              }
             />
           ) : (
             <ul className="flex flex-col gap-2">
