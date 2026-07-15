@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Search, BookOpen, Gamepad2, NotebookPen, Target, Sparkles } from "lucide-react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
+import heroIllustration from "@/assets/hero-illustration.png.asset.json";
 import type { DictEntry } from "@/lib/literacy-types";
 import { useEngagementStore } from "@/stores/engagement";
 import { RoadmapCard } from "./RoadmapCard";
