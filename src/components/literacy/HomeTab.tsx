@@ -155,17 +155,17 @@ export function HomeTab({
               상대를 존중하는 표현을 함께 만들어 가는 학습 공간
             </p>
 
-            {/* characters row (emoji placeholders — 과도한 애니메이션 없음) */}
-            <div className="mt-2 flex items-center justify-center gap-6 text-4xl sm:text-5xl select-none">
-              <span aria-label="생각하는 학생" role="img">
-                🧑‍🎓
-              </span>
-              <span aria-label="탐구하는 학생" role="img">
-                🔎
-              </span>
-              <span aria-label="쓰는 학생" role="img">
-                👩‍🎓
-              </span>
+            {/* Hero illustration — 바른말 수호대 학생 일러스트 */}
+            <div className="mt-2 w-full max-w-md">
+              <img
+                src={heroIllustration.url}
+                alt="태블릿과 책으로 바른말을 배우는 두 학생 일러스트"
+                width={1600}
+                height={1024}
+                fetchPriority="high"
+                decoding="async"
+                className="w-full h-auto select-none"
+              />
             </div>
 
             {/* 오늘의 미션 */}
