@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Student, StudentRecord } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
+import heroIllustration from "@/assets/hero-illustration.png.asset.json";
 
 export function Onboarding({
   onSubmit,
