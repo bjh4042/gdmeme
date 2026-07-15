@@ -727,9 +727,11 @@ export function TeacherDashboard({
               </div>
 
               {list.length === 0 ? (
-                <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                  {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
-                </div>
+                <EmptyState
+                  icon={<Inbox className="h-5 w-5" />}
+                  title={query ? "검색 결과가 없습니다" : "해당 상태의 단어가 없습니다"}
+                  description={query ? "다른 검색어로 시도해 보세요." : undefined}
+                />
               ) : (
                 <div className="space-y-2">
                   {list.map((d) => (
