@@ -23,6 +23,8 @@ import { TeacherDailyMissionPanel } from "./TeacherDailyMissionPanel";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
 import { useClassStore } from "@/stores/class";
+import { EmptyState } from "./ui/primitives";
+import { Inbox, UserSearch, History } from "lucide-react";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
