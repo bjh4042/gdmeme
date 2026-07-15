@@ -1787,9 +1787,10 @@ function RecentActivity({ classCode }: { classCode: string }) {
   const rows = log.slice(0, 10);
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl bg-[color:var(--muted)] p-5 text-center text-xs text-muted-foreground">
-        아직 기록된 활동이 없어요.
-      </div>
+      <EmptyState
+        icon={<History className="h-5 w-5" />}
+        title="아직 기록된 활동이 없어요"
+      />
     );
   }
   return (
