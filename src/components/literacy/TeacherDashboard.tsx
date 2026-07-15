@@ -23,6 +23,8 @@ import { TeacherDailyMissionPanel } from "./TeacherDailyMissionPanel";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
 import { useClassStore } from "@/stores/class";
+import { EmptyState } from "./ui/primitives";
+import { Inbox, UserSearch, History } from "lucide-react";
 // 인증은 <TeacherGate /> 래퍼가 SHA-256 해시로 처리한다.
 // 이 컴포넌트에 도달했다는 것 = 이미 인증 통과.
 
@@ -725,9 +727,11 @@ export function TeacherDashboard({
               </div>
 
               {list.length === 0 ? (
-                <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                  {query ? "검색 결과가 없습니다." : "해당 상태의 단어가 없습니다."}
-                </div>
+                <EmptyState
+                  icon={<Inbox className="h-5 w-5" />}
+                  title={query ? "검색 결과가 없습니다" : "해당 상태의 단어가 없습니다"}
+                  description={query ? "다른 검색어로 시도해 보세요." : undefined}
+                />
               ) : (
                 <div className="space-y-2">
                   {list.map((d) => (
@@ -924,11 +928,19 @@ export function TeacherDashboard({
             </div>
 
             {studentList.length === 0 ? (
-              <div className="rounded-xl bg-[color:var(--muted)] p-6 text-sm text-muted-foreground text-center">
-                {students.length === 0
-                  ? "아직 등록된 학생이 없습니다. XLSX 업로드로 명단을 불러올 수 있어요."
-                  : "조건에 맞는 학생이 없습니다."}
-              </div>
+              <EmptyState
+                icon={<UserSearch className="h-5 w-5" />}
+                title={
+                  students.length === 0
+                    ? "아직 등록된 학생이 없습니다"
+                    : "조건에 맞는 학생이 없습니다"
+                }
+                description={
+                  students.length === 0
+                    ? "XLSX 업로드로 명단을 불러올 수 있어요."
+                    : undefined
+                }
+              />
             ) : (
               <>
                 {/* Desktop table */}
@@ -1775,9 +1787,10 @@ function RecentActivity({ classCode }: { classCode: string }) {
   const rows = log.slice(0, 10);
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl bg-[color:var(--muted)] p-5 text-center text-xs text-muted-foreground">
-        아직 기록된 활동이 없어요.
-      </div>
+      <EmptyState
+        icon={<History className="h-5 w-5" />}
+        title="아직 기록된 활동이 없어요"
+      />
     );
   }
   return (
