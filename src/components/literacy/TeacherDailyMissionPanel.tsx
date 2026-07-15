@@ -3,6 +3,8 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import type { StudentRecord } from "@/lib/literacy-types";
 import { studentId as makeStudentId } from "@/lib/literacy-store";
 import { missionEntryAt, readMissionForStudent, type DailyMissionState } from "@/lib/daily-mission";
+import { EmptyState } from "./ui/primitives";
+import { Users } from "lucide-react";
 
 type Row = {
   student: StudentRecord;
@@ -46,7 +48,12 @@ export function TeacherDailyMissionPanel({
   const [openId, setOpenId] = useState<string | null>(null);
 
   if (rows.length === 0) {
-    return <div className="text-[12px] text-slate-500">현재 학급에 등록된 학생이 없습니다.</div>;
+    return (
+      <EmptyState
+        icon={<Users className="h-5 w-5" />}
+        title="현재 학급에 등록된 학생이 없습니다"
+      />
+    );
   }
 
   return (
