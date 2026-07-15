@@ -33,6 +33,7 @@ import {
 import { AreaBadgeChips } from "./AreaBadges";
 import { useDebouncedAction } from "@/lib/use-debounced-action";
 import { toast } from "sonner";
+import { EmptyState } from "./ui/primitives";
 
 export function DictionaryTab({
   dict,
@@ -230,10 +231,11 @@ export function DictionaryTab({
       </div>
 
       {shown.length === 0 ? (
-        <div className="glass-soft p-10 text-center text-muted-foreground border-2 border-dashed border-white/50">
-          <Sparkles className="mx-auto mb-2 text-[color:var(--mint-deep)]" />
-          검색 조건에 맞는 단어가 없어요. 다른 초성·위험도·검색어를 시도해 보세요.
-        </div>
+        <EmptyState
+          icon={<Sparkles className="h-5 w-5" />}
+          title="검색 조건에 맞는 단어가 없어요"
+          description="다른 초성·위험도·검색어를 시도해 보세요."
+        />
       ) : (
         <div data-tour="dict-grid" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((d) => (
