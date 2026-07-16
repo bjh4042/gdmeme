@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Compass, Heart, Pencil, Sprout, Check, Lock, type LucideIcon } from "lucide-react";
+import { Search, BookOpen, Heart, Pencil, Sprout, Check, Lock, type LucideIcon } from "lucide-react";
 import type { DictEntry } from "@/lib/literacy-types";
 import { STAGES, deriveRoadmap, type StageKey } from "@/lib/roadmap";
 import { useEngagementStore } from "@/stores/engagement";
@@ -31,7 +31,7 @@ const STAGE_STYLE: Record<
     glow: "shadow-[0_0_0_6px_rgba(56,189,248,0.18)]",
   },
   dissect: {
-    icon: Compass,
+    icon: BookOpen,
     ring: "ring-emerald-300",
     bg: "bg-emerald-50 border-emerald-200",
     fg: "text-emerald-600",
