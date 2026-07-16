@@ -37,7 +37,7 @@ export const STAGES: StageMeta[] = [
   {
     key: "dissect",
     order: 2,
-    icon: "🧭",
+    icon: "📖",
     title: "파헤치기",
     short: "파헤치기",
     desc: "표현의 뜻·유래·숨은 비하 요소를 확인해요. 좋은 말/나쁜 말이 아니라 맥락을 살펴요.",

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Target, CheckCircle2, RefreshCw } from "lucide-react";
+import { Flag, CheckCircle2, RefreshCw } from "lucide-react";
 import {
   completeMission,
   getTodayMission,
@@ -57,7 +57,7 @@ export function DailyMissionCard({ activeId, onXP }: Props) {
     >
       <div className="flex items-center gap-2 flex-wrap">
         <span className="inline-flex items-center gap-1 rounded-full bg-rose-500 text-white text-[11px] font-black px-2.5 py-1">
-          <Target className="h-3.5 w-3.5" />
+          <Flag className="h-3.5 w-3.5" />
           오늘의 상황 미션
         </span>
         <span className="inline-flex items-center rounded-full bg-white/80 border border-rose-200 text-rose-700 text-[11px] font-bold px-2 py-0.5">
