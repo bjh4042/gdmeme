@@ -53,6 +53,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 1,
+    image: dictionary_1.url,
   },
   {
     key: "dictionary_2",
@@ -65,6 +66,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 5,
+    image: dictionary_2.url,
   },
   {
     key: "dictionary_3",
@@ -77,6 +79,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 10,
+    image: dictionary_3.url,
   },
   // ── 누적 XP ────────────────────────────────
   {
@@ -90,6 +93,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 100,
+    image: xp_1.url,
   },
   {
     key: "xp_2",
@@ -102,6 +106,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 400,
+    image: xp_2.url,
   },
   {
     key: "xp_3",
@@ -114,6 +119,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 700,
+    image: xp_3.url,
   },
   // ── 선플 공감 ──────────────────────────────
   {
@@ -127,6 +133,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 5,
+    image: reactions_1.url,
   },
   {
     key: "reactions_2",
@@ -139,6 +146,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 20,
+    image: reactions_2.url,
   },
   {
     key: "reactions_3",
@@ -151,6 +159,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 50,
+    image: reactions_3.url,
   },
   // ── 성찰 저널 ──────────────────────────────
   {
@@ -164,6 +173,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 3,
+    image: journal_1.url,
   },
   {
     key: "journal_2",
@@ -176,6 +186,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 7,
+    image: journal_2.url,
   },
   {
     key: "journal_3",
@@ -188,6 +199,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 14,
+    image: journal_3.url,
   },
 ];
 
