@@ -1,6 +1,19 @@
 // 12대 뱃지 도감 (4트랙 × 3티어).
 // 통계 값에서 즉시 파생하되, 상위에서 ratchet(누적 잠금 유지)로 관리.
 
+import dictionary_1 from "@/assets/badges/dictionary_1.png.asset.json";
+import dictionary_2 from "@/assets/badges/dictionary_2.png.asset.json";
+import dictionary_3 from "@/assets/badges/dictionary_3.png.asset.json";
+import xp_1 from "@/assets/badges/xp_1.png.asset.json";
+import xp_2 from "@/assets/badges/xp_2.png.asset.json";
+import xp_3 from "@/assets/badges/xp_3.png.asset.json";
+import reactions_1 from "@/assets/badges/reactions_1.png.asset.json";
+import reactions_2 from "@/assets/badges/reactions_2.png.asset.json";
+import reactions_3 from "@/assets/badges/reactions_3.png.asset.json";
+import journal_1 from "@/assets/badges/journal_1.png.asset.json";
+import journal_2 from "@/assets/badges/journal_2.png.asset.json";
+import journal_3 from "@/assets/badges/journal_3.png.asset.json";
+
 export type BadgeTrack = "dictionary" | "xp" | "reactions" | "journal";
 export type BadgeTier = 1 | 2 | 3;
 
@@ -15,6 +28,7 @@ export type BadgeDef = {
   metricLabel: string;
   unit: string;
   threshold: number;
+  image?: string; // CDN URL for badge illustration (optional; icon emoji is fallback)
 };
 
 export type BadgeStats = {
@@ -39,6 +53,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 1,
+    image: dictionary_1.url,
   },
   {
     key: "dictionary_2",
@@ -51,6 +66,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 5,
+    image: dictionary_2.url,
   },
   {
     key: "dictionary_3",
@@ -63,6 +79,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "승인 등재",
     unit: "개",
     threshold: 10,
+    image: dictionary_3.url,
   },
   // ── 누적 XP ────────────────────────────────
   {
@@ -76,6 +93,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 100,
+    image: xp_1.url,
   },
   {
     key: "xp_2",
@@ -88,6 +106,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 400,
+    image: xp_2.url,
   },
   {
     key: "xp_3",
@@ -100,6 +119,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누적 XP",
     unit: "XP",
     threshold: 700,
+    image: xp_3.url,
   },
   // ── 선플 공감 ──────────────────────────────
   {
@@ -113,6 +133,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 5,
+    image: reactions_1.url,
   },
   {
     key: "reactions_2",
@@ -125,6 +146,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 20,
+    image: reactions_2.url,
   },
   {
     key: "reactions_3",
@@ -137,6 +159,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "누른 공감",
     unit: "회",
     threshold: 50,
+    image: reactions_3.url,
   },
   // ── 성찰 저널 ──────────────────────────────
   {
@@ -150,6 +173,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 3,
+    image: journal_1.url,
   },
   {
     key: "journal_2",
@@ -162,6 +186,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 7,
+    image: journal_2.url,
   },
   {
     key: "journal_3",
@@ -174,6 +199,7 @@ export const BADGE_TRACKS: BadgeDef[] = [
     metricLabel: "연속 작성",
     unit: "일",
     threshold: 14,
+    image: journal_3.url,
   },
 ];
 

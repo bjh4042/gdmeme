@@ -104,7 +104,11 @@ export function ProfileModal({
                 style={{ background: rep.color }}
                 title={`대표 칭호 · ${TIER_LABEL[rep.tier]}`}
               >
-                <span className="text-sm leading-none">{rep.icon}</span>
+                {rep.image ? (
+                  <img src={rep.image} alt="" className="h-4 w-4 object-contain" loading="lazy" />
+                ) : (
+                  <span className="text-sm leading-none">{rep.icon}</span>
+                )}
                 {rep.name}
                 <span className="opacity-80 font-mono">Lv.{rep.tier}</span>
               </div>
@@ -263,13 +267,21 @@ function BadgeTile({
         style={done ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
       >
         <div
-          className="text-2xl leading-none"
+          className="grid place-items-center h-10"
           style={{
             filter: done ? undefined : "grayscale(1) blur(0.4px)",
             opacity: done ? 1 : 0.55,
           }}
         >
-          {done ? b.icon : "🔒"}
+          {done ? (
+            b.image ? (
+              <img src={b.image} alt="" className="h-10 w-10 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-2xl leading-none">{b.icon}</span>
+            )
+          ) : (
+            <span className="text-2xl leading-none">🔒</span>
+          )}
         </div>
         <div
           className={`mt-1 text-[10px] font-black truncate ${done ? "text-[color:var(--navy)]" : "text-muted-foreground"}`}
@@ -303,7 +315,12 @@ function BadgeTile({
             {TRACK_LABEL[b.track]} · {TIER_LABEL[b.tier]}
           </div>
           <div className="text-sm font-black flex items-center gap-1.5">
-            <span className="text-lg leading-none">{b.icon}</span> {b.name}
+            {b.image ? (
+              <img src={b.image} alt="" className="h-5 w-5 object-contain" loading="lazy" />
+            ) : (
+              <span className="text-lg leading-none">{b.icon}</span>
+            )}{" "}
+            {b.name}
           </div>
           <div className="mt-1 text-[11px] opacity-90 leading-snug">{b.desc}</div>
           <div className="mt-2 flex items-center justify-between text-[11px] font-bold">

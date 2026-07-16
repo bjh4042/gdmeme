@@ -236,6 +236,7 @@ function CodexCard({
   const { done, pct } = item;
   const color = item.badge.color;
   const icon = item.badge.icon;
+  const image = item.kind === "track" ? item.badge.image : undefined;
   const name = item.badge.name;
   const sub =
     item.kind === "area"
@@ -253,12 +254,22 @@ function CodexCard({
       title={done ? name : `${name} · 잠금 · 눌러서 조건 보기`}
     >
       <div className="flex items-center gap-1.5">
-        <span
-          className="text-xl leading-none"
-          style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.55 }}
-        >
-          {done ? icon : "🔒"}
-        </span>
+        {done && image ? (
+          <img
+            src={image}
+            alt=""
+            className="h-7 w-7 object-contain shrink-0"
+            style={{ opacity: done ? 1 : 0.55 }}
+            loading="lazy"
+          />
+        ) : (
+          <span
+            className="text-xl leading-none"
+            style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.55 }}
+          >
+            {done ? icon : "🔒"}
+          </span>
+        )}
         <span
           className={`text-[11px] font-black truncate ${
             done ? "text-[color:var(--navy)]" : "text-muted-foreground"
@@ -338,12 +349,21 @@ function InfoPanel({
         <X size={16} />
       </button>
       <div className="flex items-center gap-2 mb-2">
-        <span
-          className="text-2xl leading-none"
-          style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
-        >
-          {item.done ? item.badge.icon : "🔒"}
-        </span>
+        {item.done && item.kind === "track" && item.badge.image ? (
+          <img
+            src={item.badge.image}
+            alt=""
+            className="h-10 w-10 object-contain shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <span
+            className="text-2xl leading-none"
+            style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
+          >
+            {item.done ? item.badge.icon : "🔒"}
+          </span>
+        )}
         <div className="min-w-0">
           <div className="font-black text-[color:var(--navy)] truncate">{item.badge.name}</div>
           <div className="text-[10px] font-bold text-muted-foreground">
