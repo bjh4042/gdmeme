@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Gamepad2, NotebookPen } from "lucide-react";
+import { Lightbulb, NotebookPen } from "lucide-react";
 import type { ReactNode } from "react";
 
 type Sub = "quiz" | "reflect";
@@ -18,7 +18,7 @@ export function Step5Tab({ quiz, reflect }: { quiz: ReactNode; reflect: ReactNod
         aria-label="STEP 5 실천하기 하위 활동"
         className="inline-flex items-center gap-1 rounded-xl border border-border bg-white p-1 shadow-[var(--shadow-soft)]"
       >
-        <SubTab active={sub === "quiz"} onClick={() => setSub("quiz")} icon={<Gamepad2 className="h-4 w-4" />}>
+        <SubTab active={sub === "quiz"} onClick={() => setSub("quiz")} icon={<Lightbulb className="h-4 w-4" />}>
           스피드 퀴즈
         </SubTab>
         <SubTab
