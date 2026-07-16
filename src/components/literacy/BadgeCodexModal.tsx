@@ -349,12 +349,21 @@ function InfoPanel({
         <X size={16} />
       </button>
       <div className="flex items-center gap-2 mb-2">
-        <span
-          className="text-2xl leading-none"
-          style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
-        >
-          {item.done ? item.badge.icon : "🔒"}
-        </span>
+        {item.done && item.kind === "track" && item.badge.image ? (
+          <img
+            src={item.badge.image}
+            alt=""
+            className="h-10 w-10 object-contain shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <span
+            className="text-2xl leading-none"
+            style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
+          >
+            {item.done ? item.badge.icon : "🔒"}
+          </span>
+        )}
         <div className="min-w-0">
           <div className="font-black text-[color:var(--navy)] truncate">{item.badge.name}</div>
           <div className="text-[10px] font-bold text-muted-foreground">
