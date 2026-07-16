@@ -1,6 +1,19 @@
 // 12대 뱃지 도감 (4트랙 × 3티어).
 // 통계 값에서 즉시 파생하되, 상위에서 ratchet(누적 잠금 유지)로 관리.
 
+import dictionary_1 from "@/assets/badges/dictionary_1.png.asset.json";
+import dictionary_2 from "@/assets/badges/dictionary_2.png.asset.json";
+import dictionary_3 from "@/assets/badges/dictionary_3.png.asset.json";
+import xp_1 from "@/assets/badges/xp_1.png.asset.json";
+import xp_2 from "@/assets/badges/xp_2.png.asset.json";
+import xp_3 from "@/assets/badges/xp_3.png.asset.json";
+import reactions_1 from "@/assets/badges/reactions_1.png.asset.json";
+import reactions_2 from "@/assets/badges/reactions_2.png.asset.json";
+import reactions_3 from "@/assets/badges/reactions_3.png.asset.json";
+import journal_1 from "@/assets/badges/journal_1.png.asset.json";
+import journal_2 from "@/assets/badges/journal_2.png.asset.json";
+import journal_3 from "@/assets/badges/journal_3.png.asset.json";
+
 export type BadgeTrack = "dictionary" | "xp" | "reactions" | "journal";
 export type BadgeTier = 1 | 2 | 3;
 
@@ -15,6 +28,7 @@ export type BadgeDef = {
   metricLabel: string;
   unit: string;
   threshold: number;
+  image?: string; // CDN URL for badge illustration (optional; icon emoji is fallback)
 };
 
 export type BadgeStats = {
