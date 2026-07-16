@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Search, BookOpen, Gamepad2, NotebookPen, Target, Sparkles } from "lucide-react";
+import { Search, BookOpen, Lightbulb, NotebookPen, Flag, Sparkles } from "lucide-react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import heroIllustration from "@/assets/hero-illustration.png.asset.json";
 import type { DictEntry } from "@/lib/literacy-types";
@@ -105,7 +105,7 @@ export function HomeTab({
       key: "quiz",
       title: "퀴즈 놀이터",
       desc: "재미있는 퀴즈를 풀며 실력을 쌓아요.",
-      icon: <Gamepad2 className="h-6 w-6 text-accent" />,
+      icon: <Lightbulb className="h-6 w-6 text-accent" />,
       iconBg: "bg-accent/10",
       btn: "bg-accent hover:bg-accent/90 focus:ring-accent/40",
       btnText: "text-accent-foreground",
@@ -171,7 +171,7 @@ export function HomeTab({
             {/* 오늘의 미션 */}
             <div className="mt-4 w-full max-w-md rounded-2xl border border-rose-100 bg-white/80 backdrop-blur px-4 py-3 text-left">
               <div className="flex items-center gap-2 text-[11px] font-black text-rose-600 uppercase tracking-wider">
-                <Target className="h-3.5 w-3.5" />
+                <Flag className="h-3.5 w-3.5" />
                 오늘의 미션
               </div>
               <div className="mt-1 flex items-center justify-between gap-2">
