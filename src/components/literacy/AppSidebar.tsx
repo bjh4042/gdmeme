@@ -5,7 +5,7 @@ import {
   Heart,
   Pencil,
   Sprout,
-  Award,
+  Shield,
   LogOut,
   Check,
   type LucideIcon,
@@ -227,11 +227,11 @@ export function AppSidebar({
                   : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
               }`}
             >
-              <Award
+              <Shield
                 className={`h-5 w-5 shrink-0 ${activeKey === "badges" ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"}`}
                 strokeWidth={activeKey === "badges" ? 2.4 : 2}
               />
-              <span className="truncate">🏅 배지</span>
+              <span className="truncate">배지</span>
             </button>
           </li>
         </ul>
