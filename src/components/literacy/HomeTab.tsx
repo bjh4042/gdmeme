@@ -274,7 +274,12 @@ export function HomeTab({
               value={`${stats.reflections}개`}
               accent="text-purple-600"
             />
-            <StatRow label="받은 배지" value={`${stats.badges}개`} accent="text-amber-600" />
+            <StatRow
+              label="받은 배지"
+              value={`${stats.badges}개`}
+              accent="text-amber-600"
+              pulse={badgeCelebrate}
+            />
           </ul>
         </section>
 
@@ -316,11 +321,31 @@ export function HomeTab({
   );
 }
 
-function StatRow({ label, value, accent }: { label: string; value: string; accent: string }) {
+function StatRow({
+  label,
+  value,
+  accent,
+  pulse,
+}: {
+  label: string;
+  value: string;
+  accent: string;
+  pulse?: boolean;
+}) {
   return (
     <li className="flex items-center justify-between py-2">
       <span className="text-slate-600">{label}</span>
-      <span className={`font-black ${accent}`}>{value}</span>
+      <span
+        className={`font-black ${accent} ${pulse ? "animate-scale-in" : ""}`}
+        aria-live={pulse ? "polite" : undefined}
+      >
+        {value}
+        {pulse && (
+          <span className="ml-1 inline-block animate-fade-in" aria-hidden>
+            ✨
+          </span>
+        )}
+      </span>
     </li>
   );
 }
