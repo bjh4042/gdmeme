@@ -100,17 +100,36 @@ export function ProfileModal({
             </h3>
             {rep && (
               <div
-                className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-black text-white shadow-sm"
-                style={{ background: rep.color }}
+                className="mt-2 inline-flex items-center gap-2 rounded-2xl px-3 py-1.5 shadow-md ring-1 ring-white/70 animate-scale-in max-w-full"
+                style={{ background: `linear-gradient(135deg, ${rep.color}, ${rep.color}cc)` }}
                 title={`대표 칭호 · ${TIER_LABEL[rep.tier]}`}
               >
                 {rep.image ? (
-                  <img src={rep.image} alt="" className="h-4 w-4 object-contain" loading="lazy" />
+                  <img
+                    src={rep.image}
+                    alt={rep.name}
+                    className="h-8 w-8 object-contain drop-shadow shrink-0"
+                    loading="lazy"
+                  />
                 ) : (
-                  <span className="text-sm leading-none">{rep.icon}</span>
+                  <span className="text-xl leading-none" aria-hidden>
+                    {rep.icon}
+                  </span>
                 )}
-                {rep.name}
-                <span className="opacity-80 font-mono">Lv.{rep.tier}</span>
+                <span className="flex flex-col leading-tight min-w-0">
+                  <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
+                    대표 칭호
+                  </span>
+                  <span className="text-[12px] font-black text-white truncate">
+                    {rep.name}
+                    <span
+                      className="ml-1 font-mono text-white/90"
+                      aria-label={`레벨 ${rep.tier}`}
+                    >
+                      {"★".repeat(rep.tier)}
+                    </span>
+                  </span>
+                </span>
               </div>
             )}
           </div>
@@ -258,29 +277,34 @@ function BadgeTile({
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        aria-label={`${b.name} · ${TIER_LABEL[b.tier]} · ${p.current}/${p.target}${b.unit}`}
-        className={`w-full rounded-xl p-2 text-center border-2 transition-all duration-200 ${
+        aria-label={`${b.name} · ${TIER_LABEL[b.tier]} · ${done ? "획득 완료" : "잠금"} · ${p.current}/${p.target}${b.unit}`}
+        className={`w-full rounded-xl p-2 text-center border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--mint-deep)] ${
           done
             ? "border-white bg-white/95 hover:-translate-y-0.5 hover:shadow-md"
-            : "border-dashed border-white/60 bg-white/40 hover:bg-white/60"
+            : "border-dashed border-slate-300 bg-white/40 hover:-translate-y-0.5 hover:bg-white/60"
         } ${open ? "ring-2 ring-[color:var(--mint-deep)]" : ""}`}
         style={done ? { boxShadow: `inset 0 -3px 0 ${b.color}` } : undefined}
       >
-        <div
-          className="grid place-items-center h-10"
-          style={{
-            filter: done ? undefined : "grayscale(1) blur(0.4px)",
-            opacity: done ? 1 : 0.55,
-          }}
-        >
-          {done ? (
-            b.image ? (
-              <img src={b.image} alt="" className="h-10 w-10 object-contain" loading="lazy" />
-            ) : (
-              <span className="text-2xl leading-none">{b.icon}</span>
-            )
+        <div className="grid place-items-center h-12">
+          {b.image ? (
+            <img
+              src={b.image}
+              alt={done ? b.name : `${b.name} (잠금)`}
+              className="h-12 w-12 object-contain transition"
+              style={{
+                filter: done ? undefined : "grayscale(1)",
+                opacity: done ? 1 : 0.4,
+              }}
+              loading="lazy"
+            />
           ) : (
-            <span className="text-2xl leading-none">🔒</span>
+            <span
+              className="text-2xl leading-none"
+              style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.4 }}
+              aria-hidden
+            >
+              {done ? b.icon : "🔒"}
+            </span>
           )}
         </div>
         <div
@@ -289,7 +313,10 @@ function BadgeTile({
           {b.name}
         </div>
         <div className="mt-1 text-[9px] font-bold text-muted-foreground">
-          Lv.{b.tier} · {TIER_LABEL[b.tier]}
+          <span aria-label={`레벨 ${b.tier}`} style={{ color: done ? b.color : undefined }}>
+            {"★".repeat(b.tier)}
+          </span>{" "}
+          · {TIER_LABEL[b.tier]}
         </div>
         {/* progress */}
         <div className="mt-1.5 h-1.5 rounded-full bg-white/70 overflow-hidden">

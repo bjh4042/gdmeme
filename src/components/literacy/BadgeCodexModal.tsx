@@ -157,7 +157,7 @@ export function BadgeCodexModal({
               아직 획득한 뱃지가 없어요. 아래 잠긴 뱃지를 눌러 조건을 확인해 보세요!
             </div>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {owned.map((it) => (
                 <CodexCard
                   key={itemKey(it)}
@@ -186,7 +186,7 @@ export function BadgeCodexModal({
               🎉 모든 뱃지를 획득했어요!
             </div>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {locked.map((it) => (
                 <CodexCard
                   key={itemKey(it)}
@@ -242,43 +242,57 @@ function CodexCard({
     item.kind === "area"
       ? item.badge.area
       : `Lv.${item.badge.tier} · ${TIER_LABEL[item.badge.tier]}`;
+  const tier = item.kind === "track" ? item.badge.tier : 0;
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`text-left rounded-xl p-2 border-2 transition hover:scale-[1.02] active:scale-95 ${
-        done ? "border-white bg-white/95" : "border-dashed border-white/60 bg-white/40"
+      aria-label={`${name} · ${sub} · ${done ? "획득 완료" : "잠금"} · ${pct}%`}
+      className={`text-left rounded-xl p-2.5 border-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--navy)]/60 ${
+        done ? "border-white bg-white/95" : "border-dashed border-slate-300 bg-white/40"
       } ${active ? "ring-2 ring-[color:var(--navy)]/60" : ""}`}
       style={done ? { boxShadow: `inset 0 -3px 0 ${color}` } : undefined}
       title={done ? name : `${name} · 잠금 · 눌러서 조건 보기`}
     >
-      <div className="flex items-center gap-1.5">
-        {done && image ? (
+      <div className="grid place-items-center h-12 mb-1">
+        {image ? (
           <img
             src={image}
-            alt=""
-            className="h-7 w-7 object-contain shrink-0"
-            style={{ opacity: done ? 1 : 0.55 }}
+            alt={done ? name : `${name} (잠금)`}
+            className="h-12 w-12 object-contain transition"
+            style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.4 }}
             loading="lazy"
           />
         ) : (
           <span
-            className="text-xl leading-none"
-            style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.55 }}
+            className="text-2xl leading-none"
+            style={{ filter: done ? undefined : "grayscale(1)", opacity: done ? 1 : 0.4 }}
+            aria-hidden
           >
             {done ? icon : "🔒"}
           </span>
         )}
-        <span
-          className={`text-[11px] font-black truncate ${
-            done ? "text-[color:var(--navy)]" : "text-muted-foreground"
-          }`}
-        >
-          {name}
-        </span>
       </div>
-      <div className="mt-0.5 text-[9px] font-bold text-muted-foreground truncate">{sub}</div>
+      <div
+        className={`text-[11px] font-black truncate text-center ${
+          done ? "text-[color:var(--navy)]" : "text-muted-foreground"
+        }`}
+      >
+        {name}
+      </div>
+      <div className="mt-0.5 text-[9px] font-bold text-muted-foreground truncate text-center">
+        {tier > 0 ? (
+          <>
+            <span aria-label={`레벨 ${tier}`} style={{ color: done ? color : undefined }}>
+              {"★".repeat(tier)}
+            </span>{" "}
+            · {TIER_LABEL[tier as 1 | 2 | 3]}
+          </>
+        ) : (
+          sub
+        )}
+      </div>
       <div className="mt-1.5 h-1.5 rounded-full bg-white/70 overflow-hidden">
         <div
           className="h-full transition-all"
@@ -348,18 +362,20 @@ function InfoPanel({
       >
         <X size={16} />
       </button>
-      <div className="flex items-center gap-2 mb-2">
-        {item.done && item.kind === "track" && item.badge.image ? (
+      <div className="flex items-center gap-3 mb-2">
+        {item.kind === "track" && item.badge.image ? (
           <img
             src={item.badge.image}
-            alt=""
-            className="h-10 w-10 object-contain shrink-0"
+            alt={item.done ? item.badge.name : `${item.badge.name} (잠금)`}
+            className="h-16 w-16 object-contain shrink-0 drop-shadow"
+            style={{ filter: item.done ? undefined : "grayscale(1)", opacity: item.done ? 1 : 0.5 }}
             loading="lazy"
           />
         ) : (
           <span
-            className="text-2xl leading-none"
-            style={{ filter: item.done ? undefined : "grayscale(0.2)" }}
+            className="text-3xl leading-none"
+            style={{ filter: item.done ? undefined : "grayscale(1)", opacity: item.done ? 1 : 0.5 }}
+            aria-hidden
           >
             {item.done ? item.badge.icon : "🔒"}
           </span>
