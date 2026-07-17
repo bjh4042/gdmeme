@@ -157,7 +157,7 @@ export function BadgeCodexModal({
               아직 획득한 뱃지가 없어요. 아래 잠긴 뱃지를 눌러 조건을 확인해 보세요!
             </div>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {owned.map((it) => (
                 <CodexCard
                   key={itemKey(it)}
@@ -186,7 +186,7 @@ export function BadgeCodexModal({
               🎉 모든 뱃지를 획득했어요!
             </div>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {locked.map((it) => (
                 <CodexCard
                   key={itemKey(it)}
