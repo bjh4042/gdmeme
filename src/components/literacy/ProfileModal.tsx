@@ -100,17 +100,36 @@ export function ProfileModal({
             </h3>
             {rep && (
               <div
-                className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-black text-white shadow-sm"
-                style={{ background: rep.color }}
+                className="mt-2 inline-flex items-center gap-2 rounded-2xl px-3 py-1.5 shadow-md ring-1 ring-white/70 animate-scale-in max-w-full"
+                style={{ background: `linear-gradient(135deg, ${rep.color}, ${rep.color}cc)` }}
                 title={`대표 칭호 · ${TIER_LABEL[rep.tier]}`}
               >
                 {rep.image ? (
-                  <img src={rep.image} alt="" className="h-4 w-4 object-contain" loading="lazy" />
+                  <img
+                    src={rep.image}
+                    alt={rep.name}
+                    className="h-8 w-8 object-contain drop-shadow shrink-0"
+                    loading="lazy"
+                  />
                 ) : (
-                  <span className="text-sm leading-none">{rep.icon}</span>
+                  <span className="text-xl leading-none" aria-hidden>
+                    {rep.icon}
+                  </span>
                 )}
-                {rep.name}
-                <span className="opacity-80 font-mono">Lv.{rep.tier}</span>
+                <span className="flex flex-col leading-tight min-w-0">
+                  <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
+                    대표 칭호
+                  </span>
+                  <span className="text-[12px] font-black text-white truncate">
+                    {rep.name}
+                    <span
+                      className="ml-1 font-mono text-white/90"
+                      aria-label={`레벨 ${rep.tier}`}
+                    >
+                      {"★".repeat(rep.tier)}
+                    </span>
+                  </span>
+                </span>
               </div>
             )}
           </div>
