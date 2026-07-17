@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Student, StudentRecord } from "@/lib/literacy-types";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
-import heroIllustration from "@/assets/hero-illustration.png.asset.json";
 
 export function Onboarding({
   onSubmit,
@@ -141,9 +140,6 @@ export function Onboarding({
 
         {/* Inner screen */}
         <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] bg-white flex flex-col">
-          <div className="absolute top-0 inset-x-0 z-30 bg-gray-50 border-b border-gray-100 text-gray-500 text-[10px] text-center py-1 px-2 rounded-t-[2.25rem]">
-            🖥️ 학교 PC 및 태블릿(가로 모드) 환경 최적화
-          </div>
           {/* Dynamic-island / notch */}
           <div
             aria-hidden
@@ -218,17 +214,6 @@ export function Onboarding({
                     </li>
                   ))}
                 </ol>
-                <div className="mt-4 mx-auto max-w-[260px] sm:max-w-[320px]">
-                  <img
-                    src={heroIllustration.url}
-                    alt="태블릿과 책으로 바른말을 배우는 두 학생 일러스트"
-                    width={1600}
-                    height={1024}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-auto select-none"
-                  />
-                </div>
               </div>
               <form onSubmit={submit} className="space-y-4">
                 <div>
@@ -324,6 +309,9 @@ export function Onboarding({
             </div>
           </div>
 
+          <div className="bg-gray-50 border-t border-gray-100 text-gray-500 text-[10px] text-center py-1 px-2">
+            🖥️ 학교 PC 및 태블릿(가로 모드) 환경 최적화
+          </div>
           {/* Home indicator */}
           <div aria-hidden className="pb-2 pt-1 flex justify-center">
             <span className="h-1 w-24 rounded-full bg-slate-800/80" />
