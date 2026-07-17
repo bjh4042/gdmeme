@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, BookOpen, Lightbulb, NotebookPen, Flag, Sparkles } from "lucide-react";
 import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import heroIllustration from "@/assets/hero-illustration.png.asset.json";
@@ -38,6 +38,18 @@ export function HomeTab({
     const roleplay = engagement?.roleplayCleared?.length ?? 0;
     return { registered, reflections, badges, roleplay };
   }, [dict, engagement, activeId]);
+
+  // 새 배지 획득 시 가벼운 축하 애니메이션 (scale + fade). 이전 카운트 대비 증가만 트리거.
+  const prevBadges = useRef<number | null>(null);
+  const [badgeCelebrate, setBadgeCelebrate] = useState(false);
+  useEffect(() => {
+    if (prevBadges.current !== null && stats.badges > prevBadges.current) {
+      setBadgeCelebrate(true);
+      const t = window.setTimeout(() => setBadgeCelebrate(false), 900);
+      return () => window.clearTimeout(t);
+    }
+    prevBadges.current = stats.badges;
+  }, [stats.badges]);
 
   const recent = useMemo(() => {
     const items: { tag: string; tagColor: string; text: string }[] = [];
