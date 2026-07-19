@@ -3,6 +3,10 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { computeTotal, gradeOf } from "@/lib/literacy-types";
 import { SEED_DICT } from "@/lib/literacy-seed";
+import {
+  DEFAULT_DICT_CURRICULUM_CODE,
+  DEFAULT_DICT_CURRICULUM_CODES,
+} from "@/lib/curriculum-standards";
 
 const PERSIST_KEY = "wtmeme:store:dict:v1";
 const LEGACY_KEY = "wtmeme:dict:v5";
@@ -117,7 +121,8 @@ export const useDictStore = create<DictState>()(
             status: "pending",
             grade: gradeOf(total).label,
             alternatives: payload.alternatives,
-            curriculum_code: "4국01-02",
+            curriculum_code: DEFAULT_DICT_CURRICULUM_CODE,
+            curriculum_codes: [...DEFAULT_DICT_CURRICULUM_CODES],
             timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
             vote_count: 1,
             sum_eval: payload.evaluations,

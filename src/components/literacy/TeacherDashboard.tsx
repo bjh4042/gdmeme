@@ -385,7 +385,8 @@ export function TeacherDashboard({
             status: "approved",
             grade: statusStr || gradeOf(nextScore).label,
             alternatives,
-            curriculum_code: "4국01-02",
+            curriculum_code: "4국04-05",
+            curriculum_codes: ["4국04-05", "4국05-04"],
             timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
             vote_count: 1,
           };
