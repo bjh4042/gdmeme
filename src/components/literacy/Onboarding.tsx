@@ -158,63 +158,60 @@ export function Onboarding({
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="min-h-full flex flex-col justify-center gap-8">
               <div className="text-center">
-                <div className="mx-auto max-w-[240px] sm:max-w-[320px] lg:max-w-[360px] mb-4">
-                  <div
-                    className="relative w-full rounded-2xl overflow-hidden bg-slate-100"
-                    style={{ aspectRatio: "720 / 393" }}
-                  >
-                    {!logoLoaded && (
-                      <div
-                        className="absolute inset-0 animate-pulse bg-gradient-to-br from-slate-200 to-slate-100"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <img
-                      ref={imgRef}
-                      src={logoAsset.url}
-                      alt="바른말 수호대 로고"
-                      width={720}
-                      height={393}
-                      fetchPriority="high"
-                      decoding="async"
-                      onLoad={() => setLogoLoaded(true)}
-                      className={`w-full h-auto object-contain transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+              <div className="flex items-center justify-center gap-5">
+                <div className="relative shrink-0 h-18 w-auto">
+                  {!logoLoaded && (
+                    <div
+                      className="absolute inset-0 min-w-[72px] animate-pulse rounded-xl bg-gradient-to-br from-slate-200 to-slate-100"
+                      aria-hidden="true"
                     />
-                  </div>
+                  )}
+                  <img
+                    ref={imgRef}
+                    src={logoAsset.url}
+                    alt="바른말 수호대 로고"
+                    fetchPriority="high"
+                    decoding="async"
+                    onLoad={() => setLogoLoaded(true)}
+                    className={`h-18 w-auto shrink-0 object-contain transition-opacity duration-150 ${logoLoaded ? "opacity-100" : "opacity-0"}`}
+                  />
                 </div>
-                <h1 className="mt-2 text-base font-black text-[color:var(--navy)]">
-                  바른말 수호대
-                </h1>
-                <p className="mt-1 text-[11px] leading-snug text-slate-600 px-2">
-                  디지털 언어의 뜻과 맥락을 살펴보고,
-                  <br />
-                  상대를 존중하는 표현을 함께 만들어 가는 학습 공간
-                </p>
-                <ol
-                  aria-label="바른말 수호 5단계 학습 흐름"
-                  className="mt-3 flex items-center justify-center gap-1 text-[10px] font-bold text-slate-600 flex-wrap"
-                >
-                  {[
-                    { i: "🔎", t: "발견" },
-                    { i: "🧭", t: "파헤치기" },
-                    { i: "💗", t: "공감" },
-                    { i: "✏️", t: "바꾸기" },
-                    { i: "🌱", t: "실천" },
-                  ].map((s, idx, arr) => (
-                    <li key={s.t} className="flex items-center gap-1">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5">
-                        <span aria-hidden>{s.i}</span>
-                        <span>{s.t}</span>
-                      </span>
-                      {idx < arr.length - 1 && (
-                        <span aria-hidden className="text-slate-300">
-                          ›
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ol>
+                <div className="text-left">
+                  <h1 className="text-base font-black text-[color:var(--navy)]">
+                    바른말 수호대
+                  </h1>
+                  <p className="mt-1 text-[11px] leading-snug text-slate-600">
+                    디지털 언어의 뜻과 맥락을 살펴보고,
+                    <br />
+                    상대를 존중하는 표현을 함께 만들어 가는 학습 공간
+                  </p>
+                </div>
               </div>
+              <ol
+                aria-label="바른말 수호 5단계 학습 흐름"
+                className="mt-3 flex items-center justify-center gap-1 text-[10px] font-bold text-slate-600 flex-wrap"
+              >
+                {[
+                  { i: "🔎", t: "발견" },
+                  { i: "🧭", t: "파헤치기" },
+                  { i: "💗", t: "공감" },
+                  { i: "✏️", t: "바꾸기" },
+                  { i: "🌱", t: "실천" },
+                ].map((s, idx, arr) => (
+                  <li key={s.t} className="flex items-center gap-1">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5">
+                      <span aria-hidden>{s.i}</span>
+                      <span>{s.t}</span>
+                    </span>
+                    {idx < arr.length - 1 && (
+                      <span aria-hidden className="text-slate-300">
+                        ›
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </div>
               <form onSubmit={submit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-[color:var(--navy)] mb-1.5">
