@@ -157,7 +157,7 @@ export function Onboarding({
           {/* Scrollable screen content */}
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="min-h-full flex flex-col justify-center gap-8">
-            <div className="text-center">
+              <div className="text-center">
               <div className="flex items-center justify-center gap-5">
                 <div className="relative shrink-0 h-18 w-auto">
                   {!logoLoaded && (
