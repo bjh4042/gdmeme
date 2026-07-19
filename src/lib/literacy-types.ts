@@ -18,6 +18,8 @@ export type DictEntry = {
   grade: string;
   alternatives: string[];
   curriculum_code: string;
+  /** 여러 성취기준을 함께 연결할 때 사용. 미지정 시 curriculum_code 하나만 사용. */
+  curriculum_codes?: string[];
   timestamp: string;
   vote_count?: number;
   sum_eval?: Evaluation;
