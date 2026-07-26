@@ -80,7 +80,7 @@ const STEP_ITEMS: StepItem[] = [
     step: 5,
     stageKey: "practice",
     label: "실천하기",
-    sub: "퀴즈 · 표현 돌아보기",
+    sub: "AI 실천 코치 · 7일 챌린지",
     icon: Sprout,
     emoji: "🌱",
   },
