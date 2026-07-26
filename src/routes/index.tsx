@@ -36,7 +36,7 @@ import { RoadmapCard, StageChip } from "@/components/literacy/RoadmapCard";
 import { stageContextForTab } from "@/lib/stage-context";
 import { AppSidebar, type SidebarKey } from "@/components/literacy/AppSidebar";
 import { HomeTab } from "@/components/literacy/HomeTab";
-import { Step5Tab } from "@/components/literacy/Step5Tab";
+import { PracticeTab } from "@/components/literacy/PracticeTab";
 import { deriveRoadmap } from "@/lib/roadmap";
 
 export const Route = createFileRoute("/")({
@@ -240,12 +240,13 @@ function Index() {
   const quizNode = useMemo(() => <QuizTab dict={dict} onXP={awardXP} />, [dict, awardXP]);
   const step5Node = useMemo(
     () => (
-      <Step5Tab
-        quiz={<QuizTab dict={dict} onXP={awardXP} />}
-        reflect={<AssistantTab onXP={awardXP} />}
+      <PracticeTab
+        studentKey={activeId}
+        studentName={student?.name}
+        onXP={(delta, kind, note) => awardXP(delta, kind, note)}
       />
     ),
-    [dict, awardXP],
+    [activeId, student?.name, awardXP],
   );
   const dictNode = useMemo(
     () => (
