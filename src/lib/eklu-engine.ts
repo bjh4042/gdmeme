@@ -1,19 +1,21 @@
 /**
- * EKLU Engine v1.0 — Elementary Korean Language Understanding Engine
+ * EKLU Engine v1.1 — Elementary Korean Language Understanding Engine
  *
  * 초등학교 3~4학년 학생 입력을 "교육적으로 올바르게 이해"만 하는 내부 엔진.
  * ❌ 답변 생성 금지
- * ❌ 학생에게 내부 판단 노출 금지
+ * ❌ 확인 질문 문장 생성 금지 (Teaching Engine이 담당)
+ * ❌ 학생 화면 노출 금지
  * ✅ Teaching Engine 으로 전달할 구조화된 이해 결과만 반환
  *
- * 파이프라인:
- *   입력 → 정리(Normalize) → 의도 → 감정 → 감정 변화 → 학생 모델 갱신
- *        → 반복 오류 → 오개념 → 학습 단계 → 신뢰도 → 최종 출력
- *
- * 원칙:
- *   - 맞춤법보다 의미 우선. 오타/줄임말/초성/이모티콘/반말 모두 정상 입력.
- *   - 짧은 입력은 최근 5턴 문맥으로 복원.
- *   - 이해 실패 시 학생에게 되묻지 않고 "쉬운 확인 질문"을 힌트로 넘긴다.
+ * v1.1 변경점
+ *  - 정규화와 의미 해석 분리 (NormalizationResult)
+ *  - 다중 의도 / 복합 감정 (primary + secondary)
+ *  - 분석 근거(evidence)와 규칙 id 노출 (내부 검증용)
+ *  - StudentModel 누적 완화(EWMA), observationCount / stability / insufficient_data
+ *  - 언어 형식 vs 교육적 역량 분리 (languageFormLevel / empathyLevel / expressionCompleteness / meaningClarity)
+ *  - 오개념 vs 방어 반응(defensiveResponse) 분리
+ *  - clarificationNeed 구조 (질문 문장은 만들지 않음)
+ *  - 하위 호환: understand({input, history, model}), serializeForTeachingEngine 유지, 기존 필드 유지
  */
 
 // ─────────────────────────────────────────────────────────────
@@ -50,27 +52,65 @@ export type Emotion =
   | "neutral";
 
 export type LearningStage =
-  | "discovery" // 발견 · 관찰
-  | "investigation" // 탐구 · 원인
-  | "empathy" // 공감
-  | "change" // 표현 변화
-  | "practice"; // 실천
+  | "discovery"
+  | "investigation"
+  | "empathy"
+  | "change"
+  | "practice";
 
 export type Confidence = "high" | "mid" | "low";
 
+export type NormalizationResult = {
+  original: string;
+  normalizedText: string;
+  possibleMeanings: string[];
+  selectedMeaning?: string;
+  selectedByContext: boolean;
+};
+
+export type IntentAnalysis = {
+  primary: Intent;
+  secondary: Intent[];
+  confidence: number; // 0..1
+};
+
+export type EmotionAnalysis = {
+  primary: Emotion;
+  secondary: Emotion[];
+  intensity: number; // 0..1
+  confidence: number; // 0..1
+};
+
+export type Evidence = {
+  matchedTokens: string[];
+  contextSignals: string[];
+  ruleIds: string[];
+};
+
 export type StudentModel = {
-  empathyLevel: number; // 0..5
-  expressionLevel: number; // 0..5
-  engagement: number; // 0..5
+  // 교육적 역량 (0..5)
+  empathyLevel: number;
+  expressionLevel: number; // 하위 호환용 alias for expressionCompleteness
+  expressionCompleteness: number; // 의미 완결성
+  meaningClarity: number; // 의미 명확도
+  languageFormLevel: number; // 맞춤법·문장 형식(낮은 가중치)
+  engagement: number;
+  confidence: number;
+  helpNeed: number;
+  choicePreference: number;
+
   avgReplyLength: number;
   typoRate: number; // 0..1
-  choicePreference: number; // 0..5 (선택지 답변 선호)
-  confidence: number; // 0..5
-  helpNeed: number; // 0..5
   repeatedErrors: Record<string, number>;
-  recentEmotions: Emotion[]; // 최근 순서대로
+  recentEmotions: Emotion[];
   stage: LearningStage;
+
+  // 안정화 메타
   turns: number;
+  observationCount: number;
+  evidenceCount: number;
+  stability: number; // 0..1
+  lastUpdatedAt: number; // epoch ms
 };
 
 export type EkluTurn = {
@@ -78,102 +118,174 @@ export type EkluTurn = {
   text: string;
 };
 
+export type ClarificationNeed = {
+  required: boolean;
+  target?: "intent" | "emotion" | "event" | "meaning";
+  strategy?: "forced_choice" | "easy_open_question" | "context_check";
+  candidates?: string[];
+};
+
+export type DefensiveResponse = {
+  detected: boolean;
+  type?: "blame_shift" | "self_justification" | "avoidance" | "denial";
+  confidence: number; // 0..1
+};
+
+export type Misconception = {
+  detected: boolean;
+  kind?: "friend_teasing_ok" | "close_swearing_ok" | "joke_excuses_all";
+  evidence?: string;
+  confidence: number; // 0..1
+};
+
 export type EkluResult = {
-  /** ① 정리된 입력 (맞춤법·조사·줄임말 완화) */
+  // 하위 호환 (v1.0)
   normalized: string;
-  /** ② 학생의 진짜 목적 */
   intent: Intent;
-  /** ③ 현재 감정 */
   emotion: Emotion;
-  /** ④ 감정 변화 흐름 (오래된 → 최신) */
   emotionTrajectory: Emotion[];
-  /** ⑤ 갱신된 학생 모델 */
   studentModel: StudentModel;
-  /** ⑥ 반복 사고 오류 감지 */
   repeatedError: {
     detected: boolean;
     kind?: "blame_shift" | "give_up" | "joke_avoid" | "denial";
     count?: number;
   };
-  /** ⑦ 오개념 감지 */
-  misconception: {
-    detected: boolean;
-    kind?: "friend_teasing_ok" | "close_swearing_ok" | "joke_excuses_all";
-    evidence?: string;
-  };
-  /** ⑧ 현재 학습 단계 (다음에 어떤 교수 전략이 필요한지) */
+  misconception: Misconception;
   stage: LearningStage;
-  /** ⑨ 입력 이해 신뢰도 */
   confidence: Confidence;
-  /** 이해가 어려울 때 Teaching Engine 이 사용할 "쉬운 확인 질문" 후보 */
   clarifierHints: string[];
+
+  // v1.1 상세 구조
+  normalization: NormalizationResult;
+  intentAnalysis: IntentAnalysis;
+  emotionAnalysis: EmotionAnalysis;
+  defensiveResponse: DefensiveResponse;
+  clarificationNeed: ClarificationNeed;
+  evidence: Evidence;
+  status: "ok" | "insufficient_data";
 };
 
 // ─────────────────────────────────────────────────────────────
-// 기본 학생 모델
+// 유틸
+// ─────────────────────────────────────────────────────────────
+
+function clamp(n: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(hi, n));
+}
+
+function clamp01(n: number) {
+  return clamp(n, 0, 1);
+}
+
+function shortReply(s: string): boolean {
+  return s.replace(/\s+/g, "").length <= 3;
+}
+
+// ─────────────────────────────────────────────────────────────
+// 학생 모델 초기값
 // ─────────────────────────────────────────────────────────────
 
 export function createStudentModel(partial?: Partial<StudentModel>): StudentModel {
   return {
     empathyLevel: 2,
     expressionLevel: 2,
+    expressionCompleteness: 2,
+    meaningClarity: 2,
+    languageFormLevel: 2,
     engagement: 3,
-    avgReplyLength: 0,
-    typoRate: 0,
-    choicePreference: 2,
     confidence: 2,
     helpNeed: 2,
+    choicePreference: 2,
+    avgReplyLength: 0,
+    typoRate: 0,
     repeatedErrors: {},
     recentEmotions: [],
     stage: "discovery",
     turns: 0,
+    observationCount: 0,
+    evidenceCount: 0,
+    stability: 0,
+    lastUpdatedAt: 0,
     ...partial,
   };
 }
 
 // ─────────────────────────────────────────────────────────────
-// 입력 정리 (Normalization)
+// 1) 정규화 (원문 보존 + 표기 정리 + 가능한 의미 후보)
 // ─────────────────────────────────────────────────────────────
 
-/** 초성/줄임말 → 의미 확장 사전. 학생에게 노출되지 않고 내부 해석용. */
-const SHORTCUT_MAP: Array<[RegExp, string]> = [
-  [/\bㅇㅇ\b/g, "응"],
-  [/\bㄴㄴ\b/g, "아니"],
-  [/\bㄱㅊ\b/g, "괜찮아"],
-  [/\bㄹㅇ\b/g, "정말"],
-  [/\bㅇㅋ\b/g, "알겠어"],
-  [/\bㄱㄱ\b/g, "가자"],
-  [/\bㅅㄱ\b/g, "수고"],
-  [/몰루/g, "잘 모르겠다"],
+/** 형태 정리용 — 표기만 다듬는다. 의미를 확정하지 않는다. */
+const FORM_FIX: Array<[RegExp, string]> = [
   [/알겟/g, "알겠"],
   [/그랫/g, "그랬"],
   [/햇는대/g, "했는데"],
-  [/인대\b/g, "인데"],
-  [/자나\b/g, "잖아"],
+  [/햇/g, "했"],
+  [/인대(?![가-힣])/g, "인데"],
+  [/자나(?![가-힣])/g, "잖아"],
+  [/했자나/g, "했잖아"],
 ];
 
-/** 이모티콘 감정 태그 (내부용, 원문은 유지) */
-const EMOTICON_HINTS: Array<[RegExp, Emotion]> = [
-  [/ㅠㅠ+|ㅜㅜ+/g, "sadness"],
-  [/ㅋㅋ+/g, "playful"],
-  [/ㅎㅎ+/g, "shy"],
-  [/ㅡㅡ+|;;+/g, "unfair"],
+/** 다의 표현 사전 — 의미는 후보로만 남긴다. */
+const MEANING_HINTS: Array<{ re: RegExp; meanings: string[] }> = [
+  { re: /(^|\s)ㅇㅇ($|\s)/, meanings: ["동의", "인정", "형식적 대답"] },
+  { re: /(^|\s)ㄴㄴ($|\s)/, meanings: ["거절", "부정"] },
+  { re: /(^|\s)ㄱㅊ($|\s)/, meanings: ["괜찮음", "무관심"] },
+  { re: /(^|\s)ㄹㅇ($|\s)/, meanings: ["강한 동의", "강조"] },
+  { re: /(^|\s)ㅇㅋ($|\s)/, meanings: ["수락", "이해"] },
+  { re: /ㅋㅋ+/, meanings: ["웃음", "장난", "당황 회피", "친근함"] },
+  { re: /ㅎㅎ+/, meanings: ["쑥스러움", "부드러운 웃음", "회피"] },
+  { re: /ㅠㅠ+|ㅜㅜ+/, meanings: ["슬픔", "억울함", "과장 표현"] },
+  { re: /ㅡㅡ+|;;+/, meanings: ["불만", "억울함", "회피"] },
+  { re: /몰루|모름/, meanings: ["회피", "실제 모름", "말하기 싫음"] },
+  { re: /^응$|^어$|^넹$/, meanings: ["동의", "형식적 대답"] },
+  { re: /^몰라$/, meanings: ["회피", "실제 모름", "생각 중"] },
+  { re: /^아니$/, meanings: ["거절", "정정"] },
 ];
 
 function collapseRepeats(s: string): string {
-  // 같은 문자 4개 이상 반복 → 2개로 축약 (의미는 보존, 잡음만 감소)
   return s.replace(/(.)\1{3,}/g, "$1$1");
 }
 
-export function normalizeInput(raw: string): string {
+function normalizeTextOnly(raw: string): string {
   let s = (raw ?? "").trim();
   if (!s) return "";
   s = collapseRepeats(s);
-  // 조사 앞 붙어있는 흔한 오탈자 보정
-  s = s.replace(/([가-힣])(는|은|이|가|을|를|에|에서|으로|로|와|과|도|만)([가-힣])/g, "$1$2 $3");
-  for (const [re, rep] of SHORTCUT_MAP) s = s.replace(re, rep);
+  s = s.replace(
+    /([가-힣])(는|은|이|가|을|를|에|에서|으로|로|와|과|도|만)([가-힣])/g,
+    "$1$2 $3",
+  );
+  for (const [re, rep] of FORM_FIX) s = s.replace(re, rep);
   s = s.replace(/\s{2,}/g, " ").trim();
   return s;
+}
+
+/** @deprecated 하위 호환: 표기 정리만 반환. 의미 확정은 하지 않음. */
+export function normalizeInput(raw: string): string {
+  return normalizeTextOnly(raw);
+}
+
+function analyzeNormalization(raw: string, aiPrev?: string): NormalizationResult {
+  const original = raw ?? "";
+  const normalizedText = normalizeTextOnly(original);
+  const possibleMeanings: string[] = [];
+  for (const { re, meanings } of MEANING_HINTS) {
+    if (re.test(original) || re.test(normalizedText)) {
+      for (const m of meanings) if (!possibleMeanings.includes(m)) possibleMeanings.push(m);
+    }
+  }
+  let selectedMeaning: string | undefined;
+  let selectedByContext = false;
+  if (possibleMeanings.length > 0 && aiPrev && /[\?？]/.test(aiPrev)) {
+    // 직전이 질문이면 "동의/거절/회피" 중 하나로 문맥상 좁힘
+    const preferred = possibleMeanings.find((m) =>
+      ["동의", "수락", "거절", "부정", "회피"].includes(m),
+    );
+    if (preferred) {
+      selectedMeaning = preferred;
+      selectedByContext = true;
+    }
+  }
+  return { original, normalizedText, possibleMeanings, selectedMeaning, selectedByContext };
 }
 
 function looksTypoHeavy(raw: string, normalized: string): boolean {
@@ -183,245 +295,387 @@ function looksTypoHeavy(raw: string, normalized: string): boolean {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 문맥 복원
+// 2) 의도 분석 (다중)
 // ─────────────────────────────────────────────────────────────
 
-function shortReply(s: string): boolean {
-  return s.replace(/\s+/g, "").length <= 3;
-}
+type IntentRule = { id: string; intent: Intent; re: RegExp; weight: number };
 
-function lastStudentAndAiPair(history: EkluTurn[]): { aiPrev?: string } {
-  for (let i = history.length - 1; i >= 0; i--) {
-    const t = history[i];
-    if (t.role !== "student") return { aiPrev: t.text };
-  }
-  return {};
-}
-
-// ─────────────────────────────────────────────────────────────
-// 의도 분석
-// ─────────────────────────────────────────────────────────────
-
-const INTENT_PATTERNS: Array<{ intent: Intent; re: RegExp }> = [
-  { intent: "apology", re: /(미안|죄송|잘못했)/ },
-  { intent: "excuse", re: /(먼저 했|먼저했|쟤가|얘가|나만|너도 그랬|너도그랬|어쩔 수 없|어쩔수없)/ },
-  { intent: "help_request", re: /(도와|알려줘|어떻게 해|어떡해|모르겠어)/ },
-  { intent: "question", re: /(왜|뭐|어떻게|언제|누구|어디)[\?？]?$|[\?？]\s*$/ },
-  { intent: "refuse", re: /^(아니|싫|안 ?해|안 ?할래|하기 싫)/ },
-  { intent: "agree", re: /^(응|어|맞아|그래|알겠|좋아)$/ },
-  { intent: "disagree", re: /(아닌데|그건 아니|틀렸|그렇지 않)/ },
-  { intent: "avoid", re: /^(몰라|글쎄|그러게|나중에|패스)$/ },
-  { intent: "joke", re: /(장난|ㅋㅋ|헤헤|ㅎㅎ)/ },
-  { intent: "empathy", re: /(속상했겠|힘들었겠|그랬구나|이해해)/ },
-  { intent: "explain", re: /(왜냐하면|because|그래서|그러니까|사실은)/ },
+const INTENT_RULES: IntentRule[] = [
+  { id: "i.apology", intent: "apology", re: /(미안|죄송|잘못했)/, weight: 3 },
+  { id: "i.excuse.first", intent: "excuse", re: /(먼저 했|먼저했|먼저햇)/, weight: 3 },
+  { id: "i.excuse.blame", intent: "excuse", re: /(쟤가|얘가|너도 그랬|너도그랬|너도그랫)/, weight: 3 },
+  { id: "i.excuse.helpless", intent: "excuse", re: /(어쩔 수 없|어쩔수없|나만)/, weight: 2 },
+  { id: "i.help", intent: "help_request", re: /(도와|알려줘|어떻게 해|어떡해|모르겠어)/, weight: 3 },
+  { id: "i.question", intent: "question", re: /(왜|뭐|어떻게|언제|누구|어디)[\?？]?$|[\?？]\s*$/, weight: 2 },
+  { id: "i.refuse", intent: "refuse", re: /^(아니|싫|안 ?해|안 ?할래|하기 싫)/, weight: 3 },
+  { id: "i.agree", intent: "agree", re: /^(응|어|맞아|그래|알겠|좋아|넹)$/, weight: 2 },
+  { id: "i.disagree", intent: "disagree", re: /(아닌데|그건 아니|틀렸|그렇지 않)/, weight: 3 },
+  { id: "i.avoid", intent: "avoid", re: /^(몰라|글쎄|그러게|나중에|패스)$/, weight: 3 },
+  { id: "i.joke", intent: "joke", re: /(장난|ㅋㅋ|헤헤|ㅎㅎ)/, weight: 1 },
+  { id: "i.empathy", intent: "empathy", re: /(속상했겠|힘들었겠|그랬구나|이해해|속상했을|힘들었을)/, weight: 3 },
+  { id: "i.explain", intent: "explain", re: /(왜냐하면|그래서|그러니까|사실은)/, weight: 2 },
 ];
 
-function detectIntent(normalized: string, aiPrev?: string): Intent {
-  const s = normalized;
-  if (!s) return "unknown";
-  for (const { intent, re } of INTENT_PATTERNS) if (re.test(s)) return intent;
-  // 매우 짧고 직전이 질문이면 → agree/refuse/avoid 로 문맥 해석
-  if (shortReply(s) && aiPrev && /[\?？]/.test(aiPrev)) {
-    if (/^(응|어|네|넹)$/.test(s)) return "agree";
-    if (/^(아니|노|no)$/i.test(s)) return "refuse";
-    return "avoid";
+function analyzeIntent(
+  normalized: string,
+  aiPrev: string | undefined,
+  evidence: Evidence,
+): IntentAnalysis {
+  const scores = new Map<Intent, number>();
+  if (!normalized) {
+    return { primary: "unknown", secondary: [], confidence: 0 };
   }
-  return "explain";
-}
-
-// ─────────────────────────────────────────────────────────────
-// 감정 분석
-// ─────────────────────────────────────────────────────────────
-
-const EMOTION_PATTERNS: Array<{ emo: Emotion; re: RegExp; weight: number }> = [
-  { emo: "unfair", re: /(억울|나만|왜 나|먼저 했|먼저했)/, weight: 3 },
-  { emo: "anger", re: /(짜증|화나|열받|싫어|미워)/, weight: 3 },
-  { emo: "sadness", re: /(속상|슬프|눈물|서운|외로)/, weight: 3 },
-  { emo: "sorry", re: /(미안|죄송|잘못했)/, weight: 3 },
-  { emo: "shy", re: /(부끄|민망|쑥스)/, weight: 2 },
-  { emo: "joy", re: /(좋아|신나|재밌|기뻐|행복)/, weight: 2 },
-  { emo: "playful", re: /(장난|ㅋㅋ|헤헤)/, weight: 1 },
-  { emo: "avoidant", re: /^(몰라|글쎄|그러게|패스)$/, weight: 2 },
-  { emo: "confused", re: /(어렵|헷갈|모르겠)/, weight: 2 },
-  { emo: "confident", re: /(할 수 있|자신|당연히|해볼래)/, weight: 2 },
-  { emo: "nervous", re: /(떨려|긴장|무서)/, weight: 2 },
-];
-
-function detectEmotion(raw: string, normalized: string): Emotion {
-  const scores: Partial<Record<Emotion, number>> = {};
-  for (const [re, emo] of EMOTICON_HINTS) {
-    if (re.test(raw)) scores[emo] = (scores[emo] ?? 0) + 1;
-  }
-  for (const { emo, re, weight } of EMOTION_PATTERNS) {
-    if (re.test(normalized)) scores[emo] = (scores[emo] ?? 0) + weight;
-  }
-  let best: Emotion = "neutral";
-  let bestScore = 0;
-  for (const [emo, sc] of Object.entries(scores)) {
-    if ((sc ?? 0) > bestScore) {
-      best = emo as Emotion;
-      bestScore = sc ?? 0;
+  for (const rule of INTENT_RULES) {
+    if (rule.re.test(normalized)) {
+      scores.set(rule.intent, (scores.get(rule.intent) ?? 0) + rule.weight);
+      evidence.ruleIds.push(rule.id);
+      const m = normalized.match(rule.re);
+      if (m) evidence.matchedTokens.push(m[0]);
     }
   }
-  return best;
+  // 문맥 기반 짧은 답 보정
+  if (scores.size === 0 && shortReply(normalized) && aiPrev && /[\?？]/.test(aiPrev)) {
+    if (/^(응|어|네|넹|ㅇㅇ)$/.test(normalized)) {
+      scores.set("agree", 2);
+      evidence.contextSignals.push("short_reply_after_question:agree");
+    } else if (/^(아니|노|no|ㄴㄴ)$/i.test(normalized)) {
+      scores.set("refuse", 2);
+      evidence.contextSignals.push("short_reply_after_question:refuse");
+    } else {
+      scores.set("avoid", 1);
+      evidence.contextSignals.push("short_reply_after_question:avoid");
+    }
+  }
+  if (scores.size === 0) {
+    return { primary: "explain", secondary: [], confidence: 0.2 };
+  }
+  const sorted = [...scores.entries()].sort((a, b) => b[1] - a[1]);
+  const [primary, primaryScore] = sorted[0];
+  const secondary = sorted.slice(1).map(([i]) => i);
+  const total = sorted.reduce((s, [, v]) => s + v, 0);
+  const confidence = clamp01(primaryScore / Math.max(1, total));
+  return { primary, secondary, confidence };
 }
 
 // ─────────────────────────────────────────────────────────────
-// 반복 오류 & 오개념
+// 3) 감정 분석 (복합)
+// ─────────────────────────────────────────────────────────────
+
+type EmotionRule = { id: string; emo: Emotion; re: RegExp; weight: number };
+
+const EMOTION_RULES: EmotionRule[] = [
+  { id: "e.unfair", emo: "unfair", re: /(억울|나만|왜 나|먼저 했|먼저했|먼저햇)/, weight: 3 },
+  { id: "e.anger", emo: "anger", re: /(짜증|화나|열받|미워)/, weight: 3 },
+  { id: "e.sad", emo: "sadness", re: /(속상|슬프|눈물|서운|외로|속상햇|속상했)/, weight: 3 },
+  { id: "e.sorry", emo: "sorry", re: /(미안|죄송|잘못했)/, weight: 3 },
+  { id: "e.shy", emo: "shy", re: /(부끄|민망|쑥스|ㅎㅎ)/, weight: 1 },
+  { id: "e.joy", emo: "joy", re: /(좋아|신나|재밌|기뻐|행복)/, weight: 2 },
+  { id: "e.play", emo: "playful", re: /(장난|ㅋㅋ|헤헤)/, weight: 1 },
+  { id: "e.avoid", emo: "avoidant", re: /^(몰라|글쎄|그러게|패스)$/, weight: 2 },
+  { id: "e.confused", emo: "confused", re: /(어렵|헷갈|모르겠)/, weight: 2 },
+  { id: "e.confident", emo: "confident", re: /(할 수 있|자신|당연히|해볼래)/, weight: 2 },
+  { id: "e.nervous", emo: "nervous", re: /(떨려|긴장|무서)/, weight: 2 },
+  { id: "e.sad.emo", emo: "sadness", re: /ㅠㅠ+|ㅜㅜ+/, weight: 2 },
+  { id: "e.unfair.emo", emo: "unfair", re: /ㅡㅡ+|;;+/, weight: 1 },
+];
+
+function analyzeEmotion(raw: string, normalized: string, evidence: Evidence): EmotionAnalysis {
+  const scores = new Map<Emotion, number>();
+  let totalWeight = 0;
+  for (const rule of EMOTION_RULES) {
+    if (rule.re.test(raw) || rule.re.test(normalized)) {
+      scores.set(rule.emo, (scores.get(rule.emo) ?? 0) + rule.weight);
+      totalWeight += rule.weight;
+      evidence.ruleIds.push(rule.id);
+    }
+  }
+  if (scores.size === 0) {
+    return { primary: "neutral", secondary: [], intensity: 0, confidence: 0.2 };
+  }
+  const sorted = [...scores.entries()].sort((a, b) => b[1] - a[1]);
+  const [primary, primaryScore] = sorted[0];
+  const secondary = sorted.slice(1).map(([e]) => e);
+  const intensity = clamp01(totalWeight / 6);
+  const confidence = clamp01(primaryScore / Math.max(1, totalWeight));
+  return { primary, secondary, intensity, confidence };
+}
+
+// ─────────────────────────────────────────────────────────────
+// 4) 방어 반응 / 오개념
+// ─────────────────────────────────────────────────────────────
+
+type DefensiveRule = { id: string; type: NonNullable<DefensiveResponse["type"]>; re: RegExp };
+const DEFENSIVE_RULES: DefensiveRule[] = [
+  { id: "d.blame", type: "blame_shift", re: /(쟤가|얘가|너도 그랬|너도그랬|너도그랫|먼저 했|먼저했|먼저햇)/ },
+  { id: "d.selfjust", type: "self_justification", re: /(장난이었|그럴 수도|나만 그런|그럴 뻔)/ },
+  { id: "d.avoid", type: "avoidance", re: /^(몰라|글쎄|그러게|패스)$/ },
+  { id: "d.denial", type: "denial", re: /(아닌데|그런 적 없|안 그랬)/ },
+];
+
+function analyzeDefensive(normalized: string, evidence: Evidence): DefensiveResponse {
+  for (const rule of DEFENSIVE_RULES) {
+    if (rule.re.test(normalized)) {
+      evidence.ruleIds.push(rule.id);
+      return { detected: true, type: rule.type, confidence: 0.6 };
+    }
+  }
+  return { detected: false, confidence: 0 };
+}
+
+const MISCONCEPTION_RULES: Array<{
+  id: string;
+  kind: NonNullable<Misconception["kind"]>;
+  re: RegExp;
+}> = [
+  { id: "m.friend_tease", kind: "friend_teasing_ok", re: /(친구니까|친구인데) ?(놀려도|장난쳐도|괴롭혀도)/ },
+  { id: "m.close_swear", kind: "close_swearing_ok", re: /(친하니까|친하면) ?(욕|비속어|나쁜 ?말)/ },
+  { id: "m.joke_all", kind: "joke_excuses_all", re: /(장난이면|장난인데) ?(괜찮|되잖)/ },
+];
+
+function analyzeMisconception(
+  normalized: string,
+  prevCounts: Record<string, number>,
+  evidence: Evidence,
+): Misconception {
+  for (const rule of MISCONCEPTION_RULES) {
+    if (rule.re.test(normalized)) {
+      evidence.ruleIds.push(rule.id);
+      const prior = prevCounts[`misc:${rule.kind}`] ?? 0;
+      const confidence = clamp01(0.5 + prior * 0.2);
+      // 반복 근거가 있거나 표현이 매우 명시적일 때만 확정
+      const detected = prior >= 1 || /친구니까|친하니까|장난이면/.test(normalized);
+      return { detected, kind: rule.kind, evidence: normalized, confidence };
+    }
+  }
+  return { detected: false, confidence: 0 };
+}
+
+// ─────────────────────────────────────────────────────────────
+// 5) 반복 오류 분류
 // ─────────────────────────────────────────────────────────────
 
 type RepeatKind = "blame_shift" | "give_up" | "joke_avoid" | "denial";
-
 function classifyRepeatKind(intent: Intent, normalized: string): RepeatKind | null {
-  if (intent === "excuse" || /먼저 했|먼저했|쟤가|너도/.test(normalized)) return "blame_shift";
+  if (intent === "excuse" || /먼저 했|먼저했|먼저햇|쟤가|너도/.test(normalized)) return "blame_shift";
   if (intent === "avoid" || /^몰라$|^글쎄$/.test(normalized)) return "give_up";
   if (intent === "joke" || /^ㅋㅋ+$|^ㅎㅎ+$/.test(normalized)) return "joke_avoid";
   if (intent === "disagree" || /아닌데|그건 아니/.test(normalized)) return "denial";
   return null;
 }
 
-const MISCONCEPTIONS: Array<{
-  kind: NonNullable<EkluResult["misconception"]["kind"]>;
-  re: RegExp;
-}> = [
-  { kind: "friend_teasing_ok", re: /(친구니까|친구인데) ?(놀려도|장난쳐도|괴롭혀도)/ },
-  { kind: "close_swearing_ok", re: /(친하니까|친하면) ?(욕|비속어|나쁜 ?말)/ },
-  { kind: "joke_excuses_all", re: /(장난이면|장난인데) ?(괜찮|되잖)/ },
-];
-
-function detectMisconception(normalized: string): EkluResult["misconception"] {
-  for (const { kind, re } of MISCONCEPTIONS) {
-    if (re.test(normalized)) return { detected: true, kind, evidence: normalized };
-  }
-  return { detected: false };
-}
-
 // ─────────────────────────────────────────────────────────────
-// 학습 단계 추정
+// 6) 학습 단계 / 신뢰도
 // ─────────────────────────────────────────────────────────────
 
 function inferStage(model: StudentModel, intent: Intent, emotion: Emotion): LearningStage {
-  // 5단계 로드맵 기준으로 "다음에 필요한" 단계를 안내
   if (intent === "avoid" || emotion === "confused") return "discovery";
   if (intent === "excuse" || emotion === "unfair" || emotion === "anger") return "investigation";
   if (emotion === "sorry" || intent === "apology") return "empathy";
   if (intent === "explain" && model.empathyLevel >= 3) return "change";
   if (intent === "help_request") return "change";
-  if (model.empathyLevel >= 4 && model.expressionLevel >= 3) return "practice";
+  if (model.empathyLevel >= 4 && model.expressionCompleteness >= 3) return "practice";
   return model.stage;
 }
 
-// ─────────────────────────────────────────────────────────────
-// 신뢰도
-// ─────────────────────────────────────────────────────────────
-
-function computeConfidence(normalized: string, intent: Intent, typoHeavy: boolean): Confidence {
+function computeConfidence(
+  normalized: string,
+  intentConf: number,
+  typoHeavy: boolean,
+): Confidence {
   if (!normalized) return "low";
-  if (intent === "unknown") return "low";
-  if (shortReply(normalized) || typoHeavy) return "mid";
+  if (intentConf < 0.34) return "low";
+  if (shortReply(normalized) || typoHeavy || intentConf < 0.6) return "mid";
   return "high";
 }
 
 // ─────────────────────────────────────────────────────────────
-// 모델 갱신
+// 7) 학생 모델 갱신 (EWMA 완화)
 // ─────────────────────────────────────────────────────────────
 
-function clamp(n: number, lo: number, hi: number) {
-  return Math.max(lo, Math.min(hi, n));
+const ALPHA = 0.2;
+function ewma(prev: number, obs: number): number {
+  return prev * (1 - ALPHA) + obs * ALPHA;
 }
 
 function updateModel(
   prev: StudentModel,
   normalized: string,
-  intent: Intent,
-  emotion: Emotion,
+  intentA: IntentAnalysis,
+  emotionA: EmotionAnalysis,
   typoHeavy: boolean,
   repeatKind: RepeatKind | null,
+  misc: Misconception,
+  now: number,
 ): StudentModel {
   const turns = prev.turns + 1;
+  const observationCount = prev.observationCount + 1;
   const len = normalized.length;
   const avgReplyLength = (prev.avgReplyLength * prev.turns + len) / turns;
   const typoRate = (prev.typoRate * prev.turns + (typoHeavy ? 1 : 0)) / turns;
-  const recentEmotions = [...prev.recentEmotions, emotion].slice(-8);
+  const recentEmotions = [...prev.recentEmotions, emotionA.primary].slice(-8);
 
-  let empathyLevel = prev.empathyLevel;
-  if (intent === "empathy" || emotion === "sorry") empathyLevel = clamp(empathyLevel + 1, 0, 5);
-  if (intent === "excuse" || repeatKind === "blame_shift") empathyLevel = clamp(empathyLevel - 1, 0, 5);
+  // 관찰값(0..5 스케일)
+  const obsEmpathy =
+    intentA.primary === "empathy" || emotionA.primary === "sorry"
+      ? 4
+      : intentA.primary === "excuse" || repeatKind === "blame_shift"
+        ? 1
+        : prev.empathyLevel;
 
-  let expressionLevel = prev.expressionLevel;
-  if (len >= 20 && intent !== "avoid") expressionLevel = clamp(expressionLevel + 1, 0, 5);
-  if (shortReply(normalized)) expressionLevel = clamp(expressionLevel - 1, 0, 5);
+  const obsExpression =
+    len >= 20 && intentA.primary !== "avoid" ? 4 : shortReply(normalized) ? 1 : prev.expressionCompleteness;
 
-  let engagement = prev.engagement;
-  if (intent === "avoid" || intent === "joke") engagement = clamp(engagement - 1, 0, 5);
-  else engagement = clamp(engagement + 1, 0, 5);
+  const obsClarity = intentA.confidence >= 0.6 ? 4 : intentA.confidence >= 0.3 ? 3 : 1;
 
-  let helpNeed = prev.helpNeed;
-  if (intent === "help_request" || emotion === "confused") helpNeed = clamp(helpNeed + 1, 0, 5);
-  else helpNeed = clamp(helpNeed - 1, 0, 5);
+  const obsForm = typoHeavy ? 1 : len >= 10 ? 3 : prev.languageFormLevel;
 
-  let confidence = prev.confidence;
-  if (emotion === "confident") confidence = clamp(confidence + 1, 0, 5);
-  if (emotion === "nervous" || emotion === "confused") confidence = clamp(confidence - 1, 0, 5);
+  const obsEngagement =
+    intentA.primary === "avoid" || intentA.primary === "joke" ? 1 : 4;
+
+  const obsHelp =
+    intentA.primary === "help_request" || emotionA.primary === "confused" ? 4 : 1;
+
+  const obsConfidence =
+    emotionA.primary === "confident" ? 4 : emotionA.primary === "nervous" || emotionA.primary === "confused" ? 1 : prev.confidence;
+
+  const empathyLevel = clamp(ewma(prev.empathyLevel, obsEmpathy), 0, 5);
+  const expressionCompleteness = clamp(ewma(prev.expressionCompleteness, obsExpression), 0, 5);
+  const meaningClarity = clamp(ewma(prev.meaningClarity, obsClarity), 0, 5);
+  const languageFormLevel = clamp(ewma(prev.languageFormLevel, obsForm), 0, 5);
+  const engagement = clamp(ewma(prev.engagement, obsEngagement), 0, 5);
+  const helpNeed = clamp(ewma(prev.helpNeed, obsHelp), 0, 5);
+  const confidenceLvl = clamp(ewma(prev.confidence, obsConfidence), 0, 5);
 
   const repeatedErrors = { ...prev.repeatedErrors };
   if (repeatKind) repeatedErrors[repeatKind] = (repeatedErrors[repeatKind] ?? 0) + 1;
+  if (misc.kind) {
+    const key = `misc:${misc.kind}`;
+    repeatedErrors[key] = (repeatedErrors[key] ?? 0) + 1;
+  }
+
+  const evidenceCount =
+    prev.evidenceCount +
+    (intentA.confidence >= 0.5 ? 1 : 0) +
+    (emotionA.confidence >= 0.5 ? 1 : 0);
+
+  const stability = clamp01(observationCount / 5);
 
   return {
     ...prev,
     turns,
+    observationCount,
+    evidenceCount,
+    stability,
+    lastUpdatedAt: now,
     avgReplyLength,
     typoRate,
     recentEmotions,
     empathyLevel,
-    expressionLevel,
+    expressionCompleteness,
+    expressionLevel: expressionCompleteness, // 하위 호환 alias
+    meaningClarity,
+    languageFormLevel,
     engagement,
     helpNeed,
-    confidence,
+    confidence: confidenceLvl,
     repeatedErrors,
+    stage: prev.stage,
   };
 }
 
 // ─────────────────────────────────────────────────────────────
-// 이해 실패 시 쉬운 확인 질문 후보
+// 8) 저신뢰 → clarificationNeed (문장은 만들지 않음)
 // ─────────────────────────────────────────────────────────────
 
-const CLARIFIER_POOL = [
-  "조금만 더 이야기해 줄래?",
-  "그때 무슨 일이 있었어?",
-  "어떤 마음이 제일 컸어?",
-  "누구랑 있었던 일이야?",
-  "지금 기분을 한 단어로 말해줄 수 있어?",
-];
+function planClarification(
+  normalized: string,
+  intentA: IntentAnalysis,
+  emotionA: EmotionAnalysis,
+  norm: NormalizationResult,
+): ClarificationNeed {
+  if (!normalized) {
+    return { required: true, target: "meaning", strategy: "easy_open_question" };
+  }
+  if (intentA.confidence < 0.4) {
+    return {
+      required: true,
+      target: "intent",
+      strategy: "forced_choice",
+      candidates: [intentA.primary, ...intentA.secondary].slice(0, 3),
+    };
+  }
+  if (emotionA.confidence < 0.3 && emotionA.primary === "neutral") {
+    return { required: true, target: "emotion", strategy: "forced_choice" };
+  }
+  if (norm.possibleMeanings.length >= 2 && !norm.selectedMeaning) {
+    return {
+      required: true,
+      target: "meaning",
+      strategy: "context_check",
+      candidates: norm.possibleMeanings.slice(0, 3),
+    };
+  }
+  if (shortReply(normalized) && !norm.selectedByContext) {
+    return { required: true, target: "event", strategy: "easy_open_question" };
+  }
+  return { required: false };
+}
 
 // ─────────────────────────────────────────────────────────────
 // 진입점
 // ─────────────────────────────────────────────────────────────
 
+function lastAiUtterance(history: EkluTurn[]): string | undefined {
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].role !== "student") return history[i].text;
+  }
+  return undefined;
+}
+
 /**
- * 학생 입력을 이해한다. **답변을 만들지 않는다.**
- * 반환값은 Teaching Engine 이 사용할 순수 이해 결과.
+ * 학생 입력을 이해한다. **답변/질문 문장은 만들지 않는다.**
  */
 export function understand(params: {
   input: string;
   history?: EkluTurn[];
   model?: StudentModel;
+  now?: number;
 }): EkluResult {
   const raw = params.input ?? "";
   const history = params.history ?? [];
   const prevModel = params.model ?? createStudentModel();
+  const now = params.now ?? Date.now();
 
-  const normalized = normalizeInput(raw);
+  const aiPrev = lastAiUtterance(history);
+  const normalization = analyzeNormalization(raw, aiPrev);
+  const normalized = normalization.normalizedText;
   const typoHeavy = looksTypoHeavy(raw, normalized);
-  const { aiPrev } = lastStudentAndAiPair(history);
 
-  const intent = detectIntent(normalized, aiPrev);
-  const emotion = detectEmotion(raw, normalized);
-  const repeatKind = classifyRepeatKind(intent, normalized);
-  const misconception = detectMisconception(normalized);
+  const evidence: Evidence = { matchedTokens: [], contextSignals: [], ruleIds: [] };
+  if (normalization.selectedByContext) {
+    evidence.contextSignals.push(`selected_meaning:${normalization.selectedMeaning}`);
+  }
 
-  const nextModel = updateModel(prevModel, normalized, intent, emotion, typoHeavy, repeatKind);
-  const stage = inferStage(nextModel, intent, emotion);
+  const intentAnalysis = analyzeIntent(normalized, aiPrev, evidence);
+  if (aiPrev && /[\?？]/.test(aiPrev) && shortReply(normalized)) {
+    evidence.contextSignals.push(`short_reply_after_question:${intentAnalysis.primary}`);
+  }
+  const emotionAnalysis = analyzeEmotion(raw, normalized, evidence);
+  const defensiveResponse = analyzeDefensive(normalized, evidence);
+  const misconception = analyzeMisconception(normalized, prevModel.repeatedErrors, evidence);
+  const repeatKind = classifyRepeatKind(intentAnalysis.primary, normalized);
+
+  const nextModel = updateModel(
+    prevModel,
+    normalized,
+    intentAnalysis,
+    emotionAnalysis,
+    typoHeavy,
+    repeatKind,
+    misconception,
+    now,
+  );
+  const stage = inferStage(nextModel, intentAnalysis.primary, emotionAnalysis.primary);
   nextModel.stage = stage;
 
   const repeatCount = repeatKind ? nextModel.repeatedErrors[repeatKind] ?? 0 : 0;
@@ -431,39 +685,72 @@ export function understand(params: {
     count: repeatCount || undefined,
   };
 
-  const confidence = computeConfidence(normalized, intent, typoHeavy);
+  const overallConfidence = computeConfidence(normalized, intentAnalysis.confidence, typoHeavy);
+  const clarificationNeed = planClarification(
+    normalized,
+    intentAnalysis,
+    emotionAnalysis,
+    normalization,
+  );
+
+  const status: EkluResult["status"] =
+    nextModel.observationCount < 3 ? "insufficient_data" : "ok";
 
   return {
+    // v1.0 호환
     normalized,
-    intent,
-    emotion,
+    intent: intentAnalysis.primary,
+    emotion: emotionAnalysis.primary,
     emotionTrajectory: nextModel.recentEmotions,
     studentModel: nextModel,
     repeatedError,
     misconception,
     stage,
-    confidence,
-    clarifierHints: confidence === "low" ? CLARIFIER_POOL.slice(0, 3) : [],
+    confidence: overallConfidence,
+    clarifierHints: [], // v1.1: 문장은 생성하지 않는다. clarificationNeed 참조.
+
+    // v1.1 상세
+    normalization,
+    intentAnalysis,
+    emotionAnalysis,
+    defensiveResponse,
+    clarificationNeed,
+    evidence,
+    status,
   };
 }
 
 /**
- * 편의 함수: 이해 결과를 Teaching Engine 프롬프트에 그대로 붙일 수 있는
- * 간결한 한국어 요약으로 직렬화. **학생에게 노출 금지.**
+ * Teaching Engine 용 요약 (내부/서버 로그 용도). 학생 노출 금지.
  */
 export function serializeForTeachingEngine(r: EkluResult): string {
+  const m = r.studentModel;
   const lines = [
-    `[EKLU]`,
-    `정리입력: ${r.normalized || "(빈 입력)"}`,
-    `의도: ${r.intent}`,
-    `감정: ${r.emotion}`,
+    `[EKLU v1.1]`,
+    `상태: ${r.status}`,
+    `원문: ${r.normalization.original || "(빈 입력)"}`,
+    `정리: ${r.normalization.normalizedText || "-"}`,
+    `의미후보: ${r.normalization.possibleMeanings.join(", ") || "-"}${r.normalization.selectedMeaning ? ` / 문맥선택: ${r.normalization.selectedMeaning}` : ""}`,
+    `의도: ${r.intentAnalysis.primary}${r.intentAnalysis.secondary.length ? ` (+${r.intentAnalysis.secondary.join(",")})` : ""} conf=${r.intentAnalysis.confidence.toFixed(2)}`,
+    `감정: ${r.emotionAnalysis.primary}${r.emotionAnalysis.secondary.length ? ` (+${r.emotionAnalysis.secondary.join(",")})` : ""} int=${r.emotionAnalysis.intensity.toFixed(2)} conf=${r.emotionAnalysis.confidence.toFixed(2)}`,
     `감정흐름: ${r.emotionTrajectory.join(" → ") || "-"}`,
-    `학습단계: ${r.stage}`,
-    `신뢰도: ${r.confidence}`,
+    `학습단계: ${r.stage}  종합신뢰도: ${r.confidence}`,
+    `방어반응: ${r.defensiveResponse.detected ? `${r.defensiveResponse.type}(${r.defensiveResponse.confidence.toFixed(2)})` : "없음"}`,
+    `오개념: ${r.misconception.detected ? `${r.misconception.kind}(${r.misconception.confidence.toFixed(2)})` : "없음"}`,
     `반복오류: ${r.repeatedError.detected ? `${r.repeatedError.kind}(${r.repeatedError.count})` : "없음"}`,
-    `오개념: ${r.misconception.detected ? r.misconception.kind : "없음"}`,
-    `모델(공감/표현/참여/자신감/도움): ${r.studentModel.empathyLevel}/${r.studentModel.expressionLevel}/${r.studentModel.engagement}/${r.studentModel.confidence}/${r.studentModel.helpNeed}`,
+    `모델 공감/표현/명확/형식/참여/자신감/도움: ${m.empathyLevel.toFixed(1)}/${m.expressionCompleteness.toFixed(1)}/${m.meaningClarity.toFixed(1)}/${m.languageFormLevel.toFixed(1)}/${m.engagement.toFixed(1)}/${m.confidence.toFixed(1)}/${m.helpNeed.toFixed(1)}`,
+    `안정성: obs=${m.observationCount} stab=${m.stability.toFixed(2)}`,
   ];
-  if (r.clarifierHints.length) lines.push(`확인질문후보: ${r.clarifierHints.join(" | ")}`);
+  if (r.clarificationNeed.required) {
+    lines.push(
+      `확인필요: target=${r.clarificationNeed.target} strategy=${r.clarificationNeed.strategy}${
+        r.clarificationNeed.candidates?.length ? ` cand=[${r.clarificationNeed.candidates.join("|")}]` : ""
+      }`,
+    );
+  }
+  // evidence는 축약 요약만
+  if (r.evidence.ruleIds.length) {
+    lines.push(`규칙: ${r.evidence.ruleIds.slice(0, 8).join(",")}`);
+  }
   return lines.join("\n");
 }
