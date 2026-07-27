@@ -7,7 +7,7 @@
  *   ✅ 같은 상황당 최소 5개의 표현을 보유한다.
  *   ✅ 유사 예시가 없으면 호출자는 기존 규칙대로 생성한다.
  */
-import type { EmotionCategory, LearningStage } from "./eklu-engine";
+import type { Emotion, LearningStage } from "./eklu-engine";
 import type { TeachingStrategy } from "./teaching-strategy";
 import type { PedagogicalGoal } from "./teaching-planner";
 
@@ -15,7 +15,7 @@ export type FewShotExample = {
   id: string;
   situation: string;
   studentInput: string;
-  studentEmotion: EmotionCategory | "defensive" | "confused" | "silent";
+  studentEmotion: Emotion | "defensive" | "confused" | "silent";
   currentStage: LearningStage;
   teachingGoal: PedagogicalGoal;
   strategy: TeachingStrategy;
@@ -36,7 +36,7 @@ export const TEACHING_CORPUS: FewShotExample[] = [
     studentInput: "친구가 먼저 놀렸어요.",
     studentEmotion: "anger",
     currentStage: "investigation",
-    teachingGoal: "perspective_taking",
+    teachingGoal: "empathy",
     strategy: "perspective_shift",
     teacherResponses: [
       "억울한 마음이 들었겠구나. 친구 입장에서는 어떤 기분이었을까?",
@@ -55,7 +55,7 @@ export const TEACHING_CORPUS: FewShotExample[] = [
     studentInput: "내 잘못 아니에요.",
     studentEmotion: "defensive",
     currentStage: "empathy",
-    teachingGoal: "responsibility",
+    teachingGoal: "empathy",
     strategy: "counterexample",
     teacherResponses: [
       "만약 친구가 너에게 똑같이 말했다면 기분이 어땠을까?",
@@ -91,7 +91,7 @@ export const TEACHING_CORPUS: FewShotExample[] = [
     studentInput: "...",
     studentEmotion: "silent",
     currentStage: "discovery",
-    teachingGoal: "self_awareness",
+    teachingGoal: "emotion_awareness",
     strategy: "easy_open_question",
     teacherResponses: [
       "괜찮아요. 천천히 생각해 봐도 돼요. 친구 마음은 어땠을까?",
@@ -109,7 +109,7 @@ export const TEACHING_CORPUS: FewShotExample[] = [
     studentInput: "친구의 마음을 이해합니다.",
     studentEmotion: "neutral",
     currentStage: "change",
-    teachingGoal: "expression",
+    teachingGoal: "expression_revision",
     strategy: "encourage_retry",
     teacherResponses: [
       "좋아요. 이번에는 너의 말로 한번 표현해 볼까?",
