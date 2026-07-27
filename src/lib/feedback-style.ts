@@ -173,15 +173,17 @@ function pickQuestionStyle(
   reasons: string[],
 ): QuestionStyle {
   // Planner 결정 존중: choice 모드면 choice 만 사용.
-  const mode = input.decision.mode;
+  const mode = input.decision.responseMode;
   if (mode === "forced_choice") {
     reasons.push("q:forced_choice");
     return "choice";
   }
   const strat = input.decision.strategy;
-  if (strat === "perspective_shift") return "perspective";
-  if (strat === "counterexample") return "challenge";
-  if (strat === "reflect_student_words" || strat === "acknowledge_emotion") {
+  if (strat === "perspective_taking") return "perspective";
+  if (strat === "reframe_defense" || strat === "correct_misconception") {
+    return "challenge";
+  }
+  if (strat === "reflect_emotion" || strat === "clarify_meaning") {
     return "reflective";
   }
 
@@ -222,10 +224,13 @@ function pickPraise(
   if (trend === "declining" || rec === "more_encouragement") {
     prefs.push("effort");
   }
-  if (strat === "reflect_student_words" || strat === "acknowledge_emotion") {
+  if (strat === "reflect_emotion" || strat === "clarify_meaning") {
     prefs.push("reflection");
   }
-  if (input.decision.goal === "cooperate" || strat === "perspective_shift") {
+  if (
+    input.decision.goal === "practice_reinforce" ||
+    strat === "perspective_taking"
+  ) {
     prefs.push("cooperation");
   }
   // 기본: 능력/성격이 아닌 행동/노력 칭찬
@@ -281,13 +286,13 @@ export function decideFeedbackStyle(
   // Reference style from few-shot corpus (tone reference only; not copied).
   let referenceStyleHint: string | undefined;
   try {
-    const ex = findSimilarExample({
-      strategy: input.decision.strategy,
+    // Corpus strategy 타입은 다르므로 goal 과 입력 텍스트만으로 조회.
+    const match = findSimilarExample({
       goal: input.decision.goal,
       studentInput: input.studentInput,
-    } as Parameters<typeof findSimilarExample>[0]);
-    if (ex && typeof (ex as { id?: string }).id === "string") {
-      referenceStyleHint = (ex as { id: string }).id;
+    });
+    if (match && match.score >= 2) {
+      referenceStyleHint = match.example.id;
     }
   } catch {
     // corpus lookup is best-effort
