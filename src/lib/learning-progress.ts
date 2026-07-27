@@ -296,10 +296,12 @@ export function analyzeLearningProgress(input: ProgressInput): ProgressResult {
   const progressHist = mem.progressHistory ?? [];
 
   const mastery = computeMastery(input);
-  const engagement = computeEngagement(input);
+  const engagementScore = computeEngagement(input);
+  const engagement: Level3 =
+    engagementScore >= 65 ? "high" : engagementScore >= 35 ? "medium" : "low";
   const trend = computeTrend(masteryHist, mastery);
   const stability = computeStability([...masteryHist, mastery]);
-  const risk = computeRisk(input, engagement, [...masteryHist, mastery]);
+  const risk = computeRisk(input, engagementScore, [...masteryHist, mastery]);
   const recommendation = recommend(trend, mastery, risk, input.persona);
 
   const now = input.now ?? Date.now();
@@ -308,7 +310,7 @@ export function analyzeLearningProgress(input: ProgressInput): ProgressResult {
     goal: input.currentGoal,
     stage: input.currentStage,
     mastery,
-    engagement,
+    engagement: engagementScore,
     risk,
     trend,
   };
@@ -316,14 +318,14 @@ export function analyzeLearningProgress(input: ProgressInput): ProgressResult {
   const updatedMemory: ExtendedLearningMemory = {
     ...mem,
     masteryHistory: [...masteryHist, mastery].slice(-30),
-    engagementHistory: [...engagementHist, engagement].slice(-30),
+    engagementHistory: [...engagementHist, engagementScore].slice(-30),
     trendHistory: [...trendHist, trend].slice(-30),
     riskHistory: [...riskHist, risk].slice(-30),
     progressHistory: [...progressHist, nextEntry].slice(-50),
   };
 
   const reason =
-    `trend=${trend} mastery=${mastery} eng=${engagement} ` +
+    `trend=${trend} mastery=${mastery} eng=${engagementScore}(${engagement}) ` +
     `stab=${stability} risk=${risk} rec=${recommendation}`;
 
   return {
