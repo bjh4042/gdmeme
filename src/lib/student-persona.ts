@@ -126,7 +126,8 @@ function scoreTurn(input: PersonaInput): PersonaScores {
   const defensive = u.defensiveResponse?.detected ?? false;
   const confused = u.status === "insufficient_data";
   const model = input.studentModel ?? u.studentModel;
-  const conf = model?.competencies?.expressionCompleteness ?? 0.3;
+  // StudentModel의 역량은 0..5 스케일 → 0..1로 정규화
+  const conf = (model?.expressionCompleteness ?? 1.5) / 5;
   const successRate =
     (input.learningMemory?.successCount ?? 0) /
     Math.max(1, input.learningMemory?.attemptCount ?? 0);
@@ -283,7 +284,11 @@ function extractTraits(
   if ((turnScores.confident_learner ?? 0) >= 2) traits.add("confident");
   if (u.intentAnalysis?.primary === "apology" || u.intentAnalysis?.primary === "empathy")
     traits.add("reflective");
-  if (u.intentAnalysis?.primary === "attack") traits.add("impulsive");
+  if (
+    u.intentAnalysis?.primary === "refuse" ||
+    u.intentAnalysis?.primary === "disagree"
+  )
+    traits.add("impulsive");
 
   return Array.from(traits);
 }
