@@ -160,7 +160,7 @@ function pickOpening(
   if (p === "curious_learner" || p === "confident_learner") {
     prefs.push("positive", "reflection");
   }
-  if (goal === "reflect" || goal === "consolidate") {
+  if (goal === "emotion_awareness" || goal === "empathy") {
     prefs.push("reflection");
   }
   prefs.push("neutral", "positive", "empathy", "reflection", "celebration");
