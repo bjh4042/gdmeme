@@ -220,18 +220,18 @@ const FORM_FIX: Array<[RegExp, string]> = [
   [/그랫/g, "그랬"],
   [/햇는대/g, "했는데"],
   [/햇/g, "했"],
-  [/인대\b/g, "인데"],
-  [/자나\b/g, "잖아"],
+  [/인대(?![가-힣])/g, "인데"],
+  [/자나(?![가-힣])/g, "잖아"],
   [/했자나/g, "했잖아"],
 ];
 
 /** 다의 표현 사전 — 의미는 후보로만 남긴다. */
 const MEANING_HINTS: Array<{ re: RegExp; meanings: string[] }> = [
-  { re: /\bㅇㅇ\b/, meanings: ["동의", "인정", "형식적 대답"] },
-  { re: /\bㄴㄴ\b/, meanings: ["거절", "부정"] },
-  { re: /\bㄱㅊ\b/, meanings: ["괜찮음", "무관심"] },
-  { re: /\bㄹㅇ\b/, meanings: ["강한 동의", "강조"] },
-  { re: /\bㅇㅋ\b/, meanings: ["수락", "이해"] },
+  { re: /(^|\s)ㅇㅇ($|\s)/, meanings: ["동의", "인정", "형식적 대답"] },
+  { re: /(^|\s)ㄴㄴ($|\s)/, meanings: ["거절", "부정"] },
+  { re: /(^|\s)ㄱㅊ($|\s)/, meanings: ["괜찮음", "무관심"] },
+  { re: /(^|\s)ㄹㅇ($|\s)/, meanings: ["강한 동의", "강조"] },
+  { re: /(^|\s)ㅇㅋ($|\s)/, meanings: ["수락", "이해"] },
   { re: /ㅋㅋ+/, meanings: ["웃음", "장난", "당황 회피", "친근함"] },
   { re: /ㅎㅎ+/, meanings: ["쑥스러움", "부드러운 웃음", "회피"] },
   { re: /ㅠㅠ+|ㅜㅜ+/, meanings: ["슬픔", "억울함", "과장 표현"] },
@@ -657,6 +657,9 @@ export function understand(params: {
   }
 
   const intentAnalysis = analyzeIntent(normalized, aiPrev, evidence);
+  if (aiPrev && /[\?？]/.test(aiPrev) && shortReply(normalized)) {
+    evidence.contextSignals.push(`short_reply_after_question:${intentAnalysis.primary}`);
+  }
   const emotionAnalysis = analyzeEmotion(raw, normalized, evidence);
   const defensiveResponse = analyzeDefensive(normalized, evidence);
   const misconception = analyzeMisconception(normalized, prevModel.repeatedErrors, evidence);
