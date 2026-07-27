@@ -1,0 +1,104 @@
+[
+  {
+    "id": "blame_youfault",
+    "term": "네 탓이야",
+    "aliases": [
+      "너 때문이야"
+    ],
+    "category": "blame.shift",
+    "meaning": "문제의 원인을 상대에게 돌리는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "상대가 억울하고 방어적으로 변해요"
+    ],
+    "possibleMisunderstanding": "관계가 상하고 문제 해결이 어려워져요.",
+    "betterExpressions": [
+      "나는 ~해서 속상했어.",
+      "우리 어떻게 하면 좋을까?"
+    ],
+    "teacherTip": "비난 대신 나 전달법으로 바꾸는 연습을 함께 합니다.",
+    "reflectionQuestions": [
+      "내가 책임질 수 있는 부분은 무엇일까요?"
+    ],
+    "relatedTerms": [
+      "conf_i_message",
+      "apology_repair"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "blame_iknow",
+    "term": "원래 그래",
+    "aliases": [],
+    "category": "blame.avoid",
+    "meaning": "상황을 바꿀 수 없다는 이유로 책임을 피하는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "대화를 막고 답답함을 줘요"
+    ],
+    "possibleMisunderstanding": "변화 의지가 없다고 오해될 수 있어요.",
+    "betterExpressions": [
+      "다음엔 다르게 해 볼게.",
+      "작은 것부터 바꿔 볼래."
+    ],
+    "teacherTip": "작은 변화 가능성을 함께 찾아 보게 합니다.",
+    "reflectionQuestions": [
+      "오늘 바꿀 수 있는 아주 작은 행동은 무엇인가요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "blame_notme",
+    "term": "나만 그런 거 아니잖아",
+    "aliases": [],
+    "category": "blame.diffuse",
+    "meaning": "다른 사람도 그러니 자기만 잘못이 아니라고 말하는 표현이에요.",
+    "contexts": [
+      "friend",
+      "school"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "상대가 진지함을 느끼지 못해요"
+    ],
+    "possibleMisunderstanding": "책임 회피로 들려요.",
+    "betterExpressions": [
+      "내가 한 부분은 이거야, 그건 미안해.",
+      "우리 모두 다시 생각해 보면 좋겠어."
+    ],
+    "teacherTip": "자기 몫을 구체적으로 말해 보도록 안내합니다.",
+    "reflectionQuestions": [
+      "내가 책임질 수 있는 부분은 어디까지일까요?"
+    ],
+    "relatedTerms": [
+      "blame_youfault"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "alt_gaejjaejeung",
+    "term": "개짜증 → 다른 말",
+    "aliases": [],
+    "category": "alternative.emotion",
+    "meaning": "'개짜증' 대신 쓸 수 있는 건강한 표현들이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "kakaotalk"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "감정을 솔직히 나눌 수 있어요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "정말 속상해.",
+      "기분이 안 좋아.",
+      "화가 났어.",
+      "조금 쉬고 싶어."
+    ],
+    "teacherTip": "감정 이름 붙이기 연습으로 활용합니다.",
+    "reflectionQuestions": [
+      "지금 내 감정을 이름으로 부른다면 무엇인가요?"
+    ],
+    "relatedTerms": [
+      "slang_gaejjaejeung"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "alt_notjaem",
+    "term": "노잼 → 다른 말",
+    "aliases": [],
+    "category": "alternative.evaluation",
+    "meaning": "'노잼' 대신 자기 느낌으로 말하는 표현들이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "sns"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "평가 대신 느낌이 전달돼요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "나한테는 조금 어려웠어.",
+      "내 취향은 아니었어.",
+      "다음엔 다른 것도 해 볼래?"
+    ],
+    "teacherTip": "상대의 노력을 인정하는 문장을 함께 붙이도록 지도합니다.",
+    "reflectionQuestions": [
+      "어떤 점이 나에게 잘 맞지 않았나요?"
+    ],
+    "relatedTerms": [
+      "slang_notjaem"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "alt_ez",
+    "term": "ez → 다른 말",
+    "aliases": [],
+    "category": "alternative.game",
+    "meaning": "'ez' 대신 상대를 존중하는 인사말이에요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "상대가 존중받는 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "잘 배웠어.",
+      "좋은 경기였어.",
+      "같이 잘 해 봐."
+    ],
+    "teacherTip": "승패 상황에서의 인사말을 반복해 연습합니다.",
+    "reflectionQuestions": [
+      "졌을 때 나는 어떤 말을 듣고 싶었나요?"
+    ],
+    "relatedTerms": [
+      "game_ez"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

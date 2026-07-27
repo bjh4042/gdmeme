@@ -1,0 +1,207 @@
+[
+  {
+    "id": "abbr_zz",
+    "term": "ㅋㅋ",
+    "aliases": [
+      "ㅋㅋㅋ",
+      "ㅋㅋㅋㅋ"
+    ],
+    "category": "abbr.reaction",
+    "meaning": "웃음을 나타내는 인터넷 표현이에요.",
+    "contexts": [
+      "kakaotalk",
+      "sns",
+      "friend"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "가벼운 웃음이 전달돼요"
+    ],
+    "possibleMisunderstanding": "상황에 따라 비웃음으로 오해될 수 있어요.",
+    "betterExpressions": [
+      "재미있네요.",
+      "웃음이 나요."
+    ],
+    "teacherTip": "누가, 언제 웃는지에 따라 의미가 달라짐을 이야기해 봅니다.",
+    "reflectionQuestions": [
+      "친구가 슬픈 이야기를 했는데 ㅋㅋ라고 답하면 어떨까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "abbr_ㅇㅋ",
+    "term": "ㅇㅋ",
+    "aliases": [
+      "오키",
+      "오케이"
+    ],
+    "category": "abbr.reply",
+    "meaning": "'오케이', 알겠다는 짧은 답변이에요.",
+    "contexts": [
+      "kakaotalk",
+      "game",
+      "friend"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "빠른 대답이 전달돼요"
+    ],
+    "possibleMisunderstanding": "성의 없어 보일 수 있어요.",
+    "betterExpressions": [
+      "알겠어.",
+      "네, 그렇게 할게요."
+    ],
+    "teacherTip": "상대와 상황에 맞게 답의 길이를 조절하도록 안내합니다.",
+    "reflectionQuestions": [
+      "선생님께 ㅇㅋ라고 답해도 될까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "abbr_ㅇㅈ",
+    "term": "ㅇㅈ",
+    "aliases": [
+      "인정"
+    ],
+    "category": "abbr.reply",
+    "meaning": "'인정한다'는 뜻의 줄임말이에요.",
+    "contexts": [
+      "kakaotalk",
+      "sns",
+      "game"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "동의가 전달돼요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "나도 그렇게 생각해.",
+      "네 말이 맞아."
+    ],
+    "teacherTip": "짧은 답을 늘려 자신의 이유도 함께 말해 보게 합니다.",
+    "reflectionQuestions": [
+      "왜 인정한다고 생각했나요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "abbr_ㄱㅅ",
+    "term": "ㄱㅅ",
+    "aliases": [
+      "감사"
+    ],
+    "category": "abbr.polite",
+    "meaning": "'감사합니다'의 줄임말이에요.",
+    "contexts": [
+      "kakaotalk",
+      "sns"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "가볍게 고마움이 전달돼요"
+    ],
+    "possibleMisunderstanding": "어른께 쓰면 예의 없어 보일 수 있어요.",
+    "betterExpressions": [
+      "감사합니다.",
+      "고맙습니다."
+    ],
+    "teacherTip": "공적인 상황에서는 줄임말 대신 온전한 표현을 쓰도록 안내합니다.",
+    "reflectionQuestions": [
+      "누구에게 어떤 말투가 어울릴까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "abbr_ㅈㅅ",
+    "term": "ㅈㅅ",
+    "aliases": [
+      "죄송"
+    ],
+    "category": "abbr.polite",
+    "meaning": "'죄송합니다'의 줄임말이에요.",
+    "contexts": [
+      "kakaotalk",
+      "sns"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "사과의 무게가 가볍게 들려요"
+    ],
+    "possibleMisunderstanding": "진심이 없어 보일 수 있어요.",
+    "betterExpressions": [
+      "죄송합니다.",
+      "정말 미안해요, 다음엔 조심할게요."
+    ],
+    "teacherTip": "사과는 줄이지 말고 이유와 다짐을 함께 말하도록 지도합니다.",
+    "reflectionQuestions": [
+      "ㅈㅅ만 들으면 진심이 느껴질까요?"
+    ],
+    "relatedTerms": [
+      "apology_sorry"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "abbr_ㄴㄴ",
+    "term": "ㄴㄴ",
+    "aliases": [
+      "노노"
+    ],
+    "category": "abbr.reply",
+    "meaning": "'아니다'는 뜻의 짧은 답이에요.",
+    "contexts": [
+      "kakaotalk",
+      "game"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "단호하게 들릴 수 있어요"
+    ],
+    "possibleMisunderstanding": "차갑게 느껴질 수 있어요.",
+    "betterExpressions": [
+      "아니야, 나는 이렇게 생각해.",
+      "조금 다르게 봤어."
+    ],
+    "teacherTip": "거절할 때 이유를 함께 말하도록 유도합니다.",
+    "reflectionQuestions": [
+      "ㄴㄴ만 들으면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

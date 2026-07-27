@@ -1,0 +1,138 @@
+[
+  {
+    "id": "cyber_smear",
+    "term": "단톡 저격",
+    "aliases": [
+      "단톡저격"
+    ],
+    "category": "cyberbullying.attack",
+    "meaning": "단체 대화방에서 특정 친구를 겨냥해 비난하는 행동이에요.",
+    "contexts": [
+      "kakaotalk",
+      "school"
+    ],
+    "appropriateness": "NEVER_OK",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "대상 친구가 크게 위축되고 두려워져요"
+    ],
+    "possibleMisunderstanding": "장난이 사이버폭력이 될 수 있어요.",
+    "betterExpressions": [
+      "직접 만나서 이야기하자.",
+      "선생님, 부모님께 도움을 요청하자."
+    ],
+    "teacherTip": "즉시 개입하고 학교 상담 절차를 안내합니다. 학생에게 안전을 먼저 알립니다.",
+    "reflectionQuestions": [
+      "내가 그 친구라면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [
+      "sns_jaljin"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "cyber_kick",
+    "term": "강퇴",
+    "aliases": [
+      "강제퇴장"
+    ],
+    "category": "cyberbullying.exclusion",
+    "meaning": "대화방에서 특정 친구만 내보내는 행동이에요.",
+    "contexts": [
+      "kakaotalk",
+      "discord"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "따돌림으로 느껴질 수 있어요"
+    ],
+    "possibleMisunderstanding": "장난이라도 소외의 상처가 남아요.",
+    "betterExpressions": [
+      "규칙을 함께 정하자.",
+      "이유를 설명하고 함께 결정하자."
+    ],
+    "teacherTip": "배제 행동은 즉시 대화하도록 돕고 학급 규칙을 함께 만듭니다.",
+    "reflectionQuestions": [
+      "내가 강퇴당하면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [
+      "nw_bbunhaejyeo"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "cyber_dox",
+    "term": "신상털이",
+    "aliases": [
+      "신상 털이"
+    ],
+    "category": "cyberbullying.privacy",
+    "meaning": "다른 사람의 이름, 학교, 사진 등을 알아내 퍼뜨리는 행동이에요.",
+    "contexts": [
+      "sns",
+      "community"
+    ],
+    "appropriateness": "NEVER_OK",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "큰 두려움과 불안이 생겨요"
+    ],
+    "possibleMisunderstanding": "장난으로 시작해도 범죄가 될 수 있어요.",
+    "betterExpressions": [
+      "즉시 어른께 알리자.",
+      "자료를 저장하고 신고하자."
+    ],
+    "teacherTip": "안전을 최우선으로 하고 보호자·상담교사·경찰 절차를 안내합니다.",
+    "reflectionQuestions": [
+      "내 정보가 퍼진다면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "cyber_screen",
+    "term": "캡처 협박",
+    "aliases": [
+      "캡처협박"
+    ],
+    "category": "cyberbullying.threat",
+    "meaning": "대화나 사진을 캡처해 뿌리겠다고 위협하는 행동이에요.",
+    "contexts": [
+      "kakaotalk",
+      "sns"
+    ],
+    "appropriateness": "NEVER_OK",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "큰 공포심이 생겨요"
+    ],
+    "possibleMisunderstanding": "장난이 협박이 됩니다.",
+    "betterExpressions": [
+      "즉시 어른께 알리자.",
+      "증거를 남기고 도움 요청하자."
+    ],
+    "teacherTip": "위기 개입이 필요합니다. 학생에게 잘못이 아님을 먼저 말해 줍니다.",
+    "reflectionQuestions": [
+      "도움을 요청할 어른은 누구인가요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

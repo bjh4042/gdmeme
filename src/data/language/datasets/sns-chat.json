@@ -1,0 +1,134 @@
+[
+  {
+    "id": "sns_dm",
+    "term": "디엠",
+    "aliases": [
+      "DM",
+      "dm"
+    ],
+    "category": "sns.channel",
+    "meaning": "SNS에서 개인적으로 주고받는 쪽지예요.",
+    "contexts": [
+      "sns"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "몰래 이야기하는 느낌이 들 수 있어요"
+    ],
+    "possibleMisunderstanding": "비밀 대화가 오해나 갈등을 키울 수 있어요.",
+    "betterExpressions": [
+      "다 함께 있는 곳에서 얘기하자.",
+      "선생님이나 부모님께도 알리자."
+    ],
+    "teacherTip": "공개 대화와 개인 대화의 차이, 안전 사용을 함께 이야기합니다.",
+    "reflectionQuestions": [
+      "모르는 사람이 디엠을 보내면 어떻게 해야 할까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "sns_jaljin",
+    "term": "저격",
+    "aliases": [
+      "저격글"
+    ],
+    "category": "sns.attack",
+    "meaning": "누구를 겨냥해 비난하는 글이에요.",
+    "contexts": [
+      "sns",
+      "kakaotalk"
+    ],
+    "appropriateness": "NEVER_OK",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "대상 친구가 크게 상처받아요"
+    ],
+    "possibleMisunderstanding": "이름을 안 써도 알아보게 되면 사이버폭력이 될 수 있어요.",
+    "betterExpressions": [
+      "직접 만나서 이야기하자.",
+      "선생님과 함께 이야기해 보자."
+    ],
+    "teacherTip": "공개 저격은 폭력이 될 수 있음을 분명히 안내합니다.",
+    "reflectionQuestions": [
+      "나를 향한 저격글을 보게 된다면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [
+      "cyberbullying_smear"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "sns_like",
+    "term": "좋아요 구걸",
+    "aliases": [
+      "좋구",
+      "좋아요구걸"
+    ],
+    "category": "sns.behavior",
+    "meaning": "좋아요를 눌러 달라고 부탁하거나 강요하는 행동이에요.",
+    "contexts": [
+      "sns"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "친구가 부담을 느낄 수 있어요"
+    ],
+    "possibleMisunderstanding": "관계를 시험한다고 오해될 수 있어요.",
+    "betterExpressions": [
+      "봐 줘서 고마워.",
+      "좋아하는 사람만 눌러 줘."
+    ],
+    "teacherTip": "타인의 반응에 대한 건강한 기대를 함께 이야기합니다.",
+    "reflectionQuestions": [
+      "좋아요가 적어도 내 가치는 어떻게 남을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "sns_share",
+    "term": "박제",
+    "aliases": [],
+    "category": "sns.behavior",
+    "meaning": "친구의 말이나 사진을 캡처해 오래 남겨 두는 행동이에요.",
+    "contexts": [
+      "sns",
+      "kakaotalk"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "HIGH",
+    "emotionImpact": [
+      "대상 친구가 오래 힘들어져요"
+    ],
+    "possibleMisunderstanding": "장난이 지나쳐 사이버폭력이 될 수 있어요.",
+    "betterExpressions": [
+      "허락받고 저장하자.",
+      "지워 달라고 하면 지우자."
+    ],
+    "teacherTip": "온라인 기록의 영향력을 함께 이야기합니다.",
+    "reflectionQuestions": [
+      "내 실수 장면이 박제되면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

@@ -1,0 +1,105 @@
+[
+  {
+    "id": "conf_i_message",
+    "term": "나 전달법",
+    "aliases": [
+      "I-message",
+      "아이메시지"
+    ],
+    "category": "conflict.skill",
+    "meaning": "'너 때문에'가 아니라 '나는 이런 마음이야'로 말하는 방법이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "비난 대신 이해가 전달돼요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "나는 ~해서 속상했어.",
+      "나는 ~하면 좋겠어."
+    ],
+    "teacherTip": "상황-감정-바람의 3단계로 문장을 만들어 보게 합니다.",
+    "reflectionQuestions": [
+      "'너' 대신 '나'로 시작하면 어떻게 달라질까요?"
+    ],
+    "relatedTerms": [
+      "blame_youfault"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "conf_pause",
+    "term": "잠깐 쉬자",
+    "aliases": [
+      "타임아웃"
+    ],
+    "category": "conflict.regulation",
+    "meaning": "감정이 너무 커졌을 때 잠시 멈추자고 제안하는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "감정을 가라앉힐 시간이 생겨요"
+    ],
+    "possibleMisunderstanding": "회피로 오해될 수 있어요.",
+    "betterExpressions": [
+      "5분만 쉬었다가 다시 이야기하자.",
+      "조금 마음이 진정된 뒤에 이야기하자."
+    ],
+    "teacherTip": "감정 조절은 배움의 과정임을 인정해 줍니다.",
+    "reflectionQuestions": [
+      "감정이 커졌을 때 도움이 되는 방법은 무엇이었나요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "conf_agree",
+    "term": "어떻게 하면 좋을까?",
+    "aliases": [],
+    "category": "conflict.solution",
+    "meaning": "함께 해결책을 찾자고 초대하는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "협력의 분위기가 생겨요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "우리가 같이 해결해 볼래?",
+      "서로에게 좋은 방법을 찾아보자."
+    ],
+    "teacherTip": "문제 해결의 주체가 학생 자신이 되도록 유도합니다.",
+    "reflectionQuestions": [
+      "둘 다 편안해지는 방법은 무엇일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

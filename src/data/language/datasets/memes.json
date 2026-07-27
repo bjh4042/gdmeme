@@ -1,0 +1,169 @@
+[
+  {
+    "id": "meme_gwiyomi",
+    "term": "어쩔티비",
+    "aliases": [
+      "저쩔티비"
+    ],
+    "category": "meme.dismissal",
+    "meaning": "상대의 말을 무시하듯 받아치는 유행어예요.",
+    "contexts": [
+      "school",
+      "friend",
+      "sns"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "말한 친구가 무시당한 기분이 들어요"
+    ],
+    "possibleMisunderstanding": "장난이라도 상처를 줄 수 있어요.",
+    "betterExpressions": [
+      "나는 조금 다르게 생각해.",
+      "그 얘기 더 들려줄래?"
+    ],
+    "teacherTip": "유행어라도 상대의 감정을 먼저 살피는 습관을 함께 만듭니다.",
+    "reflectionQuestions": [
+      "'어쩔티비'를 들은 친구는 어떤 기분일까요?"
+    ],
+    "relatedTerms": [
+      "저쩔냉장고"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "meme_gg",
+    "term": "ㅇㅈ각",
+    "aliases": [],
+    "category": "meme.reaction",
+    "meaning": "'인정할 만하다'는 뜻으로 쓰이는 표현이에요.",
+    "contexts": [
+      "friend",
+      "sns"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "가볍게 동의가 전해져요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "그럴 만해.",
+      "이해가 돼."
+    ],
+    "teacherTip": "유행 표현 뒤에 자신의 근거를 덧붙이도록 안내합니다.",
+    "reflectionQuestions": [
+      "왜 인정할 만하다고 생각했나요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "meme_gyaru",
+    "term": "킹받네",
+    "aliases": [
+      "킹받아"
+    ],
+    "category": "meme.emotion",
+    "meaning": "많이 짜증난다는 뜻을 재미있게 표현한 말이에요.",
+    "contexts": [
+      "friend",
+      "game",
+      "sns"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "가벼운 짜증이 전달돼요"
+    ],
+    "possibleMisunderstanding": "상대를 향한 화로 오해될 수 있어요.",
+    "betterExpressions": [
+      "조금 답답해.",
+      "마음이 편치 않아."
+    ],
+    "teacherTip": "감정을 이름 붙여 말해 보도록 도와줍니다.",
+    "reflectionQuestions": [
+      "언제 이런 기분이 드나요?"
+    ],
+    "relatedTerms": [
+      "빡친다"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "meme_flex",
+    "term": "플렉스",
+    "aliases": [
+      "플렉스했다"
+    ],
+    "category": "meme.behavior",
+    "meaning": "자랑하듯 자신 있게 보여준다는 뜻이에요.",
+    "contexts": [
+      "sns",
+      "friend"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "부러움이나 소외감이 생길 수 있어요"
+    ],
+    "possibleMisunderstanding": "자랑처럼 보여 친구가 서운할 수 있어요.",
+    "betterExpressions": [
+      "정말 기뻐서 자랑하고 싶었어.",
+      "같이 기뻐해 줄래?"
+    ],
+    "teacherTip": "기쁨과 자랑의 차이를 함께 생각해 봅니다.",
+    "reflectionQuestions": [
+      "내가 못 가진 걸 친구가 자랑하면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "meme_smsh",
+    "term": "스불재",
+    "aliases": [],
+    "category": "meme.selfreflect",
+    "meaning": "'스스로 불러온 재앙'의 줄임말로 자신을 웃기게 반성할 때 써요.",
+    "contexts": [
+      "friend",
+      "sns"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "자기 반성을 가볍게 표현해요"
+    ],
+    "possibleMisunderstanding": "자책이 강해지면 힘들 수 있어요.",
+    "betterExpressions": [
+      "이번엔 내가 실수했어.",
+      "다음엔 다르게 해 볼게."
+    ],
+    "teacherTip": "가벼운 반성은 좋지만 지나친 자책이 되지 않도록 살펴봅니다.",
+    "reflectionQuestions": [
+      "다음엔 어떻게 하면 좋을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]
