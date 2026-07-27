@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { withCorePrompt } from "./ai-core-prompt";
 
 /**
  * STEP5 실천 코치 — Lovable AI Gateway 를 통해 학생의 실천 계획에
@@ -35,7 +36,7 @@ function fallback(input: CoachInput): CoachResult {
 }
 
 async function callGateway(input: CoachInput, apiKey: string): Promise<CoachResult> {
-  const system = [
+  const system = withCorePrompt([
     "너는 초등학교 3~4학년 학생의 '바른말 실천 코치' 다.",
     "상담사가 아니라 실천 코치다. 짧고, 밝고, 구체적으로 말한다.",
     "학생을 훈계·비난하지 않는다. 부정 표현을 쓰지 않는다.",
@@ -44,7 +45,7 @@ async function callGateway(input: CoachInput, apiKey: string): Promise<CoachResu
     "그리고 오늘 바로 도전할 수 있는 미션 3개를 추천한다 (각 20자 이내, 명령형 짧은 문장).",
     "반드시 아래 JSON 형식으로만 답한다:",
     `{"feedback":"...","missions":["...","...","..."]}`,
-  ].join("\n");
+  ].join("\n"));
   const user = `실천 목표: ${input.goal}\n나의 다짐: ${input.promise}`;
 
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
