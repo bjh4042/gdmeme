@@ -347,7 +347,7 @@ function updateLearningMemory(params: {
   if (goalHistory[goalHistory.length - 1] !== goal) goalHistory.push(goal);
 
   const practiceHistory = prev.practiceHistory ? [...prev.practiceHistory] : [];
-  if (strategy === "reinforce_practice" || strategy === "advance_stage") {
+  if (strategy === "advance_stage" || strategy === "summarize_learning") {
     practiceHistory.push(`${Date.now()}:${String(strategy)}`);
   }
 
