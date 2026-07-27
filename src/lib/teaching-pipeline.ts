@@ -33,9 +33,8 @@ import {
   type StrategyDecision,
   type TeachingStrategy as StrategyName,
   type HintLevel,
-  type ResponseMode,
-  type ChoiceType,
 } from "./teaching-strategy";
+import type { ResponseMode } from "./teaching-planner";
 import { decideStage, type StageDecisionResult } from "./stage-decision";
 import {
   generateResponse,
@@ -349,7 +348,7 @@ function updateLearningMemory(params: {
 
   const practiceHistory = prev.practiceHistory ? [...prev.practiceHistory] : [];
   if (strategy === "reinforce_practice" || strategy === "advance_stage") {
-    practiceHistory.push(`${Date.now()}:${strategy}`);
+    practiceHistory.push(`${Date.now()}:${String(strategy)}`);
   }
 
   const misconceptionSeen = prev.misconceptionSeen
@@ -394,25 +393,26 @@ function fallbackUnderstanding(
   const m = model ?? createStudentModel();
   return {
     normalized: raw ?? "",
-    intent: "share_feeling",
+    intent: "unknown",
     emotion: "neutral",
     emotionTrajectory: [],
     studentModel: m,
     repeatedError: { detected: false },
-    misconception: { detected: false },
+    misconception: { detected: false, confidence: 0 },
     stage: m.stage,
     confidence: "low",
     clarifierHints: [],
     normalization: {
+      original: raw ?? "",
       normalizedText: raw ?? "",
-      meaningCandidates: [],
+      possibleMeanings: [],
       selectedMeaning: "unknown",
       selectedByContext: false,
     },
-    intentAnalysis: { primary: "share_feeling", confidence: 0.3 },
-    emotionAnalysis: { primary: "neutral", intensity: 0, confidence: 0.3 },
-    defensiveResponse: { detected: false },
-    clarificationNeed: { required: true, target: "meaning", strategy: "open_question" },
+    intentAnalysis: { primary: "unknown", secondary: [], confidence: 0.3 },
+    emotionAnalysis: { primary: "neutral", secondary: [], intensity: 0, confidence: 0.3 },
+    defensiveResponse: { detected: false, confidence: 0 },
+    clarificationNeed: { required: true, target: "meaning", strategy: "easy_open_question" },
     evidence: { matchedTokens: [], contextSignals: ["fallback"], ruleIds: [] },
     status: "insufficient_data",
   };
@@ -457,9 +457,8 @@ function fallbackStage(ps: PedagogicalState): StageDecisionResult {
     checklistResult: {
       goal: ps.currentGoal,
       items: [],
-      passed: 0,
-      required: 0,
-      allPassed: false,
+      passedCount: 0,
+      requiredCount: 0,
     },
     plannerDecision: { shouldAdvanceStage: false },
     status: "insufficient_data",
@@ -493,7 +492,7 @@ function inferStudentReaction(
   if (u.defensiveResponse?.detected) return "defensive";
   const p = u.intentAnalysis?.primary;
   if (p === "avoid") return "avoidant";
-  if (p === "share_feeling" || p === "apology") return "reflective";
+  if (p === "apology" || p === "empathy") return "reflective";
   if (u.status === "insufficient_data") return "confused";
   return "engaged";
 }
