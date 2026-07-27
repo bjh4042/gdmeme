@@ -1,0 +1,166 @@
+[
+  {
+    "id": "game_gg",
+    "term": "gg",
+    "aliases": [
+      "지지",
+      "ㅈㅈ"
+    ],
+    "category": "game.match",
+    "meaning": "'좋은 게임이었다'는 뜻으로 게임이 끝날 때 인사말로 써요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "예의 있는 인사가 전달돼요"
+    ],
+    "possibleMisunderstanding": "지고 있는 팀에게는 비꼼으로 들릴 수 있어요.",
+    "betterExpressions": [
+      "수고했어.",
+      "좋은 판이었어."
+    ],
+    "teacherTip": "상황에 맞게 인사 표현을 고르도록 지도합니다.",
+    "reflectionQuestions": [
+      "지고 있는 팀에게 gg를 하면 어떻게 들릴까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "game_ez",
+    "term": "ez",
+    "aliases": [
+      "이지"
+    ],
+    "category": "game.taunt",
+    "meaning": "'쉽다'는 뜻으로 상대를 놀리는 데 자주 쓰여요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "진 팀이 크게 속상해져요"
+    ],
+    "possibleMisunderstanding": "장난처럼 보여도 도발로 느껴져요.",
+    "betterExpressions": [
+      "잘 배웠어.",
+      "같이 잘 해 봐."
+    ],
+    "teacherTip": "승패보다 상대의 감정을 살피는 태도를 강조합니다.",
+    "reflectionQuestions": [
+      "내가 졌을 때 ez라는 말을 들으면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "game_noob",
+    "term": "뉴비",
+    "aliases": [
+      "초보"
+    ],
+    "category": "game.role",
+    "meaning": "게임을 처음 하거나 익숙하지 않은 친구를 부르는 말이에요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "무시하는 뜻으로 들릴 수 있어요"
+    ],
+    "possibleMisunderstanding": "깎아내리는 말로 오해될 수 있어요.",
+    "betterExpressions": [
+      "같이 배워 보자.",
+      "도와줄게, 천천히 해."
+    ],
+    "teacherTip": "배움의 단계는 누구에게나 있음을 함께 이야기합니다.",
+    "reflectionQuestions": [
+      "내가 처음일 때 어떤 말을 듣고 싶었나요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "game_carry",
+    "term": "캐리",
+    "aliases": [
+      "캐리해줘"
+    ],
+    "category": "game.role",
+    "meaning": "팀을 이끌어 이기게 해 준다는 뜻이에요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "기대와 부담이 동시에 생겨요"
+    ],
+    "possibleMisunderstanding": "한 사람에게만 책임이 몰릴 수 있어요.",
+    "betterExpressions": [
+      "같이 힘내자.",
+      "서로 도와서 해 보자."
+    ],
+    "teacherTip": "협력의 언어로 바꿔 보는 연습을 함께 합니다.",
+    "reflectionQuestions": [
+      "팀에서 한 명에게만 기대하면 어떤 문제가 생길까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "game_report",
+    "term": "신고각",
+    "aliases": [],
+    "category": "game.threat",
+    "meaning": "'신고할 만하다'는 뜻으로 상대를 겁줄 때 써요.",
+    "contexts": [
+      "game",
+      "discord"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "상대가 크게 위축돼요"
+    ],
+    "possibleMisunderstanding": "협박으로 들릴 수 있어요.",
+    "betterExpressions": [
+      "그건 규칙에 어긋나는 것 같아.",
+      "같이 규칙을 확인해 보자."
+    ],
+    "teacherTip": "문제 해결의 언어와 위협의 언어를 구분해 봅니다.",
+    "reflectionQuestions": [
+      "내가 이런 말을 들으면 어떻게 느껴질까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

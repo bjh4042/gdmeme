@@ -1,0 +1,99 @@
+[
+  {
+    "id": "sarc_wellwell",
+    "term": "잘~ 한다",
+    "aliases": [
+      "잘한다잘한다"
+    ],
+    "category": "sarcasm.mock",
+    "meaning": "칭찬처럼 들리지만 실제로는 비꼬는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "상대가 무시당한 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "장난이라도 상처가 크게 남아요.",
+    "betterExpressions": [
+      "이번엔 아쉬웠어, 같이 다시 해 볼래?",
+      "이 부분이 걱정됐어."
+    ],
+    "teacherTip": "비꼼과 유머의 차이를 함께 이야기해 봅니다.",
+    "reflectionQuestions": [
+      "내가 이런 말을 들으면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "sarc_gj",
+    "term": "대단하시네요",
+    "aliases": [],
+    "category": "sarcasm.politeMask",
+    "meaning": "존댓말이지만 비꼬는 말투로 쓰이기도 해요.",
+    "contexts": [
+      "friend",
+      "sns",
+      "kakaotalk"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "상대가 무시당한 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "말은 예의 있어 보여도 뜻은 반대예요.",
+    "betterExpressions": [
+      "내 생각은 이래.",
+      "이 부분이 걱정돼서 말했어."
+    ],
+    "teacherTip": "말의 형식과 의도의 차이를 학생과 함께 살펴봅니다.",
+    "reflectionQuestions": [
+      "말투와 진심이 다를 때 어떤 문제가 생길까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "sarc_ohso",
+    "term": "아~ 그러시겠죠",
+    "aliases": [],
+    "category": "sarcasm.dismiss",
+    "meaning": "상대 말을 진지하게 듣지 않고 넘기는 비꼬는 반응이에요.",
+    "contexts": [
+      "friend",
+      "kakaotalk"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "상대가 무시당한 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "대화를 닫아 버려 갈등이 커질 수 있어요.",
+    "betterExpressions": [
+      "조금 더 자세히 이야기해 줄래?",
+      "그 부분은 나도 생각해 볼게."
+    ],
+    "teacherTip": "'듣기'를 먼저 연습하도록 돕습니다.",
+    "reflectionQuestions": [
+      "내 말을 진지하게 들어주는 사람은 누구인가요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

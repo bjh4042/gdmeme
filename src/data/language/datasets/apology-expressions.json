@@ -1,0 +1,103 @@
+[
+  {
+    "id": "apology_sorry",
+    "term": "미안해",
+    "aliases": [
+      "미안"
+    ],
+    "category": "apology.basic",
+    "meaning": "잘못이나 실수를 인정하고 마음을 전할 때 쓰는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "관계 회복의 문이 열려요"
+    ],
+    "possibleMisunderstanding": "이유 없이 반복되면 형식적으로 들려요.",
+    "betterExpressions": [
+      "내가 ~해서 미안해.",
+      "다음엔 ~하도록 노력할게."
+    ],
+    "teacherTip": "사과의 3요소(무엇을·왜·앞으로)를 함께 연습합니다.",
+    "reflectionQuestions": [
+      "무엇이 미안한지, 왜 그랬는지 말해 볼까요?"
+    ],
+    "relatedTerms": [
+      "polite_sorry_pro"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "apology_repair",
+    "term": "내가 잘못했어",
+    "aliases": [],
+    "category": "apology.responsibility",
+    "meaning": "책임을 스스로 인정하는 표현이에요.",
+    "contexts": [
+      "friend",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "상대가 진심을 느낄 수 있어요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "내가 ~한 부분이 잘못이었어.",
+      "네 마음이 상했을 것 같아, 미안해."
+    ],
+    "teacherTip": "책임 인정 뒤에 구체적인 행동을 덧붙이게 합니다.",
+    "reflectionQuestions": [
+      "내 어떤 행동이 친구에게 상처를 줬을까요?"
+    ],
+    "relatedTerms": [
+      "blame_youfault"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "apology_plan",
+    "term": "다음엔 이렇게 할게",
+    "aliases": [],
+    "category": "apology.plan",
+    "meaning": "같은 실수를 반복하지 않기 위한 다짐을 담은 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "신뢰가 회복돼요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "다음엔 ~하기 전에 물어볼게.",
+      "다음엔 ~하는 대신 ~해 볼게."
+    ],
+    "teacherTip": "구체적이고 실천 가능한 다짐이 되도록 함께 다듬습니다.",
+    "reflectionQuestions": [
+      "어떤 작은 행동부터 시작할 수 있을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

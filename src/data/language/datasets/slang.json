@@ -1,0 +1,216 @@
+[
+  {
+    "id": "slang_gaejjaejeung",
+    "term": "개짜증",
+    "aliases": [
+      "개짱나",
+      "개빡"
+    ],
+    "category": "slang.emotion",
+    "meaning": "정말 많이 짜증이 난다는 뜻으로 친구들이 자주 쓰는 말이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "kakaotalk"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "듣는 사람이 겁을 먹을 수 있어요",
+      "분위기가 무거워져요"
+    ],
+    "possibleMisunderstanding": "나한테 화를 낸다고 오해할 수 있어요.",
+    "betterExpressions": [
+      "정말 속상해.",
+      "기분이 안 좋아.",
+      "화가 났어.",
+      "조금 쉬고 싶어."
+    ],
+    "teacherTip": "먼저 감정을 인정하고, 감정과 표현을 분리해 더 나은 말로 바꿔 보게 합니다.",
+    "reflectionQuestions": [
+      "친구는 어떤 기분이 들었을까요?",
+      "다른 말로 표현해 볼 수 있을까요?"
+    ],
+    "relatedTerms": [
+      "빡친다"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "slang_bbagchinda",
+    "term": "빡친다",
+    "aliases": [
+      "빡쳐"
+    ],
+    "category": "slang.emotion",
+    "meaning": "화가 많이 났다는 뜻이에요.",
+    "contexts": [
+      "friend",
+      "game",
+      "school"
+    ],
+    "appropriateness": "NOT_RECOMMENDED",
+    "riskLevel": "MEDIUM",
+    "emotionImpact": [
+      "듣는 사람이 놀랄 수 있어요"
+    ],
+    "possibleMisunderstanding": "상대에게 화가 났다고 오해할 수 있어요.",
+    "betterExpressions": [
+      "너무 화가 나요.",
+      "마음이 답답해요.",
+      "조금 쉬고 싶어요."
+    ],
+    "teacherTip": "감정 자체는 자연스러움을 인정하고, 표현만 다듬도록 안내합니다.",
+    "reflectionQuestions": [
+      "언제 이런 말을 하게 되나요?",
+      "다른 말로 어떻게 표현할 수 있을까요?"
+    ],
+    "relatedTerms": [
+      "개짜증"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "slang_jjot",
+    "term": "쫌",
+    "aliases": [],
+    "category": "slang.mild",
+    "meaning": "'조금'을 짧게 말하는 표현으로 가볍게 쓰이는 말이에요.",
+    "contexts": [
+      "friend",
+      "school"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "가볍게 들려요"
+    ],
+    "possibleMisunderstanding": "상황에 따라 무례하게 들릴 수 있어요.",
+    "betterExpressions": [
+      "조금",
+      "살짝",
+      "약간"
+    ],
+    "teacherTip": "상황에 맞게 존댓말과 반말을 구분해 쓰도록 지도합니다.",
+    "reflectionQuestions": [
+      "이 말을 어른께 써도 괜찮을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "slang_notjaem",
+    "term": "노잼",
+    "aliases": [
+      "노 잼"
+    ],
+    "category": "slang.evaluation",
+    "meaning": "재미없다는 뜻이에요.",
+    "contexts": [
+      "friend",
+      "school",
+      "sns"
+    ],
+    "appropriateness": "DEPENDS_ON_CONTEXT",
+    "riskLevel": "LOW",
+    "emotionImpact": [
+      "말한 친구가 서운할 수 있어요"
+    ],
+    "possibleMisunderstanding": "친구가 준비한 것을 무시한다고 느낄 수 있어요.",
+    "betterExpressions": [
+      "나한테는 조금 어려웠어.",
+      "다음엔 다른 것도 해 볼래?",
+      "내 취향은 아니었어."
+    ],
+    "teacherTip": "평가보다 자기 느낌으로 말하는 연습을 함께 합니다.",
+    "reflectionQuestions": [
+      "내가 준비한 걸 친구가 '노잼'이라 하면 어떤 기분일까요?"
+    ],
+    "relatedTerms": [
+      "꿀잼"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "slang_kkuljaem",
+    "term": "꿀잼",
+    "aliases": [],
+    "category": "slang.evaluation",
+    "meaning": "아주 재미있다는 뜻이에요.",
+    "contexts": [
+      "friend",
+      "game",
+      "sns"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "같이 즐거워져요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [
+      "정말 재미있었어.",
+      "시간 가는 줄 몰랐어."
+    ],
+    "teacherTip": "긍정 표현은 있는 그대로 인정하되 더 구체적으로 말해 보게 합니다.",
+    "reflectionQuestions": [
+      "어떤 점이 재미있었나요?"
+    ],
+    "relatedTerms": [
+      "노잼"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "slang_hul",
+    "term": "헐",
+    "aliases": [],
+    "category": "slang.reaction",
+    "meaning": "놀랐을 때 자주 쓰는 감탄사예요.",
+    "contexts": [
+      "friend",
+      "kakaotalk",
+      "sns"
+    ],
+    "appropriateness": "USUALLY_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "가볍게 놀람이 전달돼요"
+    ],
+    "possibleMisunderstanding": "공식 상황에서는 예의없어 보일 수 있어요.",
+    "betterExpressions": [
+      "정말요?",
+      "깜짝 놀랐어요."
+    ],
+    "teacherTip": "친구 사이에서는 괜찮지만 어른 앞에서는 조심하도록 안내합니다.",
+    "reflectionQuestions": [
+      "어떤 상황에서 '헐'이라고 말하나요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]

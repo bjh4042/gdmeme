@@ -1,0 +1,119 @@
+[
+  {
+    "id": "polite_greet",
+    "term": "안녕하세요",
+    "aliases": [],
+    "category": "polite.greet",
+    "meaning": "처음 만나거나 인사할 때 쓰는 예의 있는 말이에요.",
+    "contexts": [
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "상대가 존중받는 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [],
+    "teacherTip": "인사말 뒤에 이름을 함께 부르면 더 따뜻해집니다.",
+    "reflectionQuestions": [
+      "오늘 누구에게 먼저 인사해 볼 수 있을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "polite_thanks",
+    "term": "고맙습니다",
+    "aliases": [
+      "감사합니다"
+    ],
+    "category": "polite.thanks",
+    "meaning": "도움을 받았을 때 마음을 전하는 말이에요.",
+    "contexts": [
+      "school",
+      "family",
+      "friend"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "관계가 따뜻해져요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [],
+    "teacherTip": "이유를 함께 말하면 진심이 더 잘 전달됩니다.",
+    "reflectionQuestions": [
+      "어떤 점이 고마웠는지 함께 말해 볼까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "polite_ask",
+    "term": "부탁드려요",
+    "aliases": [],
+    "category": "polite.request",
+    "meaning": "공손하게 부탁할 때 쓰는 말이에요.",
+    "contexts": [
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "부탁받은 사람이 존중받는 느낌을 받아요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [],
+    "teacherTip": "부탁의 이유와 이유를 짧게 덧붙이도록 안내합니다.",
+    "reflectionQuestions": [
+      "어떤 상황에서 이 말을 쓸 수 있을까요?"
+    ],
+    "relatedTerms": [],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  },
+  {
+    "id": "polite_sorry_pro",
+    "term": "죄송합니다",
+    "aliases": [],
+    "category": "polite.apology",
+    "meaning": "잘못이나 실수를 했을 때 공손하게 사과하는 말이에요.",
+    "contexts": [
+      "school",
+      "family"
+    ],
+    "appropriateness": "ALWAYS_OK",
+    "riskLevel": "NONE",
+    "emotionImpact": [
+      "사과의 무게가 잘 전달돼요"
+    ],
+    "possibleMisunderstanding": "",
+    "betterExpressions": [],
+    "teacherTip": "이유와 다음 다짐을 함께 말하도록 안내합니다.",
+    "reflectionQuestions": [
+      "다음엔 어떻게 하면 좋을까요?"
+    ],
+    "relatedTerms": [
+      "apology_sorry"
+    ],
+    "grade": [
+      "3",
+      "4"
+    ],
+    "updatedAt": "2026-07-27"
+  }
+]
