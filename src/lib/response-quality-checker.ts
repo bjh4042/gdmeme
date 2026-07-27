@@ -386,8 +386,8 @@ export function checkResponseQuality(
 
   const hint = decision.hintLevel;
   const strategy = decision.strategy;
-  const advance = Boolean(decision.advanceStage);
-  const goal = decision.goalAfter ?? decision.goalBefore ?? "empathy";
+  const advance = Boolean(decision.shouldAdvanceStage);
+  const goal = decision.goal;
 
   let sentences = splitSentences(generated.text);
 
@@ -474,7 +474,7 @@ export function buildFinalChecklist(
       hint >= 4 ||
       !/(정답은|모범답안)/.test(output.text),
     respectsStage:
-      input.decision.advanceStage ||
+      input.decision.shouldAdvanceStage ||
       !/(축하해요|다음 단계|잘 마쳤어요|해냈어요)/.test(output.text),
     safetyRespected:
       !input.safetySignal ||
