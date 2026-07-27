@@ -400,7 +400,7 @@ function shouldAdvance(
     case "expression_revision":
       return strategy === "reinforce_practice";
     case "practice_plan":
-      return u.intentAnalysis.primary !== "avoid" && u.confidence !== "low";
+      return u.intentAnalysis.primary !== "avoid";
     case "practice_reinforce":
       return false; // 실천 강화는 스스로 멈추지 않는다
     default:
