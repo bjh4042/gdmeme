@@ -1,0 +1,340 @@
+[
+  {
+    "id": "school_lineup_cut",
+    "title": "줄서기에서 새치기 오해",
+    "context": "줄을 서다가 친구가 새치기했다고 오해받는다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "니가 먼저 했잖아",
+      "새치기 하지 마"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "자리를 맡아준 걸 새치기로 오해"
+    ],
+    "recommendedTeacherFocus": "맥락을 먼저 확인한다.",
+    "recommendedQuestions": [
+      "친구는 왜 그 자리에 섰을까?",
+      "말하기 전에 무엇을 확인할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "혹시 여기 자리 맡아 놓은 거야?",
+      "나도 여기 서 있었어. 같이 물어볼까?"
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions",
+      "blame-shifting"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_lost_item",
+    "title": "지우개가 없어졌다",
+    "context": "내 지우개가 사라졌는데 옆 친구를 의심하게 된다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "짝꿍"
+    ],
+    "typicalExpressions": [
+      "너지?",
+      "네가 가져갔지"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "실수로 떨어진 걸 도난으로 오해"
+    ],
+    "recommendedTeacherFocus": "증거 없이 단정하지 않는다.",
+    "recommendedQuestions": [
+      "혹시 다른 곳에 떨어져 있진 않을까?",
+      "어떻게 물어보면 친구가 기분 나쁘지 않을까?"
+    ],
+    "betterExpressionExamples": [
+      "내 지우개 못 봤어? 혹시 근처에 있으면 알려줘."
+    ],
+    "relatedLanguageCategories": [
+      "blame-shifting"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_group_project",
+    "title": "모둠활동에서 역할 다툼",
+    "context": "모둠활동에서 서로 하고 싶은 역할이 겹친다.",
+    "location": "classroom",
+    "participants": [
+      "모둠원"
+    ],
+    "typicalExpressions": [
+      "내가 할래",
+      "니가 왜 하냐"
+    ],
+    "communicationGoal": "협력",
+    "possibleMisunderstandings": [
+      "열심히 하려는 마음을 욕심으로 오해"
+    ],
+    "recommendedTeacherFocus": "역할 분담 규칙을 함께 정한다.",
+    "recommendedQuestions": [
+      "각자 잘하는 게 뭘까?",
+      "순서를 어떻게 정하면 좋을까?"
+    ],
+    "betterExpressionExamples": [
+      "이번엔 내가 발표할게. 다음엔 네가 해줄래?"
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_teacher_scold",
+    "title": "선생님께 혼난 뒤 친구에게 짜증",
+    "context": "선생님께 혼난 뒤 옆 친구에게 짜증을 낸다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "아 진짜",
+      "건들지 마"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "친구 탓으로 잘못 이해"
+    ],
+    "recommendedTeacherFocus": "감정과 대상을 구분한다.",
+    "recommendedQuestions": [
+      "지금 화가 난 건 누구 때문일까?",
+      "친구에게는 어떻게 말하면 좋을까?"
+    ],
+    "betterExpressionExamples": [
+      "나 지금 좀 속상해서 그래. 조금만 기다려줘."
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_nickname_hurt",
+    "title": "별명 부르기로 속상함",
+    "context": "장난으로 부른 별명에 친구가 속상해한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "장난인데?",
+      "왜 정색해"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "장난과 놀림의 경계 혼동"
+    ],
+    "recommendedTeacherFocus": "장난과 놀림의 차이를 이야기한다.",
+    "recommendedQuestions": [
+      "친구는 그 별명을 어떻게 느꼈을까?",
+      "반대로 내가 그 별명을 들으면 어땠을까?"
+    ],
+    "betterExpressionExamples": [
+      "미안, 네가 싫어하는 줄 몰랐어. 안 부를게."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying",
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_exclude_lunch",
+    "title": "점심 자리 배제",
+    "context": "점심시간에 한 친구만 자리에 못 끼운다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "자리 없어",
+      "다음에"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "우연한 자리 부족을 따돌림으로 오해할 수도, 반대일 수도 있다"
+    ],
+    "recommendedTeacherFocus": "상황 맥락과 반복성을 확인한다.",
+    "recommendedQuestions": [
+      "그 친구는 지금 어떤 기분일까?",
+      "자리를 어떻게 만들 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "옆에 의자 하나 붙일게, 같이 먹자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_hallway_bump",
+    "title": "복도에서 부딪힘",
+    "context": "복도에서 뛰다가 친구와 부딪혔다.",
+    "location": "hallway",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "아 씨",
+      "조심해야지"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [
+      "실수를 고의로 오해"
+    ],
+    "recommendedTeacherFocus": "반사적 짜증을 사과로 바꾸는 연습.",
+    "recommendedQuestions": [
+      "부딪혔을 때 먼저 어떤 말을 할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "미안해, 안 다쳤어?"
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_test_score_tease",
+    "title": "시험 점수 놀림",
+    "context": "시험 점수를 두고 서로 놀린다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "몇 점이야?",
+      "그거밖에?"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "관심 표현을 비교/무시로 오해"
+    ],
+    "recommendedTeacherFocus": "비교 대신 응원의 언어를 익힌다.",
+    "recommendedQuestions": [
+      "점수를 물어보는 게 친구에게 어떻게 느껴질까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 같이 준비해 볼까?"
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_borrow_no_return",
+    "title": "물건 빌려주고 안 돌려받음",
+    "context": "빌려준 물건을 친구가 돌려주지 않는다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "언제 줄 거야",
+      "까먹었어"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [
+      "잊어버림을 무시로 오해"
+    ],
+    "recommendedTeacherFocus": "정중한 요청 표현을 연습한다.",
+    "recommendedQuestions": [
+      "친구는 왜 잊었을까?",
+      "어떻게 말하면 서로 기분이 상하지 않을까?"
+    ],
+    "betterExpressionExamples": [
+      "혹시 어제 빌려준 거, 내일까지 돌려줄 수 있어?"
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "school_rumor_spread",
+    "title": "교실에서 소문",
+    "context": "누가 누구를 좋아한다는 소문이 돈다.",
+    "location": "classroom",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "들었어?",
+      "진짜야?"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "농담 소문을 사실로 오해"
+    ],
+    "recommendedTeacherFocus": "소문의 출처와 영향을 이야기한다.",
+    "recommendedQuestions": [
+      "그 이야기가 사실이 아니라면 친구는 어떤 기분일까?"
+    ],
+    "betterExpressionExamples": [
+      "잘 모르는 건 옮기지 말자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

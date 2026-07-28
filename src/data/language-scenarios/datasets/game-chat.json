@@ -1,0 +1,317 @@
+[
+  {
+    "id": "gc_anger_swear",
+    "title": "게임에서 화가 나 욕설",
+    "context": "게임에서 지고 화가 나 욕설이 나온다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "ㅅㅂ",
+      "억까",
+      "트롤"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "팀원 개인을 향한 공격으로 들릴 수 있음"
+    ],
+    "recommendedTeacherFocus": "감정 인식과 대체 표현.",
+    "recommendedQuestions": [
+      "지금 화가 난 진짜 이유는 뭘까?"
+    ],
+    "betterExpressionExamples": [
+      "아 아쉬워, 다음 판은 다시 해보자."
+    ],
+    "relatedLanguageCategories": [
+      "slang",
+      "game-chat"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_troll_blame",
+    "title": "트롤이라 비난",
+    "context": "팀원을 트롤이라며 비난한다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "트롤이지",
+      "고의지?"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [
+      "실력 차이나 실수를 고의로 오해"
+    ],
+    "recommendedTeacherFocus": "비난과 피드백의 차이.",
+    "recommendedQuestions": [
+      "팀원이 실수한 이유가 있었을까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 이렇게 해보자, 같이 맞춰 가자."
+    ],
+    "relatedLanguageCategories": [
+      "blame-shifting"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_voice_chat_yell",
+    "title": "보이스 채팅에서 소리 지름",
+    "context": "음성 채팅에서 급해서 소리를 지른다.",
+    "location": "game",
+    "participants": [
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "빨리",
+      "뭐 하냐고"
+    ],
+    "communicationGoal": "협력",
+    "possibleMisunderstandings": [
+      "다급함을 화로 오해"
+    ],
+    "recommendedTeacherFocus": "침착한 지시.",
+    "recommendedQuestions": [
+      "급한 상황에서 어떤 말투가 팀에 도움될까?"
+    ],
+    "betterExpressionExamples": [
+      "여기 도와줘, 지금!"
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_stranger_msg",
+    "title": "모르는 사람 귓속말",
+    "context": "모르는 사람이 게임 중 개인 정보를 묻는다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "모르는 사람"
+    ],
+    "typicalExpressions": [
+      "몇 살?",
+      "어디 살아?"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "개인 정보 보호.",
+    "recommendedQuestions": [
+      "대답하기 전에 무엇을 확인해야 할까?"
+    ],
+    "betterExpressionExamples": [
+      "개인 정보는 말 안 할래."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_kick_vote",
+    "title": "강퇴 투표",
+    "context": "특정 팀원을 강퇴하자는 투표가 올라온다.",
+    "location": "game",
+    "participants": [
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "강퇴 ㄱㄱ",
+      "답 없어"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "집단 판단의 위험.",
+    "recommendedQuestions": [
+      "강퇴 전에 한 번 더 이야기해볼 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "한 판만 더 같이 해보자, 어때?"
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_flex_item",
+    "title": "아이템 자랑",
+    "context": "비싼 아이템을 자랑하며 친구를 무시한다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "없지?",
+      "현질 안 하냐"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "자랑을 즐거움 공유로 오해할 수 있음"
+    ],
+    "recommendedTeacherFocus": "자랑과 공유의 차이.",
+    "recommendedQuestions": [
+      "없는 친구 기분은 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "나 이거 얻었어, 나중에 같이 파티하자."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_lose_blame_team",
+    "title": "지고 팀 탓",
+    "context": "게임에 지고 팀 탓만 한다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "너 때문에 짐",
+      "다시는 안 함"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "책임 분산과 자기 반성.",
+    "recommendedQuestions": [
+      "나도 다르게 할 수 있는 부분이 있었을까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 나도 각도 잘 잡을게."
+    ],
+    "relatedLanguageCategories": [
+      "blame-shifting"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_swear_habit",
+    "title": "지시어처럼 쓰는 욕",
+    "context": "습관적으로 욕설을 지시어로 쓴다.",
+    "location": "game",
+    "participants": [
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "ㅆㅂ 이리 와",
+      "개꿀"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "감탄사인데 공격처럼 들림"
+    ],
+    "recommendedTeacherFocus": "말 습관 다듬기.",
+    "recommendedQuestions": [
+      "같은 뜻을 다른 말로 어떻게 말할까?"
+    ],
+    "betterExpressionExamples": [
+      "오! 여기 와, 개꿀 상황!"
+    ],
+    "relatedLanguageCategories": [
+      "slang"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_smurf_frustration",
+    "title": "고수와 매칭됨",
+    "context": "한참 고수와 매칭되어 답답하다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "재미없어",
+      "접을래"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "좌절 감정 표현.",
+    "recommendedQuestions": [
+      "지금 어떤 마음이 가장 커?"
+    ],
+    "betterExpressionExamples": [
+      "오늘은 쉬고 내일 다시 할래."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "gc_report_threat",
+    "title": "신고하겠다고 협박",
+    "context": "사소한 일로 신고하겠다고 협박한다.",
+    "location": "game",
+    "participants": [
+      "학생",
+      "팀원"
+    ],
+    "typicalExpressions": [
+      "신고 각",
+      "고소함"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "위협 표현의 무게.",
+    "recommendedQuestions": [
+      "신고가 필요한 상황과 아닌 상황을 어떻게 구분할까?"
+    ],
+    "betterExpressionExamples": [
+      "다음 판은 팀 좀 맞춰서 해보자."
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

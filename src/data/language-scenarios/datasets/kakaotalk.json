@@ -1,0 +1,325 @@
+[
+  {
+    "id": "kt_read_no_reply",
+    "title": "읽씹 오해",
+    "context": "단톡방에서 친구가 답을 안 한다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "읽씹",
+      "답 좀",
+      "???"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "바빠서 못 본 걸 무시로 오해"
+    ],
+    "recommendedTeacherFocus": "맥락 확인의 중요성.",
+    "recommendedQuestions": [
+      "친구가 답이 늦은 이유가 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "바쁘면 이따 답해줘도 돼."
+    ],
+    "relatedLanguageCategories": [
+      "abbreviations",
+      "sns-chat"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_group_invite",
+    "title": "단톡방 초대 배제",
+    "context": "단톡방을 새로 팠는데 한 명만 초대되지 않았다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "방 팠어",
+      "초대 안 함"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "실수 미초대일 수 있음"
+    ],
+    "recommendedTeacherFocus": "반복 여부와 의도 확인.",
+    "recommendedQuestions": [
+      "빠진 친구는 어떤 기분일까?"
+    ],
+    "betterExpressionExamples": [
+      "아 미안, 지금 초대할게."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_screenshot_share",
+    "title": "캡처 돌려보기",
+    "context": "개인 대화를 캡처해서 다른 방에 공유한다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "이거 봐",
+      "캡처 감"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "개인정보와 존중.",
+    "recommendedQuestions": [
+      "당사자에게 물어봤을까?"
+    ],
+    "betterExpressionExamples": [
+      "이거 다른 데 공유해도 될까? 먼저 물어볼게."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_emoji_misread",
+    "title": "이모티콘 오해",
+    "context": "장난 이모티콘을 진지하게 받아들였다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "뭐래ㅋ",
+      "진심?"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "텍스트 어조는 얼굴이 없다"
+    ],
+    "recommendedTeacherFocus": "문자 대화의 한계.",
+    "recommendedQuestions": [
+      "직접 만나서 얘기하면 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "농담이었어! 오해 없이 봐줘."
+    ],
+    "relatedLanguageCategories": [
+      "sarcasm",
+      "memes"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_late_night_msg",
+    "title": "밤늦게 메시지 폭탄",
+    "context": "밤늦게 계속 카톡을 보낸다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "자?",
+      "답 좀"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "상대의 시간을 존중.",
+    "recommendedQuestions": [
+      "내일 아침에 말해도 되는 일일까?"
+    ],
+    "betterExpressionExamples": [
+      "내일 학교에서 얘기하자."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_swear_habit",
+    "title": "단톡방에서 습관성 욕설",
+    "context": "단톡방에서 별 이유 없이 욕설을 쓴다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "ㅅㅂ",
+      "개짜증"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "습관 표현이지만 대상이 있는 것으로 오해"
+    ],
+    "recommendedTeacherFocus": "대체 표현 연습.",
+    "recommendedQuestions": [
+      "같은 감정을 다르게 어떻게 말할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "아 진짜 짜증나, 잠깐 쉬어야겠어."
+    ],
+    "relatedLanguageCategories": [
+      "slang",
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_meme_share",
+    "title": "밈 공유",
+    "context": "유행 밈을 공유했는데 친구가 뜻을 모른다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "어쩔티비",
+      "킹받네"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "재미를 조롱으로 오해할 수 있음"
+    ],
+    "recommendedTeacherFocus": "밈의 맥락 설명.",
+    "recommendedQuestions": [
+      "이 밈이 어떤 상황에서 나왔는지 설명해줄 수 있어?"
+    ],
+    "betterExpressionExamples": [
+      "이거 이런 뜻이야, 웃긴 짤이야."
+    ],
+    "relatedLanguageCategories": [
+      "memes",
+      "new-words"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_group_fight",
+    "title": "단톡방 싸움 구경",
+    "context": "단톡방에서 두 친구가 싸우고 다른 친구들은 구경만 한다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "오~",
+      "ㄷㄷ"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "중재자의 역할.",
+    "recommendedQuestions": [
+      "둘이 잠깐 방에서 나와 이야기하자고 해볼까?"
+    ],
+    "betterExpressionExamples": [
+      "여기선 말고 둘이 따로 얘기해보는 건 어때?"
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_password_share",
+    "title": "계정/비번 공유 요구",
+    "context": "친구가 게임 계정 비번을 알려달라고 조른다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "비번 알려줘",
+      "친구 아냐?"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "거절을 우정 부족으로 오해"
+    ],
+    "recommendedTeacherFocus": "개인 정보 지키기.",
+    "recommendedQuestions": [
+      "비번은 왜 나만 알고 있어야 할까?"
+    ],
+    "betterExpressionExamples": [
+      "비번은 못 알려줘. 대신 같이 접속해서 도와줄게."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "kt_confess_rumor",
+    "title": "고백 소문",
+    "context": "누가 좋아한다는 스크린샷이 돌아다닌다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "봤어?",
+      "실화?"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "타인의 사적인 이야기 존중.",
+    "recommendedQuestions": [
+      "당사자 허락 없이 옮기면 어떤 일이 생길까?"
+    ],
+    "betterExpressionExamples": [
+      "이건 그만 돌리자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

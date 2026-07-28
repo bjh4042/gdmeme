@@ -1,0 +1,312 @@
+[
+  {
+    "id": "sns_like_compare",
+    "title": "좋아요 수 비교",
+    "context": "친구와 좋아요 수를 비교해 속상해진다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "난 왜 안 늘어",
+      "부럽"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "지표와 자기 가치 분리.",
+    "recommendedQuestions": [
+      "좋아요 수가 나의 무엇을 말해줄까?"
+    ],
+    "betterExpressionExamples": [
+      "오늘은 내가 좋아하는 사진을 골라 올렸어."
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_story_reply",
+    "title": "스토리 답장 오해",
+    "context": "스토리 답장이 이상하게 해석된다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "뭐래",
+      "진심?"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "문자 어조의 한계.",
+    "recommendedQuestions": [
+      "직접 얘기해서 확인해볼까?"
+    ],
+    "betterExpressionExamples": [
+      "아까 답장 오해했으면 미안, 이 뜻이었어."
+    ],
+    "relatedLanguageCategories": [
+      "sarcasm"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_group_photo_tag",
+    "title": "단체 사진 태그",
+    "context": "원하지 않는 사진에 태그 됐다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "내려줘",
+      "왜 올려"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "기쁨 공유를 침해로 오해"
+    ],
+    "recommendedTeacherFocus": "게시 전 동의 구하기.",
+    "recommendedQuestions": [
+      "올리기 전에 무엇을 물어보면 좋을까?"
+    ],
+    "betterExpressionExamples": [
+      "올려도 될지 먼저 물어봐줘."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_negative_comment",
+    "title": "부정 댓글 폭탄",
+    "context": "한 사진에 부정적인 댓글이 몰린다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "별로",
+      "노잼"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "집단 부정의 위력.",
+    "recommendedQuestions": [
+      "이 게시자가 보게 될 마음은 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "나는 이 부분이 좋았어."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_dm_stranger",
+    "title": "모르는 사람 DM",
+    "context": "모르는 사람이 친해지자며 DM을 보낸다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "모르는 사람"
+    ],
+    "typicalExpressions": [
+      "친해지자",
+      "사진 줘"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "온라인 안전.",
+    "recommendedQuestions": [
+      "답장하기 전에 보호자에게 알리는 건 어때?"
+    ],
+    "betterExpressionExamples": [
+      "개인적으로 대화 안 할래요."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_challenge_join",
+    "title": "유행 챌린지 참여 압박",
+    "context": "친구들이 유행 챌린지에 같이 참여하자고 조른다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "같이 하자",
+      "안 하면 아싸"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "또래 압력"
+    ],
+    "recommendedTeacherFocus": "원치 않는 참여 거절.",
+    "recommendedQuestions": [
+      "안 하는 이유를 어떻게 부드럽게 말할까?"
+    ],
+    "betterExpressionExamples": [
+      "이번엔 내 스타일이 아니야, 다음에 다른 거 같이 하자."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_secret_leak",
+    "title": "비밀 유출",
+    "context": "친구 비밀을 SNS에 살짝 흘린다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "나만 앎",
+      "힌트만"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "비밀 지키기.",
+    "recommendedQuestions": [
+      "힌트만 올려도 친구가 알아채면 어떻게 될까?"
+    ],
+    "betterExpressionExamples": [
+      "이건 나만 알고 있을게, 안 올릴게."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_fake_account",
+    "title": "가짜 계정으로 놀림",
+    "context": "가짜 계정으로 친구를 놀린다.",
+    "location": "sns",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "누구게",
+      "맞춰봐"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "장난과 사이버 괴롭힘의 경계"
+    ],
+    "recommendedTeacherFocus": "익명 뒤 책임.",
+    "recommendedQuestions": [
+      "당사자가 알게 되면 어떤 감정이 들까?"
+    ],
+    "betterExpressionExamples": [
+      "미안, 나였어. 계정 지울게."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_ai_filter_comparison",
+    "title": "AI 필터 외모 비교",
+    "context": "AI 필터로 바꾼 얼굴과 자신을 비교한다.",
+    "location": "sns",
+    "participants": [
+      "학생"
+    ],
+    "typicalExpressions": [
+      "원판 불변",
+      "현타"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "필터와 실제의 차이.",
+    "recommendedQuestions": [
+      "필터 없는 나에게는 어떤 좋은 점이 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "오늘은 필터 없이 올려봤어."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sns_exclusion_post",
+    "title": "빠진 티 나게 게시",
+    "context": "같이 놀았는데 한 명만 빠진 걸 티 나게 올린다.",
+    "location": "sns",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "○○빼고 다",
+      "우리끼리"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "배제 신호.",
+    "recommendedQuestions": [
+      "빠진 친구가 이 게시물을 본다면 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 다 같이 놀자!"
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

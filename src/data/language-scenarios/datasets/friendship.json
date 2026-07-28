@@ -1,0 +1,311 @@
+[
+  {
+    "id": "fr_new_bff",
+    "title": "가장 친한 친구가 바뀐 것 같음",
+    "context": "단짝 친구가 다른 친구와 더 친해진 것 같다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "나는?",
+      "걔가 더 좋아?"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "관계 확장을 배신으로 오해"
+    ],
+    "recommendedTeacherFocus": "질투 감정 다루기.",
+    "recommendedQuestions": [
+      "요즘 그 친구랑 뭘 하고 싶어?"
+    ],
+    "betterExpressionExamples": [
+      "요즘 좀 서운해, 나도 같이 놀 수 있을까?"
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_apology_hard",
+    "title": "사과가 어려움",
+    "context": "싸운 뒤 먼저 사과하기가 어렵다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "몰라",
+      "걔가 먼저 해야지"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "자존심과 사과.",
+    "recommendedQuestions": [
+      "먼저 말을 걸면 어떤 일이 생길까?"
+    ],
+    "betterExpressionExamples": [
+      "아까 내가 미안했어."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_share_snack",
+    "title": "간식 나눔 갈등",
+    "context": "간식을 나누다가 몫이 달라 다툰다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "내가 더 커",
+      "치사해"
+    ],
+    "communicationGoal": "협력",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "공정과 규칙.",
+    "recommendedQuestions": [
+      "어떻게 나누면 공평할까?"
+    ],
+    "betterExpressionExamples": [
+      "가위바위보로 정할래?"
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_help_hw",
+    "title": "숙제 대신 해달라 부탁",
+    "context": "친구가 숙제를 대신 해달라고 부탁한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "좀 해줘",
+      "친구잖아"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "거절을 우정 부족으로 오해"
+    ],
+    "recommendedTeacherFocus": "정중한 거절.",
+    "recommendedQuestions": [
+      "도와줄 수 있는 다른 방법은 뭘까?"
+    ],
+    "betterExpressionExamples": [
+      "대신은 못 해도 같이 풀어볼 수 있어."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_secret_share",
+    "title": "비밀 공유의 부담",
+    "context": "친구가 무거운 비밀을 털어놨다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "누구한테 말하지 마",
+      "비밀이야"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "도움 필요한 상황을 단순 비밀로 오해"
+    ],
+    "recommendedTeacherFocus": "어른의 도움 필요 판단.",
+    "recommendedQuestions": [
+      "이 비밀은 어른의 도움이 필요한 걸까?"
+    ],
+    "betterExpressionExamples": [
+      "힘들었겠다, 선생님께 같이 말해보는 건 어때?"
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_meet_new",
+    "title": "새 친구 사귀기 두려움",
+    "context": "새 학기, 말 걸기가 어렵다.",
+    "location": "classroom",
+    "participants": [
+      "학생"
+    ],
+    "typicalExpressions": [
+      "어색해",
+      "말 못 걸겠어"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "첫 말 걸기 연습.",
+    "recommendedQuestions": [
+      "처음 어떤 말로 시작해볼까?"
+    ],
+    "betterExpressionExamples": [
+      "안녕, 이거 어떻게 하는지 알아?"
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_borrowed_feelings",
+    "title": "친구 편만 든다는 오해",
+    "context": "친구 편만 든다고 다른 친구가 서운해한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "편 들지 마",
+      "넌 걔 편이잖아"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "중립적 태도.",
+    "recommendedQuestions": [
+      "양쪽 이야기를 어떻게 들을까?"
+    ],
+    "betterExpressionExamples": [
+      "둘 다 얘기해줘, 나는 편 아니야."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_moving_away",
+    "title": "친한 친구 전학",
+    "context": "가장 친한 친구가 전학 간다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "가지 마",
+      "슬퍼"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "이별 감정 다루기.",
+    "recommendedQuestions": [
+      "기억할 수 있는 방법은 뭐가 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "편지 써서 줄게, 자주 연락하자."
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_group_change",
+    "title": "놀이 그룹이 바뀜",
+    "context": "놀이 그룹이 갑자기 바뀌었다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "왜 갑자기",
+      "몰라"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "관계 변화 자연스러움.",
+    "recommendedQuestions": [
+      "새 그룹에서 하고 싶은 놀이가 있어?"
+    ],
+    "betterExpressionExamples": [
+      "나도 그 놀이 껴봐도 돼?"
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "fr_forgive_repeat",
+    "title": "같은 잘못 반복",
+    "context": "친구가 같은 잘못을 계속 반복한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "또야?",
+      "진심이야?"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "반복 문제와 대화.",
+    "recommendedQuestions": [
+      "같은 일이 다시 생기지 않으려면 뭐가 필요할까?"
+    ],
+    "betterExpressionExamples": [
+      "다음에도 이러면 나는 정말 속상할 것 같아."
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]
