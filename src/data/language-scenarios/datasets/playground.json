@@ -1,0 +1,318 @@
+[
+  {
+    "id": "pg_soccer_pass",
+    "title": "축구에서 패스 안 준다",
+    "context": "축구할 때 나에게만 패스를 안 준다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "나한테 패스 좀",
+      "왜 나만"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "게임 상황을 배제로 오해할 수 있다"
+    ],
+    "recommendedTeacherFocus": "게임 규칙과 감정 분리.",
+    "recommendedQuestions": [
+      "패스를 못 받은 이유가 있었을까?",
+      "어떻게 말해볼까?"
+    ],
+    "betterExpressionExamples": [
+      "나도 열려 있으면 한 번만 패스해줘."
+    ],
+    "relatedLanguageCategories": [
+      "game-chat"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_swing_turn",
+    "title": "그네 순서 다툼",
+    "context": "그네를 서로 오래 타려고 다툰다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "비켜",
+      "내 차례야"
+    ],
+    "communicationGoal": "협력",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "순서 규칙을 함께 만든다.",
+    "recommendedQuestions": [
+      "몇 분씩 타면 공평할까?"
+    ],
+    "betterExpressionExamples": [
+      "5분만 더 타고 바꿔줄게."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_dodgeball_hit",
+    "title": "피구에서 세게 맞음",
+    "context": "피구에서 공에 세게 맞아 아프다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "일부러 그랬지",
+      "살살 해"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [
+      "게임의 강도를 고의로 오해"
+    ],
+    "recommendedTeacherFocus": "아픔 표현과 규칙 조정.",
+    "recommendedQuestions": [
+      "살살 하려면 어떻게 말할까?"
+    ],
+    "betterExpressionExamples": [
+      "좀 아프다, 우리 살살 던지자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_tag_out",
+    "title": "술래잡기에서 아웃 시비",
+    "context": "술래잡기에서 아웃인지 아닌지 말다툼.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "아웃이야",
+      "안 잡혔어"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "판정 규칙을 미리 정한다.",
+    "recommendedQuestions": [
+      "다음 게임 전에 규칙을 어떻게 정할까?"
+    ],
+    "betterExpressionExamples": [
+      "이번 판은 다시 하고, 규칙부터 정하자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_left_out",
+    "title": "놀이에서 나만 빠짐",
+    "context": "놀이 팀 짤 때 나만 빠졌다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "왜 나만",
+      "같이 하자"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "숫자가 맞지 않아서일 수도 있음"
+    ],
+    "recommendedTeacherFocus": "배제 감정을 이야기한다.",
+    "recommendedQuestions": [
+      "나도 끼고 싶다고 말해본 적 있어?"
+    ],
+    "betterExpressionExamples": [
+      "나도 같이 하고 싶어. 껴줄래?"
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_fall_help",
+    "title": "넘어진 친구",
+    "context": "놀다가 친구가 넘어졌다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "괜찮아?",
+      "일어나"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "배려 행동을 강화한다.",
+    "recommendedQuestions": [
+      "지금 친구에게 뭐가 가장 필요할까?"
+    ],
+    "betterExpressionExamples": [
+      "많이 아프지? 보건실 같이 갈까?"
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_score_dispute",
+    "title": "점수 계산 시비",
+    "context": "점수 계산이 서로 다르다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "내가 이겼어",
+      "치사해"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "정확한 규칙 확인.",
+    "recommendedQuestions": [
+      "기록을 어떻게 남길 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "다음 판부턴 점수 종이에 적자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_bullying_watch",
+    "title": "놀이터에서 놀림 목격",
+    "context": "놀이터에서 친구가 놀림당하는 걸 목격한다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구",
+      "다른 친구들"
+    ],
+    "typicalExpressions": [
+      "하지 마",
+      "야 그만해"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "장난과 놀림의 경계"
+    ],
+    "recommendedTeacherFocus": "목격자의 역할.",
+    "recommendedQuestions": [
+      "지금 어떤 행동이 가장 도움될까?"
+    ],
+    "betterExpressionExamples": [
+      "그만하자, 우리 다른 놀이 하자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_lost_ball",
+    "title": "공이 담을 넘어감",
+    "context": "공이 담 밖으로 넘어가서 다투게 된다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "네가 찼잖아",
+      "네가 가져와"
+    ],
+    "communicationGoal": "협력",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "책임 분담.",
+    "recommendedQuestions": [
+      "같이 가져오는 건 어때?"
+    ],
+    "betterExpressionExamples": [
+      "같이 주우러 가자."
+    ],
+    "relatedLanguageCategories": [
+      "blame-shifting"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "pg_secret_talk",
+    "title": "둘이 귓속말",
+    "context": "놀이터에서 두 친구가 나만 빼고 귓속말한다.",
+    "location": "playground",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "뭐야 얘기해",
+      "나 빼지 마"
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "다른 주제일 수도 있음"
+    ],
+    "recommendedTeacherFocus": "소외감 표현.",
+    "recommendedQuestions": [
+      "궁금하다고 어떻게 물어볼까?"
+    ],
+    "betterExpressionExamples": [
+      "나만 빠진 것 같아서 좀 서운해."
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

@@ -1,0 +1,311 @@
+[
+  {
+    "id": "cf_blame_first",
+    "title": "네가 먼저 했잖아",
+    "context": "서로 먼저 잘못했다며 미룬다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "니가 먼저 했잖아",
+      "아닌데"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "원인 순서보다 감정.",
+    "recommendedQuestions": [
+      "지금 서로 어떤 마음일까?"
+    ],
+    "betterExpressionExamples": [
+      "내가 먼저 미안, 너는 어떤 게 속상했어?"
+    ],
+    "relatedLanguageCategories": [
+      "blame-shifting"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_silent_treatment",
+    "title": "말을 걸지 않음",
+    "context": "싸운 뒤 아무 말도 안 하고 지낸다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "..."
+    ],
+    "communicationGoal": "감정 표현",
+    "possibleMisunderstandings": [
+      "침묵을 미움으로 오해"
+    ],
+    "recommendedTeacherFocus": "침묵의 이유.",
+    "recommendedQuestions": [
+      "말이 안 나오는 이유는 뭘까?"
+    ],
+    "betterExpressionExamples": [
+      "지금은 말하기 힘들어, 조금만 기다려줄래?"
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_shout_match",
+    "title": "큰 소리로 다툼",
+    "context": "큰 소리로 서로 소리 지른다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "시끄러",
+      "너나 잘해"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "쿨다운 시간.",
+    "recommendedQuestions": [
+      "잠깐 떨어져 있는 시간이 필요할까?"
+    ],
+    "betterExpressionExamples": [
+      "잠깐만, 나 조금 진정하고 다시 얘기하자."
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_public_call_out",
+    "title": "반 앞에서 지적",
+    "context": "반 친구들 앞에서 잘못을 지적한다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "봐봐, 얘 또",
+      "저것 봐"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "공개 지적의 상처.",
+    "recommendedQuestions": [
+      "둘만 이야기하면 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "잠깐 나오자, 우리끼리 얘기하자."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_bystander_join",
+    "title": "구경꾼이 편들기",
+    "context": "싸움 옆에서 한쪽 편을 든다.",
+    "location": "school",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "쟤 편 들어",
+      "네 잘못이야"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "목격자 역할.",
+    "recommendedQuestions": [
+      "편들기 대신 어떤 도움이 될 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "둘 다 얘기 들어보자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_property_break",
+    "title": "물건 부러짐",
+    "context": "다투다 친구 물건이 부러졌다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "일부러 아냐",
+      "일부러잖아"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [
+      "실수를 고의로 오해"
+    ],
+    "recommendedTeacherFocus": "사과와 배상 방법.",
+    "recommendedQuestions": [
+      "어떻게 함께 해결할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "미안해, 내가 새로 사주거나 고쳐줄게."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_teacher_report",
+    "title": "선생님께 이르기 갈등",
+    "context": "선생님께 이르는 것을 두고 다툰다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "일러",
+      "이르지 마"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [
+      "도움 요청을 배신으로 오해"
+    ],
+    "recommendedTeacherFocus": "이르기 vs 도움 요청.",
+    "recommendedQuestions": [
+      "누구를 위한 알림이 될까?"
+    ],
+    "betterExpressionExamples": [
+      "이건 우리끼리 안 풀려, 선생님께 도움을 요청하자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_rumor_start",
+    "title": "소문의 시작",
+    "context": "화가 나 친구에 대한 소문을 시작한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "걔 있잖아",
+      "비밀인데"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "말이 남기는 흔적.",
+    "recommendedQuestions": [
+      "이 말이 돌면 어떤 일이 생길까?"
+    ],
+    "betterExpressionExamples": [
+      "당사자한테 직접 말할게, 여기선 그만할래."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_shove_reflex",
+    "title": "반사적으로 밀치기",
+    "context": "화가 나 친구를 밀쳤다.",
+    "location": "hallway",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "살짝 밀었어",
+      "일부러 아냐"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "신체 접촉의 무게.",
+    "recommendedQuestions": [
+      "몸으로 표현하기 전에 어떻게 말할까?"
+    ],
+    "betterExpressionExamples": [
+      "미안해, 다치진 않았어?"
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "cf_group_isolation",
+    "title": "한 명 따돌림 조짐",
+    "context": "여러 명이 한 명을 조금씩 피한다.",
+    "location": "classroom",
+    "participants": [
+      "학생들"
+    ],
+    "typicalExpressions": [
+      "다음에",
+      "시간 없어"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "반복성과 의도 확인 필요"
+    ],
+    "recommendedTeacherFocus": "따돌림 신호와 어른 개입.",
+    "recommendedQuestions": [
+      "빠진 친구는 요즘 어떤 표정이야?"
+    ],
+    "betterExpressionExamples": [
+      "오늘 같이 급식 먹자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

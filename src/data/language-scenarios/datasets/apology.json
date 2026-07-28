@@ -1,0 +1,316 @@
+[
+  {
+    "id": "ap_sorry_basic",
+    "title": "기본 사과",
+    "context": "실수를 하고 미안하다고 말해야 한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "미안해",
+      "실수야"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "사과의 3요소(무엇을·왜·앞으로).",
+    "recommendedQuestions": [
+      "무엇이 미안한지 구체적으로 말해볼까?"
+    ],
+    "betterExpressionExamples": [
+      "내가 ~해서 미안해. 다음엔 ~할게."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_fake_sorry",
+    "title": "형식적 사과",
+    "context": "'미안'만 반복하고 행동이 안 바뀐다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "미안 미안",
+      "됐지?"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [
+      "의례적 사과를 진심으로 오해"
+    ],
+    "recommendedTeacherFocus": "진심과 다짐.",
+    "recommendedQuestions": [
+      "다음엔 어떤 행동을 다르게 할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 물어보고 쓸게, 미안해."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_delayed",
+    "title": "시간이 지난 사과",
+    "context": "시간이 오래 지나 사과가 어렵다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "이제 와서",
+      "늦었지"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "지연 사과의 가치.",
+    "recommendedQuestions": [
+      "지금이라도 전할 말이 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "늦었지만 그때 정말 미안했어."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_written",
+    "title": "편지로 사과",
+    "context": "말로 하기 힘들어 편지를 쓴다.",
+    "location": "home",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "편지 써 볼래"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "다양한 사과 방식.",
+    "recommendedQuestions": [
+      "편지에 어떤 마음을 담아볼까?"
+    ],
+    "betterExpressionExamples": [
+      "그때 내가 ~한 게 미안했어. 앞으론 ~할게."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_family",
+    "title": "가족에게 사과",
+    "context": "집에서 부모님께 짜증을 낸 뒤 사과한다.",
+    "location": "home",
+    "participants": [
+      "학생",
+      "부모"
+    ],
+    "typicalExpressions": [
+      "아까 미안해요"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "가정 내 사과.",
+    "recommendedQuestions": [
+      "아까 왜 그런 마음이 들었을까?"
+    ],
+    "betterExpressionExamples": [
+      "아까 큰 소리 내서 죄송해요."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_online",
+    "title": "온라인 사과",
+    "context": "단톡방에서 상처 주는 말을 하고 사과한다.",
+    "location": "kakaotalk",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "ㅈㅅ",
+      "미안"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [
+      "짧은 사과의 무게감 부족"
+    ],
+    "recommendedTeacherFocus": "온라인 사과도 구체적으로.",
+    "recommendedQuestions": [
+      "문자로도 진심을 어떻게 담을까?"
+    ],
+    "betterExpressionExamples": [
+      "아까 내가 한 말이 심했어, 정말 미안해."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions",
+      "sns-chat"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_teacher",
+    "title": "선생님께 사과",
+    "context": "수업 태도 때문에 선생님께 사과한다.",
+    "location": "classroom",
+    "participants": [
+      "학생",
+      "교사"
+    ],
+    "typicalExpressions": [
+      "죄송해요"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "구체적 다짐 포함.",
+    "recommendedQuestions": [
+      "다음 시간엔 어떤 부분을 다르게 할까?"
+    ],
+    "betterExpressionExamples": [
+      "수업 시간에 떠들어서 죄송해요. 다음엔 집중할게요."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions",
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_mutual",
+    "title": "서로 사과",
+    "context": "양쪽 모두 잘못이 있어 함께 사과한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "나도 미안",
+      "나도"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "공동 책임.",
+    "recommendedQuestions": [
+      "각자 어떤 부분이 미안한지 나눠 볼까?"
+    ],
+    "betterExpressionExamples": [
+      "나는 ~한 부분이 미안해, 너는?"
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_refused",
+    "title": "사과 거절당함",
+    "context": "사과했지만 친구가 받지 않는다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "필요없어",
+      "됐어"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [
+      "시간이 더 필요한 상태"
+    ],
+    "recommendedTeacherFocus": "상대의 시간 존중.",
+    "recommendedQuestions": [
+      "기다림도 사과의 일부일까?"
+    ],
+    "betterExpressionExamples": [
+      "네가 준비되면 나 언제든 얘기하고 싶어."
+    ],
+    "relatedLanguageCategories": [
+      "empathy-expressions"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "ap_action_plan",
+    "title": "다음 행동 약속",
+    "context": "다시는 그러지 않겠다고 약속한다.",
+    "location": "school",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "다신 안 그럴게"
+    ],
+    "communicationGoal": "사과",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "실천 가능한 약속.",
+    "recommendedQuestions": [
+      "어떤 작은 행동부터 시작할까?"
+    ],
+    "betterExpressionExamples": [
+      "다음엔 화나면 잠깐 밖에 나가서 진정할게."
+    ],
+    "relatedLanguageCategories": [
+      "apology-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]

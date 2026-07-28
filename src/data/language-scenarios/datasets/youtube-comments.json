@@ -1,0 +1,311 @@
+[
+  {
+    "id": "yt_hater_comment",
+    "title": "악성 댓글",
+    "context": "영상 밑에 심한 악성 댓글을 본다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "익명 유저"
+    ],
+    "typicalExpressions": [
+      "못생김",
+      "꺼져"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "악성 댓글의 영향과 대응.",
+    "recommendedQuestions": [
+      "이 댓글을 본 사람은 어떤 마음일까?"
+    ],
+    "betterExpressionExamples": [
+      "이 영상 재밌게 봤어요, 응원해요."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_spoiler",
+    "title": "스포일러 댓글",
+    "context": "영화 스포를 댓글로 당한다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "익명 유저"
+    ],
+    "typicalExpressions": [
+      "결말 XX임",
+      "스포 ㅈㅅ"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "다른 사람 경험 존중.",
+    "recommendedQuestions": [
+      "스포를 피하려면 어떻게 알려주면 좋을까?"
+    ],
+    "betterExpressionExamples": [
+      "결말 얘기 있으니 주의!"
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_ai_fake_real",
+    "title": "AI 생성 영상 진짜로 믿음",
+    "context": "AI가 만든 영상을 진짜로 믿고 퍼뜨린다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "실화래",
+      "진짜야"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [
+      "AI 생성물 판단력 부족"
+    ],
+    "recommendedTeacherFocus": "정보 확인 습관.",
+    "recommendedQuestions": [
+      "출처를 어떻게 확인할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "이거 AI로 만든 거일 수도 있어, 확인해보자."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_creator_bash",
+    "title": "크리에이터 비난",
+    "context": "크리에이터를 심하게 비난하는 댓글을 남긴다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "크리에이터"
+    ],
+    "typicalExpressions": [
+      "망해라",
+      "실망"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "비판과 비난의 차이"
+    ],
+    "recommendedTeacherFocus": "건설적 피드백.",
+    "recommendedQuestions": [
+      "같은 뜻을 다르게 어떻게 전할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "이번 편은 아쉬웠어요, 다음이 기대돼요."
+    ],
+    "relatedLanguageCategories": [
+      "polite-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_challenge_dangerous",
+    "title": "위험한 챌린지 유행",
+    "context": "위험한 챌린지가 유행이라 따라 하려 한다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "친구들"
+    ],
+    "typicalExpressions": [
+      "해봐",
+      "용기 있냐"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [
+      "또래 압력"
+    ],
+    "recommendedTeacherFocus": "안전 판단.",
+    "recommendedQuestions": [
+      "안 하고도 재밌게 놀 수 있는 방법이 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "이건 위험해서 나는 안 할래."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_appearance_comment",
+    "title": "외모 댓글",
+    "context": "외모를 지적하는 댓글을 남긴다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "크리에이터"
+    ],
+    "typicalExpressions": [
+      "뚱뚱",
+      "못생김"
+    ],
+    "communicationGoal": "공감",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "외모 평가의 상처.",
+    "recommendedQuestions": [
+      "당사자가 이 댓글을 본다면 어떨까?"
+    ],
+    "betterExpressionExamples": [
+      "영상 잘 보고 갑니다."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_argue_reply",
+    "title": "댓글 말싸움",
+    "context": "댓글에서 낯선 사람과 말싸움이 붙는다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "익명 유저"
+    ],
+    "typicalExpressions": [
+      "ㄴㄴ",
+      "뭘 알아"
+    ],
+    "communicationGoal": "갈등 해결",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "온라인 말싸움에서 멈추기.",
+    "recommendedQuestions": [
+      "여기서 계속 말싸움하면 어떤 결과가 될까?"
+    ],
+    "betterExpressionExamples": [
+      "의견 잘 들었어요, 저는 이렇게 생각해요."
+    ],
+    "relatedLanguageCategories": [
+      "conflict-expressions"
+    ],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_deepfake_share",
+    "title": "딥페이크 공유",
+    "context": "친구 얼굴을 합성한 영상을 공유한다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "친구"
+    ],
+    "typicalExpressions": [
+      "짤 봐",
+      "웃기지"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [
+      "장난과 명예훼손 사이"
+    ],
+    "recommendedTeacherFocus": "당사자 동의와 초상권.",
+    "recommendedQuestions": [
+      "당사자가 이 영상을 봤다면 어떤 기분일까?"
+    ],
+    "betterExpressionExamples": [
+      "이건 지우고, 원본 영상만 공유하자."
+    ],
+    "relatedLanguageCategories": [
+      "cyberbullying"
+    ],
+    "difficulty": "hard",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_sub_beg",
+    "title": "구독 구걸 논쟁",
+    "context": "댓글에서 구독을 강요한다.",
+    "location": "youtube",
+    "participants": [
+      "학생",
+      "익명 유저"
+    ],
+    "typicalExpressions": [
+      "구독 눌러",
+      "맞구독"
+    ],
+    "communicationGoal": "예의",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "자연스러운 소통과 강요의 차이.",
+    "recommendedQuestions": [
+      "구독은 왜 각자의 선택일까?"
+    ],
+    "betterExpressionExamples": [
+      "관심 있으면 구독해줘요, 감사합니다!"
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "easy",
+    "grade": [
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "yt_fact_check",
+    "title": "가짜 정보",
+    "context": "영상 속 정보가 사실이 아닐 수 있다.",
+    "location": "youtube",
+    "participants": [
+      "학생"
+    ],
+    "typicalExpressions": [
+      "카더라",
+      "뇌피셜"
+    ],
+    "communicationGoal": "오해 줄이기",
+    "possibleMisunderstandings": [],
+    "recommendedTeacherFocus": "1차 자료 확인.",
+    "recommendedQuestions": [
+      "이 정보를 어디서 다시 확인할 수 있을까?"
+    ],
+    "betterExpressionExamples": [
+      "이 내용은 다른 곳에서도 확인해볼게."
+    ],
+    "relatedLanguageCategories": [],
+    "difficulty": "medium",
+    "grade": [
+      "3",
+      "4"
+    ]
+  }
+]
