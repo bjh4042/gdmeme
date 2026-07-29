@@ -270,7 +270,12 @@ function buildChallenge(
     doneCount: done,
     currentStreak,
     longestStreak,
-    completedAt: done === 7 ? new Date(`${days[6].date}T18:00:00`).toISOString() : undefined,
+    completedAt:
+      done === 7
+        ? new Date(
+            Math.min(new Date(`${days[6].date}T18:00:00`).getTime(), Date.now()),
+          ).toISOString()
+        : undefined,
   };
 }
 
