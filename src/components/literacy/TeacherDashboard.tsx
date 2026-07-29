@@ -20,6 +20,7 @@ import { useDictStore } from "@/stores/dict";
 import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
 import { TeacherEducationalSummary } from "./TeacherEducationalSummary";
 import { TeacherDailyMissionPanel } from "./TeacherDailyMissionPanel";
+import { TeacherDemoPanel } from "./TeacherDemoPanel";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
 import { useClassStore } from "@/stores/class";
@@ -587,6 +588,14 @@ export function TeacherDashboard({
         </DashboardCard>
 
         {/* 2) 로드맵 */}
+        <DashboardCard
+          title="연구 시연용 예시 데이터"
+          subtitle="barunmal_demo_v1 · 가상 학생 17명 (실제 학생 정보 아님)"
+          className="mb-4"
+        >
+          <TeacherDemoPanel />
+        </DashboardCard>
+
         <DashboardCard title="학습 로드맵" subtitle="단계별 학급 진행률" className="mb-4">
           <RoadmapTeacherPanel
             students={students}
