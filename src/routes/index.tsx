@@ -70,7 +70,7 @@ function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student?.classCode, student?.number, student?.name]);
 
-  // 20인 더미데이터 시드 · 최초 진입 1회만 실행
+  // 연구 시연용 예시 데이터 시드 · 시연 모드에서 최초 진입 1회만 실행
   useEffect(() => {
     // 시연용 예시 데이터(barunmal_demo_v1)는 시연 모드에서만, 1회 자동 적용.
     if (!hydrated) return;
