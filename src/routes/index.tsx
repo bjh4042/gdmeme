@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useEngagementStore } from "@/stores/engagement";
 import { SCENARIOS } from "@/lib/literacy-seed";
 import { useClassStore, EMPTY_CLASS } from "@/stores/class";
-import { seedClass3105IfNeeded } from "@/lib/seed-3105";
+import { applyDemoData, isDemoApplied, isDemoModeAvailable } from "@/lib/demo";
 import { Tutorial, TUTORIAL_STORAGE_KEY } from "@/components/literacy/Tutorial";
 import { HeaderAreaBadges } from "@/components/literacy/HeaderAreaBadges";
 import { BadgeCodexModal } from "@/components/literacy/BadgeCodexModal";
@@ -72,7 +72,11 @@ function Index() {
 
   // 20인 더미데이터 시드 · 최초 진입 1회만 실행
   useEffect(() => {
-    if (hydrated) seedClass3105IfNeeded();
+    // 시연용 예시 데이터(barunmal_demo_v1)는 시연 모드에서만, 1회 자동 적용.
+    if (!hydrated) return;
+    if (!isDemoModeAvailable()) return;
+    if (isDemoApplied()) return;
+    applyDemoData();
   }, [hydrated]);
 
   // 최초 진입자 자동 튜토리얼 (localStorage 방문 기록 없을 때만).
