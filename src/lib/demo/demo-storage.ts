@@ -150,11 +150,11 @@ export function clearDemoData(): boolean {
   if (meta.classXp > 0) {
     const cls = useClassStore.getState();
     const current = cls.byClass[meta.classCode]?.xp ?? 0;
-    cls.setXP?.(
+    cls.setXP(
       meta.classCode,
       Math.max(0, current - meta.classXp),
       "시연용 예시 데이터 해제",
-      "demo-clear",
+      "barunmal_demo_v1",
     );
   }
 
