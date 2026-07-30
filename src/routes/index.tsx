@@ -63,6 +63,7 @@ function Index() {
   const [surveyOpen, setSurveyOpen] = useState(false);
   const markLexicographer = useEngagementStore((s) => s.markLexicographer);
   const reportRoleplayClear = useEngagementStore((s) => s.reportRoleplayClear);
+  const engagementByStudent = useEngagementStore((s) => s.byStudent);
   const totalScenarios = SCENARIOS.length;
 
   // Register the active student into the roster on every session start / name change.
@@ -377,7 +378,7 @@ function Index() {
           const rm = deriveRoadmap({
             studentId: activeId,
             classCode: student.classCode,
-            engagement: undefined,
+            engagement: engagementByStudent[activeId],
             dict,
           });
           return Object.fromEntries(rm.stages.map((s) => [s.key, s.done]));
