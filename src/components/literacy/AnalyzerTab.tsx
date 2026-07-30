@@ -72,7 +72,7 @@ export function AnalyzerTab({
   // 읽기 전용: 기존 완료 판정 로직(deriveRoadmap)을 그대로 사용해 안내 문구만 바꾼다.
   const step1Done = useMemo(() => {
     if (!student) return false;
-    const sid = studentId(student);
+    const sid = studentId(student.classCode, student.number);
     const rm = deriveRoadmap({
       studentId: sid,
       classCode: student.classCode,
