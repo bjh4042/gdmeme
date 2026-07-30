@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { cloudStateStorage } from "@/lib/cloud-state-storage";
 import type { ClassState } from "@/lib/literacy-types";
 
 const PERSIST_KEY = "wtmeme:store:class:v1";
@@ -120,7 +121,7 @@ export const useClassStore = create<ClassStoreState>()(
     }),
     {
       name: PERSIST_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cloudStateStorage),
       partialize: (s) => ({ byClass: s.byClass }),
     },
   ),

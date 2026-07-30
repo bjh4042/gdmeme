@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { cloudStateStorage } from "@/lib/cloud-state-storage";
 
 /** 7일 실천 챌린지 저장소 — 학생별 DAY 완료 기록·성찰·교사 피드백. */
 export type ChallengeDayRecord = {
@@ -58,7 +59,7 @@ export const useChallengeStore = create<ChallengeState>()(
     }),
     {
       name: PERSIST_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cloudStateStorage),
       partialize: (s) => ({ byStudent: s.byStudent }),
     },
   ),

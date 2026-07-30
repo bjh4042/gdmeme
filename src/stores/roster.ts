@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { cloudStateStorage } from "@/lib/cloud-state-storage";
 import type { Student, StudentRecord } from "@/lib/literacy-types";
 
 const PERSIST_KEY = "wtmeme:store:roster:v1";
@@ -206,7 +207,7 @@ export const useRosterStore = create<RosterState>()(
     }),
     {
       name: PERSIST_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cloudStateStorage),
       partialize: (s) => ({ students: s.students }),
     },
   ),
