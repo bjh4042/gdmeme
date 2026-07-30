@@ -390,11 +390,11 @@ function Index() {
             <img
               src={logoAsset.url}
               alt="바른말 수호대 로고"
-              className="h-10 w-auto shrink-0 rounded-lg"
+              className="h-[34px] w-auto shrink-0 rounded-lg object-contain"
             />
             <div className="min-w-0">
               <div className="font-black text-[color:var(--navy)] truncate">바른말 수호대</div>
-              <div className="text-[11px] text-muted-foreground truncate">
+              <div className="text-sm text-muted-foreground truncate whitespace-nowrap">
                 {student.classCode}반 · {student.number}번 {student.name} · Lv.{lv.current.lv}{" "}
                 {lv.current.name} · {state.xp} XP
               </div>

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, BookOpen, Lightbulb, NotebookPen, Flag, Sparkles } from "lucide-react";
-import logoAsset from "@/assets/logo-v2.webp.asset.json";
 import heroIllustration from "@/assets/hero-illustration.png.asset.json";
 import type { DictEntry } from "@/lib/literacy-types";
 import { useEngagementStore } from "@/stores/engagement";
@@ -153,11 +152,6 @@ export function HomeTab({
             className="pointer-events-none absolute -bottom-4 inset-x-0 h-16 bg-gradient-to-t from-emerald-50 to-transparent"
           />
           <div className="relative flex flex-col items-center text-center gap-3">
-            <img
-              src={logoAsset.url}
-              alt="바른말 수호대 로고"
-              className="h-14 w-14 rounded-2xl shadow-[var(--shadow-soft)]"
-            />
             <h1 className="text-2xl sm:text-3xl font-black text-[color:var(--navy)] tracking-tight">
               바른말 수호대
             </h1>
