@@ -21,6 +21,7 @@ import { RoadmapTeacherPanel } from "./RoadmapTeacherPanel";
 import { TeacherEducationalSummary } from "./TeacherEducationalSummary";
 import { TeacherDailyMissionPanel } from "./TeacherDailyMissionPanel";
 import { TeacherDemoPanel } from "./TeacherDemoPanel";
+import { TeacherChallengePanel } from "./TeacherChallengePanel";
 import { exportAnonCSV, exportAnonXLSX } from "@/lib/anon-export";
 import { useEngagementStore } from "@/stores/engagement";
 import { useClassStore } from "@/stores/class";
@@ -585,6 +586,15 @@ export function TeacherDashboard({
           className="mb-4"
         >
           <TeacherDailyMissionPanel students={students} currentClassCode={currentClassCode} />
+        </DashboardCard>
+
+        {/* 1-b) 7일 실천 관리 */}
+        <DashboardCard
+          title="7일 실천 관리"
+          subtitle="학생별 DAY 완료·성찰·교사 피드백"
+          className="mb-4"
+        >
+          <TeacherChallengePanel students={students} currentClassCode={currentClassCode} />
         </DashboardCard>
 
         {/* 2) 로드맵 */}
