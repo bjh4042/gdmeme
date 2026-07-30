@@ -6,6 +6,7 @@ import {
   Pencil,
   Sprout,
   Shield,
+  CalendarCheck,
   LogOut,
   Check,
   type LucideIcon,
@@ -21,6 +22,7 @@ export type SidebarKey =
   | "step4"
   | "step5"
   | "badges"
+  | "challenge"
   // legacy keys kept for type-compat with older callers
   | "analyze"
   | "dict"
@@ -216,6 +218,24 @@ export function AppSidebar({
 
           <li className="mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             보상
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => onSelect("challenge")}
+              aria-current={activeKey === "challenge" ? "page" : undefined}
+              className={`group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                activeKey === "challenge"
+                  ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
+                  : "text-foreground/80 hover:bg-primary/10 hover:text-primary"
+              }`}
+            >
+              <CalendarCheck
+                className={`h-5 w-5 shrink-0 ${activeKey === "challenge" ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"}`}
+                strokeWidth={activeKey === "challenge" ? 2.4 : 2}
+              />
+              <span className="truncate">7일 실천 챌린지</span>
+            </button>
           </li>
           <li>
             <button
