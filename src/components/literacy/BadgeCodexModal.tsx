@@ -96,17 +96,17 @@ export function BadgeCodexModal({
 
   return (
     <div
-      className="fixed inset-0 z-[70] bg-[color:var(--navy)]/55 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[70] bg-[color:var(--navy)]/55 backdrop-blur-sm flex items-center justify-center p-3 overflow-hidden animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="뱃지 도감"
     >
       <div
-        className="w-full max-w-3xl my-4 glass-card p-5 sm:p-6 animate-scale-in"
+        className="w-full max-w-3xl my-4 glass-card p-5 sm:p-6 animate-scale-in max-h-[90dvh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="min-w-0">
             <h3 className="text-lg font-black text-[color:var(--navy)] truncate">
               🏆 뱃지 도감 · {student.name}
@@ -126,6 +126,7 @@ export function BadgeCodexModal({
           </button>
         </div>
 
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         {/* 전체 진행률 */}
         <div className="mb-4 rounded-2xl bg-white/70 p-3">
           <div className="flex items-center justify-between text-[11px] font-bold text-[color:var(--navy)] mb-1">
@@ -208,6 +209,7 @@ export function BadgeCodexModal({
             onClose={() => setSelected(null)}
           />
         )}
+        </div>
       </div>
     </div>
   );
