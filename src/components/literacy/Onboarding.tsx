@@ -154,6 +154,13 @@ export function Onboarding({
             </span>
           </div>
 
+          {/* 대상 학년 표시 */}
+          <div className="relative z-10 flex justify-center pt-1">
+            <span className="inline-flex items-center h-[30px] rounded-full bg-sky-50 border border-sky-200 px-3.5 text-[11px] font-semibold text-[color:var(--navy)] shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+              초등학교 3학년 대상
+            </span>
+          </div>
+
           {/* Scrollable screen content */}
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="min-h-full flex flex-col justify-center gap-8">
