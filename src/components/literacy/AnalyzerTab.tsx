@@ -12,6 +12,10 @@ import {
 import type { DictEntry } from "@/lib/literacy-types";
 import { gradeOf } from "@/lib/literacy-types";
 import { harmHints } from "@/lib/harm-hints";
+import { deriveRoadmap } from "@/lib/roadmap";
+import { useAuthStore } from "@/stores/auth";
+import { useEngagementStore } from "@/stores/engagement";
+import { studentId, useHydrated } from "@/lib/literacy-store";
 
 const DEFAULT_TRENDS: Record<string, number> = {
   어쩔티비: 10,
@@ -61,6 +65,22 @@ export function AnalyzerTab({
   const [q, setQ] = useState("");
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>(() => ({ ...DEFAULT_TRENDS }));
+  const hydrated = useHydrated();
+  const student = useAuthStore((s) => s.student);
+  const engagementByStudent = useEngagementStore((s) => s.byStudent);
+
+  // 읽기 전용: 기존 완료 판정 로직(deriveRoadmap)을 그대로 사용해 안내 문구만 바꾼다.
+  const step1Done = useMemo(() => {
+    if (!student) return false;
+    const sid = studentId(student.classCode, student.number);
+    const rm = deriveRoadmap({
+      studentId: sid,
+      classCode: student.classCode,
+      engagement: engagementByStudent[sid],
+      dict,
+    });
+    return rm.stages.find((s) => s.key === "discover")?.done ?? false;
+  }, [student, engagementByStudent, dict]);
 
   useEffect(() => {
     setCounts(readCounts(classCode));
@@ -175,6 +195,34 @@ export function AnalyzerTab({
                   <AnalyzerCard key={d.id} entry={d} />
                 ))}
               </div>
+              {hydrated && (
+                <div className="mt-4">
+                  {step1Done ? (
+                    <div className="glass-card p-4 sm:p-5 border border-emerald-200 bg-emerald-50/60">
+                      <div className="text-sm font-black text-emerald-800">
+                        ✅ STEP1 완료! 잘했어요
+                      </div>
+                      <p className="text-xs text-emerald-900/80 mt-1">
+                        다음 단계에서 표현의 뜻과 유래를 더 깊이 파헤쳐 봐요.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="glass-card p-4 sm:p-5 border border-amber-200 bg-amber-50/60">
+                      <div className="text-sm font-black text-amber-900">
+                        🎉 이제 참여 활동을 해볼까요?
+                      </div>
+                      <p className="text-xs text-amber-900/80 mt-1">
+                        STEP1을 완료하려면 아래 활동 중 하나를 해보세요.
+                      </p>
+                      <ul className="mt-2 space-y-1 text-sm text-[color:var(--navy)]">
+                        <li>👍 좋아요 누르기</li>
+                        <li>💡 더 나은 표현 제안하기</li>
+                        <li>📝 성찰 저널 작성하기</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           ) : (
             <div className="glass-card p-8 text-center space-y-4">
