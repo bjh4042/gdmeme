@@ -91,9 +91,9 @@ export function ProfileModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[color:var(--navy)]/50 backdrop-blur-sm flex items-center justify-center p-3 pl-safe pr-safe overflow-y-auto animate-fade-in">
-      <div className="w-full max-w-lg my-4 glass-card p-5 sm:p-6 animate-scale-in">
-        <div className="flex items-center justify-between mb-4">
+    <div className="fixed inset-0 z-50 bg-[color:var(--navy)]/50 backdrop-blur-sm flex items-center justify-center p-3 pl-safe pr-safe overflow-hidden animate-fade-in">
+      <div className="w-full max-w-lg my-4 glass-card p-5 sm:p-6 animate-scale-in max-h-[90dvh] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="min-w-0">
             <h3 className="text-lg font-black text-[color:var(--navy)] flex items-center gap-2 truncate">
               👤 내 프로필 · {student.name}
@@ -143,6 +143,7 @@ export function ProfileModal({
           </button>
         </div>
 
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         {/* Journal */}
         <section className="rounded-2xl bg-white/60 p-4">
           <div className="flex items-center gap-2 mb-2">
@@ -241,6 +242,7 @@ export function ProfileModal({
         >
           <FileText size={18} /> 📄 나의 언어 수호 리포트 보기
         </button>
+        </div>
       </div>
 
       {showReport && (

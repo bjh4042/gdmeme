@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { cloudStateStorage } from "@/lib/cloud-state-storage";
 import type { DictEntry, Evaluation } from "@/lib/literacy-types";
 import { computeTotal, gradeOf } from "@/lib/literacy-types";
 import { SEED_DICT } from "@/lib/literacy-seed";
@@ -152,7 +153,7 @@ export const useDictStore = create<DictState>()(
     }),
     {
       name: PERSIST_KEY,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cloudStateStorage),
       partialize: (s) => ({ entries: s.entries }),
     },
   ),

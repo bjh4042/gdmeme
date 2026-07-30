@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { cloudStateStorage } from "@/lib/cloud-state-storage";
 import { useRosterStore } from "./roster";
 import { useClassStore } from "./class";
 
@@ -268,7 +269,7 @@ export const useEngagementStore = create<EngagementState>()(
     }),
     {
       name: "wtmeme:store:engagement:v1",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => cloudStateStorage),
       partialize: (s) => ({ byStudent: s.byStudent, likesByEntry: s.likesByEntry }),
     },
   ),
