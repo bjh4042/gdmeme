@@ -378,7 +378,7 @@ function Index() {
           const rm = deriveRoadmap({
             studentId: activeId,
             classCode: student.classCode,
-            engagement: undefined,
+            engagement: engagementByStudent[activeId],
             dict,
           });
           return Object.fromEntries(rm.stages.map((s) => [s.key, s.done]));
