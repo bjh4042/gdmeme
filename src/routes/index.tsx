@@ -37,13 +37,14 @@ import { stageContextForTab } from "@/lib/stage-context";
 import { AppSidebar, type SidebarKey } from "@/components/literacy/AppSidebar";
 import { HomeTab } from "@/components/literacy/HomeTab";
 import { PracticeTab } from "@/components/literacy/PracticeTab";
+import { ChallengeTab } from "@/components/literacy/ChallengeTab";
 import { deriveRoadmap } from "@/lib/roadmap";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Tab = "home" | "analyze" | "chat" | "assist" | "quiz" | "dict" | "step5";
+type Tab = "home" | "analyze" | "chat" | "assist" | "quiz" | "dict" | "step5" | "challenge";
 
 function Index() {
   const hydrated = useHydrated();
@@ -332,6 +333,7 @@ function Index() {
           if (tab === "assist") return "step3";
           if (tab === "chat") return "step4";
           if (tab === "quiz" || tab === "step5") return "step5";
+          if (tab === "challenge") return "challenge";
           return "home";
         })()}
         onSelect={(key) => {
@@ -363,6 +365,9 @@ function Index() {
               break;
             case "badges":
               setCodexOpen(true);
+              break;
+            case "challenge":
+              setTab("challenge");
               break;
           }
         }}
@@ -448,6 +453,7 @@ function Index() {
 
       <main className="max-w-6xl mobile-frame lg:max-w-6xl px-3 pt-2 pb-4 sm:px-4 sm:pt-3 sm:pb-6">
         {tab !== "home" &&
+          tab !== "challenge" &&
           (() => {
             // step5 = 실천하기 → 하위에 quiz+reflect를 담고 있어 stage-context는 quiz로 대응.
             const ctxTab = tab === "step5" ? "quiz" : tab;
@@ -479,19 +485,23 @@ function Index() {
         <div hidden={tab !== "quiz"}>{quizNode}</div>
         <div hidden={tab !== "dict"}>{dictNode}</div>
         <div hidden={tab !== "step5"}>{step5Node}</div>
+        <div hidden={tab !== "challenge"}>
+          <ChallengeTab studentId={activeId} studentName={student.name} onXP={awardXP} />
+        </div>
       </main>
 
       <nav
         className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.15)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
-        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-5">
+        <div className="max-w-6xl mobile-frame lg:max-w-6xl grid grid-cols-6">
           {[
             { id: "analyze", icon: "🔎", label: "밈 분석기" },
             { id: "dict", icon: "📚", label: "우리말 사전" },
             { id: "assist", icon: "🤖", label: "AI 수호비서" },
             { id: "chat", icon: "💬", label: "예절 역할극" },
             { id: "quiz", icon: "🎮", label: "스피드 퀴즈" },
+            { id: "challenge", icon: "🗓️", label: "7일 실천" },
           ].map((t) => (
             <button
               key={t.id}
