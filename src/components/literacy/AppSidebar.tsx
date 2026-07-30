@@ -115,11 +115,13 @@ export function AppSidebar({
       {/* Top: Logo + name + slogan */}
       <div className="px-5 pt-6 pb-5 border-b border-border">
         <div className="flex items-center gap-3">
-          <img
-            src={logoAsset.url}
-            alt="바른말 수호대 로고"
-            className="h-11 w-11 rounded-xl shrink-0"
-          />
+          <div className="h-11 w-11 shrink-0 rounded-xl bg-card grid place-items-center p-1 overflow-hidden">
+            <img
+              src={logoAsset.url}
+              alt="바른말 수호대 로고"
+              className="max-h-full max-w-full w-auto h-auto object-contain"
+            />
+          </div>
           <div className="min-w-0">
             <div className="font-black text-base leading-tight text-foreground truncate">
               바른말 수호대
