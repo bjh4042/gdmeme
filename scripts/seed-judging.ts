@@ -316,13 +316,24 @@ for (const pl of plans) {
   dates.sort();
   let streak = 0;
   let prev: string | null = null;
+  const usedJournals = new Set<string>();
+  const nextJournal = () => {
+    for (let t = 0; t < 60; t++) {
+      const s = pick(pl.r, JOURNALS);
+      if (!usedJournals.has(s)) {
+        usedJournals.add(s);
+        return s;
+      }
+    }
+    return JOURNALS.find((s) => !usedJournals.has(s)) ?? JOURNALS[0];
+  };
   for (const d of dates) {
     const yd = prev ? new Date(new Date(prev + "T00:00:00Z").getTime() + 86400000) : null;
     streak = yd && dstr(yd) === d ? streak + 1 : 1;
     prev = d;
     const wd = SCHOOL_DAYS.includes(d);
     const when = wd ? sessionTime(pl, d) : at(d, 19, 20);
-    engagement[pl.id].journals.push({ date: d, text: pick(pl.r, JOURNALS) });
+    engagement[pl.id].journals.push({ date: d, text: nextJournal() });
     push(pl, when, "journal", 2, "성찰 저널", pl.who);
     if (streak % 3 === 0) push(pl, when, "journal-streak", 10, "저널 3일 연속!", pl.who);
   }
