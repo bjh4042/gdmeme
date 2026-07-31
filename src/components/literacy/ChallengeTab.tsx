@@ -82,7 +82,17 @@ export function ChallengeTab({ studentId }: Props) {
       </div>
 
       {/* 오늘 미션 */}
-      {day != null ? (
+      {day != null && doneToday ? (
+        <div className="rounded-2xl border-2 border-primary/40 bg-white p-5 text-center shadow-[var(--shadow-soft)]">
+          <CheckCircle2 className="mx-auto h-9 w-9 text-primary" aria-hidden />
+          <div className="mt-2 text-base font-black text-[color:var(--navy)]">
+            오늘의 실천을 완료했어요!
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            내일 DAY {day} 미션이 열려요. 하루에 한 번씩 천천히 실천해요.
+          </p>
+        </div>
+      ) : day != null ? (
         <div
           className={`rounded-2xl bg-white border border-border p-4 shadow-[var(--shadow-soft)] ${celebrate ? "animate-scale-in" : ""}`}
         >
@@ -171,7 +181,11 @@ export function ChallengeTab({ studentId }: Props) {
                   <span className="text-[11px] font-black text-primary">DAY {m.day}</span>
                   {d ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                      <CheckCircle2 className="h-3 w-3" /> 완료 · {formatIsoDate(d.date)}
+                      <CheckCircle2 className="h-3 w-3" /> 완료 · {formatIsoDate(d.date)}{" "}
+                      {new Date(d.completedAt).toLocaleTimeString("ko-KR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   ) : (
                     !isToday && (
