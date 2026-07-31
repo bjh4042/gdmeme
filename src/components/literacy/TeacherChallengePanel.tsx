@@ -20,6 +20,7 @@ export function TeacherChallengePanel({
     const today = todayIsoDate();
     return students
       .filter((s) => !currentClassCode || s.classCode === currentClassCode)
+      .filter((s) => Number(s.number) > 0) // 00번(교사 계정) 제외
       .sort((a, b) => Number(a.number) - Number(b.number))
       .map((s) => {
         const rec = byStudent[s.id] ?? EMPTY_CHALLENGE;
@@ -50,11 +51,12 @@ export function TeacherChallengePanel({
   return (
     <div className="min-w-0">
       {/* 상단 통계 */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-        <Stat label="전체 완료율" value={`${overall}%`} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+        <Stat label="전체 학생 수" value={`${rows.length}명`} />
         <Stat label="오늘 참여" value={`${todayCount}명`} />
         <Stat label="오늘 미참여" value={`${rows.length - todayCount}명`} />
         <Stat label="7일 완료" value={`${fullCount}명`} />
+        <Stat label="평균 진행률" value={`${overall}%`} />
       </div>
 
       {rows.length === 0 ? (
