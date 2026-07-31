@@ -21,7 +21,7 @@ type Props = {
 };
 
 /** 7일 실천 챌린지 — 하루 1미션 실천 · 한 줄 성찰 · 완료 기록. */
-export function ChallengeTab({ studentId, onXP }: Props) {
+export function ChallengeTab({ studentId }: Props) {
   const rec = useChallengeStore((s) => s.byStudent[studentId] ?? EMPTY_CHALLENGE);
   const completeDay = useChallengeStore((s) => s.completeDay);
 
@@ -32,20 +32,21 @@ export function ChallengeTab({ studentId, onXP }: Props) {
   const day = nextDayOf(rec);
   const pct = progressOf(rec);
   const doneMap = useMemo(() => new Map(rec.days.map((d) => [d.day, d])), [rec.days]);
+  const today = todayIsoDate();
+  const doneToday = rec.days.some((d) => d.date === today);
 
   function handleComplete() {
     if (day == null) return;
+    if (doneToday) return toast.error("오늘의 실천은 이미 완료했어요. 내일 다시 만나요!");
     if (!checked) return toast.error("실천 체크를 먼저 눌러 주세요.");
     if (!reflection.trim()) return toast.error("한 줄 성찰을 적어 주세요.");
-    const ok = completeDay(studentId, day, reflection.trim(), todayIsoDate());
+    const ok = completeDay(studentId, day, reflection.trim(), today);
     if (!ok) return;
     setChecked(false);
     setReflection("");
     setCelebrate(true);
     window.setTimeout(() => setCelebrate(false), 1600);
     toast.success(`DAY${day} 실천 완료! 정말 잘했어요.`);
-    onXP?.(5, "challenge7-day", `DAY${day} 실천`);
-    if (day === 7) onXP?.(20, "challenge7-complete", "7일 실천 챌린지 완료");
   }
 
   return (
