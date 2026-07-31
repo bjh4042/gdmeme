@@ -27,6 +27,7 @@ export const cloudStateStorage: StateStorage = {
       .maybeSingle();
     if (error) {
       console.error("[cloud-state] 조회 실패", name, error.message);
+      if (cache.has(name)) hydrated.add(name);
       return cache.get(name) ?? null;
     }
     if (data?.value) cache.set(name, data.value);
