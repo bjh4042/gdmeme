@@ -80,6 +80,26 @@ const JOURNALS = [
   "친구 칭찬을 한 번 더 해 보았다.",
   "댓글을 쓰기 전에 한 번 더 읽어보았다.",
   "선생님께 감사 인사를 드렸다.",
+  "오늘 처음 알았어요. 이 말이 나쁜 뜻이었어요.",
+  "친구 말을 듣고 내 말투를 고쳤어요.",
+  "다음에는 예쁜 말을 쓰고 싶어요.",
+  "친구와 사이좋게 이야기했어요.",
+  "화가 났지만 크게 숨을 쉬고 말했어요.",
+  "줄임말을 쓰지 않고 끝까지 말해 보았어요.",
+  "모둠 활동에서 친구 말을 끝까지 들었어요.",
+  "게임 채팅에서 욕을 보고 신고했어요.",
+  "엄마한테 고맙다고 말했어요.",
+  "친구가 실수했을 때 괜찮다고 말해 주었어요.",
+  "오늘은 말하기 전에 세 번 생각했어요.",
+  "짝꿍에게 먼저 인사했어요.",
+  "나쁜 말을 들었지만 따라 하지 않았어요.",
+  "친구를 별명 대신 이름으로 불렀어요.",
+  "속상한 마음을 말로 잘 이야기했어요.",
+  "SNS에 착한 댓글을 하나 남겼어요.",
+  "형에게 짜증내지 않고 부탁했어요.",
+  "오늘 배운 바른 말을 하나 외웠어요.",
+  "친구가 웃어줘서 기분이 좋았어요.",
+  "다투고 나서 먼저 미안하다고 했어요.",
 ];
 const CH_REFLECT = [
   "고운 말을 쓰니 친구가 웃어주었다.",
@@ -110,23 +130,27 @@ type Profile = {
   searches: number;
 };
 const PROFILES: Profile[] = [
+  // ── STEP5 완료(10명): 제안·공감3+·저널·실천기록 모두 충족 ─────────
   { n: 1, sessions: 32, proposals: 5, approveRate: 1, reactions: 62, journalCount: 18, streakRun: 15, roleplay: 5, practice: 9, challenge: 7, quizzes: 18, missions: 13, searches: 18 },
   { n: 2, sessions: 26, proposals: 3, approveRate: 1, reactions: 34, journalCount: 12, streakRun: 8, roleplay: 4, practice: 6, challenge: 7, quizzes: 9, missions: 8, searches: 11 },
-  { n: 3, sessions: 22, proposals: 3, approveRate: 0.67, reactions: 24, journalCount: 9, streakRun: 7, roleplay: 4, practice: 4, challenge: 5, quizzes: 7, missions: 6, searches: 9 },
-  { n: 4, sessions: 18, proposals: 2, approveRate: 1, reactions: 21, journalCount: 7, streakRun: 5, roleplay: 3, practice: 3, challenge: 4, quizzes: 6, missions: 5, searches: 8 },
-  { n: 5, sessions: 16, proposals: 2, approveRate: 0.5, reactions: 18, journalCount: 6, streakRun: 4, roleplay: 3, practice: 3, challenge: 4, quizzes: 5, missions: 4, searches: 7 },
-  { n: 6, sessions: 15, proposals: 2, approveRate: 1, reactions: 12, journalCount: 5, streakRun: 3, roleplay: 3, practice: 2, challenge: 3, quizzes: 5, missions: 4, searches: 6 },
-  { n: 7, sessions: 20, proposals: 3, approveRate: 1, reactions: 27, journalCount: 8, streakRun: 6, roleplay: 4, practice: 5, challenge: 6, quizzes: 8, missions: 7, searches: 10 },
-  { n: 8, sessions: 12, proposals: 1, approveRate: 1, reactions: 9, journalCount: 4, streakRun: 3, roleplay: 2, practice: 2, challenge: 3, quizzes: 4, missions: 3, searches: 5 },
-  { n: 9, sessions: 10, proposals: 1, approveRate: 0, reactions: 6, journalCount: 3, streakRun: 2, roleplay: 2, practice: 1, challenge: 2, quizzes: 3, missions: 3, searches: 5 },
+  { n: 3, sessions: 22, proposals: 3, approveRate: 0.67, reactions: 24, journalCount: 9, streakRun: 7, roleplay: 4, practice: 4, challenge: 6, quizzes: 7, missions: 6, searches: 9 },
+  { n: 4, sessions: 18, proposals: 2, approveRate: 1, reactions: 21, journalCount: 7, streakRun: 5, roleplay: 3, practice: 3, challenge: 5, quizzes: 6, missions: 5, searches: 8 },
+  { n: 5, sessions: 16, proposals: 2, approveRate: 0.5, reactions: 18, journalCount: 6, streakRun: 4, roleplay: 4, practice: 3, challenge: 4, quizzes: 5, missions: 4, searches: 7 },
+  { n: 6, sessions: 15, proposals: 2, approveRate: 1, reactions: 12, journalCount: 5, streakRun: 3, roleplay: 3, practice: 2, challenge: 4, quizzes: 5, missions: 4, searches: 6 },
+  { n: 7, sessions: 20, proposals: 3, approveRate: 1, reactions: 27, journalCount: 8, streakRun: 6, roleplay: 4, practice: 5, challenge: 7, quizzes: 8, missions: 7, searches: 10 },
   { n: 10, sessions: 24, proposals: 3, approveRate: 1, reactions: 31, journalCount: 10, streakRun: 7, roleplay: 5, practice: 5, challenge: 6, quizzes: 8, missions: 7, searches: 10 },
-  { n: 11, sessions: 8, proposals: 1, approveRate: 1, reactions: 5, journalCount: 2, streakRun: 2, roleplay: 1, practice: 1, challenge: 2, quizzes: 2, missions: 2, searches: 4 },
-  { n: 12, sessions: 14, proposals: 2, approveRate: 0.5, reactions: 14, journalCount: 5, streakRun: 4, roleplay: 3, practice: 2, challenge: 3, quizzes: 5, missions: 4, searches: 6 },
-  { n: 13, sessions: 6, proposals: 1, approveRate: 0, reactions: 3, journalCount: 1, streakRun: 1, roleplay: 1, practice: 0, challenge: 1, quizzes: 2, missions: 1, searches: 3 },
   { n: 14, sessions: 19, proposals: 2, approveRate: 1, reactions: 20, journalCount: 7, streakRun: 5, roleplay: 4, practice: 4, challenge: 5, quizzes: 6, missions: 6, searches: 8 },
-  { n: 15, sessions: 11, proposals: 1, approveRate: 1, reactions: 8, journalCount: 3, streakRun: 3, roleplay: 2, practice: 1, challenge: 2, quizzes: 4, missions: 3, searches: 5 },
   { n: 16, sessions: 28, proposals: 4, approveRate: 0.75, reactions: 44, journalCount: 13, streakRun: 10, roleplay: 5, practice: 7, challenge: 7, quizzes: 10, missions: 9, searches: 12 },
-  { n: 17, sessions: 4, proposals: 1, approveRate: 0, reactions: 2, journalCount: 1, streakRun: 1, roleplay: 0, practice: 0, challenge: 0, quizzes: 1, missions: 1, searches: 2 },
+  // ── STEP4 진행(4명): 실천 기록 없음 + 연속 저널 3일 미만 ──────────
+  { n: 8, sessions: 12, proposals: 1, approveRate: 1, reactions: 9, journalCount: 4, streakRun: 2, roleplay: 2, practice: 0, challenge: 5, quizzes: 5, missions: 4, searches: 6 },
+  { n: 9, sessions: 10, proposals: 1, approveRate: 0, reactions: 6, journalCount: 3, streakRun: 1, roleplay: 3, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  { n: 12, sessions: 14, proposals: 2, approveRate: 0.5, reactions: 14, journalCount: 5, streakRun: 2, roleplay: 3, practice: 0, challenge: 6, quizzes: 5, missions: 4, searches: 6 },
+  { n: 15, sessions: 11, proposals: 1, approveRate: 1, reactions: 8, journalCount: 3, streakRun: 1, roleplay: 2, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  // ── STEP3 진행(2명): 공감 3회 미만 ────────────────────────────────
+  { n: 11, sessions: 9, proposals: 1, approveRate: 1, reactions: 2, journalCount: 2, streakRun: 1, roleplay: 2, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  { n: 13, sessions: 7, proposals: 1, approveRate: 0, reactions: 1, journalCount: 1, streakRun: 1, roleplay: 1, practice: 0, challenge: 3, quizzes: 4, missions: 3, searches: 5 },
+  // ── STEP2 진행(1명): 저널·실천 없음, 공감 1회 ─────────────────────
+  { n: 17, sessions: 6, proposals: 1, approveRate: 0, reactions: 1, journalCount: 0, streakRun: 0, roleplay: 1, practice: 0, challenge: 3, quizzes: 4, missions: 3, searches: 4 },
 ];
 
 // ── ① 학생 명단 / 계정 ────────────────────────────────────────────
@@ -292,13 +316,24 @@ for (const pl of plans) {
   dates.sort();
   let streak = 0;
   let prev: string | null = null;
+  const usedJournals = new Set<string>();
+  const nextJournal = () => {
+    for (let t = 0; t < 60; t++) {
+      const s = pick(pl.r, JOURNALS);
+      if (!usedJournals.has(s)) {
+        usedJournals.add(s);
+        return s;
+      }
+    }
+    return JOURNALS.find((s) => !usedJournals.has(s)) ?? JOURNALS[0];
+  };
   for (const d of dates) {
     const yd = prev ? new Date(new Date(prev + "T00:00:00Z").getTime() + 86400000) : null;
     streak = yd && dstr(yd) === d ? streak + 1 : 1;
     prev = d;
     const wd = SCHOOL_DAYS.includes(d);
     const when = wd ? sessionTime(pl, d) : at(d, 19, 20);
-    engagement[pl.id].journals.push({ date: d, text: pick(pl.r, JOURNALS) });
+    engagement[pl.id].journals.push({ date: d, text: nextJournal() });
     push(pl, when, "journal", 2, "성찰 저널", pl.who);
     if (streak % 3 === 0) push(pl, when, "journal-streak", 10, "저널 3일 연속!", pl.who);
   }
