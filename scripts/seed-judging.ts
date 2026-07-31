@@ -130,23 +130,27 @@ type Profile = {
   searches: number;
 };
 const PROFILES: Profile[] = [
+  // ── STEP5 완료(10명): 제안·공감3+·저널·실천기록 모두 충족 ─────────
   { n: 1, sessions: 32, proposals: 5, approveRate: 1, reactions: 62, journalCount: 18, streakRun: 15, roleplay: 5, practice: 9, challenge: 7, quizzes: 18, missions: 13, searches: 18 },
   { n: 2, sessions: 26, proposals: 3, approveRate: 1, reactions: 34, journalCount: 12, streakRun: 8, roleplay: 4, practice: 6, challenge: 7, quizzes: 9, missions: 8, searches: 11 },
-  { n: 3, sessions: 22, proposals: 3, approveRate: 0.67, reactions: 24, journalCount: 9, streakRun: 7, roleplay: 4, practice: 4, challenge: 5, quizzes: 7, missions: 6, searches: 9 },
-  { n: 4, sessions: 18, proposals: 2, approveRate: 1, reactions: 21, journalCount: 7, streakRun: 5, roleplay: 3, practice: 3, challenge: 4, quizzes: 6, missions: 5, searches: 8 },
-  { n: 5, sessions: 16, proposals: 2, approveRate: 0.5, reactions: 18, journalCount: 6, streakRun: 4, roleplay: 3, practice: 3, challenge: 4, quizzes: 5, missions: 4, searches: 7 },
-  { n: 6, sessions: 15, proposals: 2, approveRate: 1, reactions: 12, journalCount: 5, streakRun: 3, roleplay: 3, practice: 2, challenge: 3, quizzes: 5, missions: 4, searches: 6 },
-  { n: 7, sessions: 20, proposals: 3, approveRate: 1, reactions: 27, journalCount: 8, streakRun: 6, roleplay: 4, practice: 5, challenge: 6, quizzes: 8, missions: 7, searches: 10 },
-  { n: 8, sessions: 12, proposals: 1, approveRate: 1, reactions: 9, journalCount: 4, streakRun: 3, roleplay: 2, practice: 2, challenge: 3, quizzes: 4, missions: 3, searches: 5 },
-  { n: 9, sessions: 10, proposals: 1, approveRate: 0, reactions: 6, journalCount: 3, streakRun: 2, roleplay: 2, practice: 1, challenge: 2, quizzes: 3, missions: 3, searches: 5 },
+  { n: 3, sessions: 22, proposals: 3, approveRate: 0.67, reactions: 24, journalCount: 9, streakRun: 7, roleplay: 4, practice: 4, challenge: 6, quizzes: 7, missions: 6, searches: 9 },
+  { n: 4, sessions: 18, proposals: 2, approveRate: 1, reactions: 21, journalCount: 7, streakRun: 5, roleplay: 3, practice: 3, challenge: 5, quizzes: 6, missions: 5, searches: 8 },
+  { n: 5, sessions: 16, proposals: 2, approveRate: 0.5, reactions: 18, journalCount: 6, streakRun: 4, roleplay: 4, practice: 3, challenge: 4, quizzes: 5, missions: 4, searches: 7 },
+  { n: 6, sessions: 15, proposals: 2, approveRate: 1, reactions: 12, journalCount: 5, streakRun: 3, roleplay: 3, practice: 2, challenge: 4, quizzes: 5, missions: 4, searches: 6 },
+  { n: 7, sessions: 20, proposals: 3, approveRate: 1, reactions: 27, journalCount: 8, streakRun: 6, roleplay: 4, practice: 5, challenge: 7, quizzes: 8, missions: 7, searches: 10 },
   { n: 10, sessions: 24, proposals: 3, approveRate: 1, reactions: 31, journalCount: 10, streakRun: 7, roleplay: 5, practice: 5, challenge: 6, quizzes: 8, missions: 7, searches: 10 },
-  { n: 11, sessions: 8, proposals: 1, approveRate: 1, reactions: 5, journalCount: 2, streakRun: 2, roleplay: 1, practice: 1, challenge: 2, quizzes: 2, missions: 2, searches: 4 },
-  { n: 12, sessions: 14, proposals: 2, approveRate: 0.5, reactions: 14, journalCount: 5, streakRun: 4, roleplay: 3, practice: 2, challenge: 3, quizzes: 5, missions: 4, searches: 6 },
-  { n: 13, sessions: 6, proposals: 1, approveRate: 0, reactions: 3, journalCount: 1, streakRun: 1, roleplay: 1, practice: 0, challenge: 1, quizzes: 2, missions: 1, searches: 3 },
   { n: 14, sessions: 19, proposals: 2, approveRate: 1, reactions: 20, journalCount: 7, streakRun: 5, roleplay: 4, practice: 4, challenge: 5, quizzes: 6, missions: 6, searches: 8 },
-  { n: 15, sessions: 11, proposals: 1, approveRate: 1, reactions: 8, journalCount: 3, streakRun: 3, roleplay: 2, practice: 1, challenge: 2, quizzes: 4, missions: 3, searches: 5 },
   { n: 16, sessions: 28, proposals: 4, approveRate: 0.75, reactions: 44, journalCount: 13, streakRun: 10, roleplay: 5, practice: 7, challenge: 7, quizzes: 10, missions: 9, searches: 12 },
-  { n: 17, sessions: 4, proposals: 1, approveRate: 0, reactions: 2, journalCount: 1, streakRun: 1, roleplay: 0, practice: 0, challenge: 0, quizzes: 1, missions: 1, searches: 2 },
+  // ── STEP4 진행(4명): 실천 기록 없음 + 연속 저널 3일 미만 ──────────
+  { n: 8, sessions: 12, proposals: 1, approveRate: 1, reactions: 9, journalCount: 4, streakRun: 2, roleplay: 2, practice: 0, challenge: 5, quizzes: 5, missions: 4, searches: 6 },
+  { n: 9, sessions: 10, proposals: 1, approveRate: 0, reactions: 6, journalCount: 3, streakRun: 1, roleplay: 3, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  { n: 12, sessions: 14, proposals: 2, approveRate: 0.5, reactions: 14, journalCount: 5, streakRun: 2, roleplay: 3, practice: 0, challenge: 6, quizzes: 5, missions: 4, searches: 6 },
+  { n: 15, sessions: 11, proposals: 1, approveRate: 1, reactions: 8, journalCount: 3, streakRun: 1, roleplay: 2, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  // ── STEP3 진행(2명): 공감 3회 미만 ────────────────────────────────
+  { n: 11, sessions: 9, proposals: 1, approveRate: 1, reactions: 2, journalCount: 2, streakRun: 1, roleplay: 2, practice: 0, challenge: 4, quizzes: 4, missions: 3, searches: 5 },
+  { n: 13, sessions: 7, proposals: 1, approveRate: 0, reactions: 1, journalCount: 1, streakRun: 1, roleplay: 1, practice: 0, challenge: 3, quizzes: 4, missions: 3, searches: 5 },
+  // ── STEP2 진행(1명): 저널·실천 없음, 공감 1회 ─────────────────────
+  { n: 17, sessions: 6, proposals: 1, approveRate: 0, reactions: 1, journalCount: 0, streakRun: 0, roleplay: 1, practice: 0, challenge: 3, quizzes: 4, missions: 3, searches: 4 },
 ];
 
 // ── ① 학생 명단 / 계정 ────────────────────────────────────────────
