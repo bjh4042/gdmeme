@@ -20,6 +20,7 @@ export function TeacherChallengePanel({
     const today = todayIsoDate();
     return students
       .filter((s) => !currentClassCode || s.classCode === currentClassCode)
+      .filter((s) => Number(s.number) > 0) // 00번(교사 계정) 제외
       .sort((a, b) => Number(a.number) - Number(b.number))
       .map((s) => {
         const rec = byStudent[s.id] ?? EMPTY_CHALLENGE;
@@ -50,11 +51,12 @@ export function TeacherChallengePanel({
   return (
     <div className="min-w-0">
       {/* 상단 통계 */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-        <Stat label="전체 완료율" value={`${overall}%`} />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+        <Stat label="전체 학생 수" value={`${rows.length}명`} />
         <Stat label="오늘 참여" value={`${todayCount}명`} />
         <Stat label="오늘 미참여" value={`${rows.length - todayCount}명`} />
         <Stat label="7일 완료" value={`${fullCount}명`} />
+        <Stat label="평균 진행률" value={`${overall}%`} />
       </div>
 
       {rows.length === 0 ? (
@@ -73,6 +75,7 @@ export function TeacherChallengePanel({
                 ))}
                 <th className="py-2 px-2 font-bold">진행률</th>
                 <th className="py-2 px-2 font-bold">최근 완료</th>
+                <th className="py-2 px-2 font-bold">완료 일수</th>
                 <th className="py-2 pl-2 font-bold">관리</th>
               </tr>
             </thead>
@@ -111,6 +114,7 @@ export function TeacherChallengePanel({
                   <td className="py-2 px-2 text-[11px] text-muted-foreground">
                     {formatIsoDate(r.last)}
                   </td>
+                  <td className="py-2 px-2 text-[11px] font-bold">{r.rec.days.length}/7</td>
                   <td className="py-2 pl-2">
                     <button
                       type="button"
@@ -144,7 +148,7 @@ export function TeacherChallengePanel({
               닫기
             </button>
           </div>
-          <ul className="mt-2 space-y-1.5">
+          <ul className="mt-2 space-y-1.5 max-h-[40vh] overflow-y-auto pr-1">
             {open.rec.days.length === 0 && (
               <li className="text-xs text-muted-foreground">아직 작성한 성찰이 없습니다.</li>
             )}
@@ -154,7 +158,11 @@ export function TeacherChallengePanel({
                 className="rounded-xl bg-white border border-[color:var(--border)] px-3 py-2"
               >
                 <div className="text-[11px] font-black text-primary">
-                  DAY {d.day} · {formatIsoDate(d.date)}
+                  DAY {d.day} · {formatIsoDate(d.date)}{" "}
+                  {new Date(d.completedAt).toLocaleTimeString("ko-KR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
                 <div className="text-xs text-slate-700 leading-relaxed">{d.reflection}</div>
               </li>
