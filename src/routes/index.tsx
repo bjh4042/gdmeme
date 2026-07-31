@@ -21,6 +21,7 @@ import {
   studentId,
   addClassXPFor,
 } from "@/lib/literacy-store";
+import { useRosterStore } from "@/stores/roster";
 import { levelOf } from "@/lib/literacy-types";
 import { toast } from "sonner";
 import { useEngagementStore } from "@/stores/engagement";
