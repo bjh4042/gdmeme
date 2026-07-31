@@ -2,7 +2,7 @@
 // 기존 zustand persist 의 저장 위치만 localStorage → Cloud DB(app_state) 로 교체한다.
 // 스토어 API·데이터 형태는 그대로 유지되므로 컴포넌트 코드는 영향을 받지 않는다.
 import type { StateStorage } from "zustand/middleware";
-import { supabase } from "@/integrations/supabase/client";
+import { readCloudState, writeCloudState } from "@/lib/cloud-state.functions";
 
 const pending = new Map<string, ReturnType<typeof setTimeout>>();
 const cache = new Map<string, string>();
@@ -11,28 +11,26 @@ const cache = new Map<string, string>();
 const hydrated = new Set<string>();
 
 async function flush(name: string, value: string) {
-  const { error } = await supabase
-    .from("app_state")
-    .upsert({ key: name, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
-  if (error) console.error("[cloud-state] 저장 실패", name, error.message);
+  try {
+    await writeCloudState({ data: { key: name, value } });
+  } catch {
+    console.error("[cloud-state] 저장 실패", name);
+  }
 }
 
 export const cloudStateStorage: StateStorage = {
   getItem: async (name) => {
     if (typeof window === "undefined") return null;
-    const { data, error } = await supabase
-      .from("app_state")
-      .select("value")
-      .eq("key", name)
-      .maybeSingle();
-    if (error) {
-      console.error("[cloud-state] 조회 실패", name, error.message);
+    try {
+      const { value } = await readCloudState({ data: { key: name } });
+      if (value) cache.set(name, value);
+      hydrated.add(name);
+      return value ?? null;
+    } catch {
+      console.error("[cloud-state] 조회 실패", name);
       if (cache.has(name)) hydrated.add(name);
       return cache.get(name) ?? null;
     }
-    if (data?.value) cache.set(name, data.value);
-    hydrated.add(name);
-    return data?.value ?? null;
   },
   setItem: async (name, value) => {
     if (typeof window === "undefined") return;
@@ -51,6 +49,6 @@ export const cloudStateStorage: StateStorage = {
   removeItem: async (name) => {
     if (typeof window === "undefined") return;
     cache.delete(name);
-    await supabase.from("app_state").update({ value: "" }).eq("key", name);
+    await flush(name, "");
   },
 };
