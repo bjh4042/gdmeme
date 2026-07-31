@@ -68,7 +68,14 @@ function Index() {
 
   // Register the active student into the roster on every session start / name change.
   useEffect(() => {
-    if (student) roster.upsertActive(student);
+    if (!student) return;
+    // Cloud 명단 하이드레이션이 끝난 뒤에 등록해야 기존 학생 명단을 덮어쓰지 않는다.
+    const run = () => useRosterStore.getState().upsertActive(student);
+    if (useRosterStore.persist.hasHydrated()) {
+      run();
+      return;
+    }
+    return useRosterStore.persist.onFinishHydration(run);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student?.classCode, student?.number, student?.name]);
 
