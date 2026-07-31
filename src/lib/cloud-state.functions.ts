@@ -11,7 +11,11 @@ const ALLOWED_KEYS = [
   "bmsd_challenge7_v1",
 ] as const;
 
-const keySchema = z.enum(ALLOWED_KEYS);
+const keySchema = z
+  .string()
+  .refine((k): k is (typeof ALLOWED_KEYS)[number] => (ALLOWED_KEYS as readonly string[]).includes(k), {
+    message: "허용되지 않은 상태 키입니다.",
+  });
 
 export const readCloudState = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => z.object({ key: keySchema }).parse(data))
