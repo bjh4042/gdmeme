@@ -9,6 +9,8 @@ import {
 } from "@/lib/ai-assistant-dataset";
 import { type CyberEthicsSolution } from "@/lib/cyber-ethics-dataset";
 import { searchAssistant, getRelatedGuides, type GuideChip } from "@/lib/assistant-search";
+import { composeAssistantReply } from "@/lib/assistant-intent";
+import { findByTerm, findAlternatives } from "@/data/language/search";
 
 type ChatMsg = {
   id: string;
@@ -102,8 +104,32 @@ export function AssistantTab({
     // 전역 다중 스코어링 검색 엔진 (사이버 윤리 + 밈/어원 통합)
     window.setTimeout(() => {
       const hit = searchAssistant(text, 1);
+      // ① Intent → ② 상황 분석 순으로 먼저 해석한다 (키워드 단독 판단 금지)
+      const composed = composeAssistantReply(text);
+      const term = composed.analysis.context.term;
+      const langEntry = term ? findByTerm(term) : null;
+      const enriched =
+        term
+          ? composeAssistantReply(text, {
+              termMeaning: langEntry?.meaning ?? null,
+              alternatives: findAlternatives(term),
+            })
+          : composed;
+
+      const useIntentEngine =
+        enriched.analysis.intent !== "other" && enriched.analysis.confidence >= 0.5;
+
       let bot: ChatMsg;
-      if (hit && hit.kind === "cyber") {
+      if (useIntentEngine) {
+        bot = {
+          id: makeId(),
+          from: "bot",
+          text: enriched.text,
+          at: stamp(),
+          category: enriched.analysis.intent,
+        };
+        if (onXP) onXP(2, "assistant-intent", enriched.analysis.intent);
+      } else if (hit && hit.kind === "cyber") {
         bot = {
           id: makeId(),
           from: "bot",
@@ -127,7 +153,7 @@ export function AssistantTab({
         bot = {
           id: makeId(),
           from: "bot",
-          text: pickFallback(),
+          text: enriched.text || pickFallback(),
           at: stamp(),
           pattern: null,
         };
@@ -135,9 +161,13 @@ export function AssistantTab({
       setMsgs((prev) => [...prev, bot]);
       setTyping(false);
       // 대화 맥락 연동형 가이드 칩 실시간 갱신
-      if (hit) {
+      if (useIntentEngine) {
+        setDynamicChips(enriched.suggestions);
+      } else if (hit) {
         const related = getRelatedGuides(hit, 4);
         setDynamicChips(related.length > 0 ? related : null);
+      } else {
+        setDynamicChips(enriched.suggestions);
       }
       inputRef.current?.focus();
     }, 480);
