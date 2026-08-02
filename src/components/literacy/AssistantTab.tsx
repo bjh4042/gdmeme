@@ -105,19 +105,14 @@ export function AssistantTab({
     window.setTimeout(() => {
       const hit = searchAssistant(text, 1);
       // ① Intent → ② 상황 분석 순으로 먼저 해석한다 (키워드 단독 판단 금지)
-      const composed = composeAssistantReply(text, {
-        termMeaning: (() => {
-          const term = composeAssistantReply.length ? null : null;
-          return term;
-        })(),
-      });
+      const composed = composeAssistantReply(text);
       const term = composed.analysis.context.term;
       const langEntry = term ? findByTerm(term) : null;
       const enriched =
-        langEntry || term
+        term
           ? composeAssistantReply(text, {
               termMeaning: langEntry?.meaning ?? null,
-              alternatives: term ? findAlternatives(term) : [],
+              alternatives: findAlternatives(term),
             })
           : composed;
 
