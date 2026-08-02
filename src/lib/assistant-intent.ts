@@ -693,7 +693,12 @@ const SUGGESTIONS: Record<AssistantIntent, AssistantSuggestion[]> = {
 export function analyzeStudentQuestion(raw: string): AssistantAnalysis {
   const t = norm(raw);
   const scored = scoreIntents(t);
-  const { intent, conf } = resolveIntent(scored, t);
+  let { intent, conf } = resolveIntent(scored, t);
+  // 장소 맥락 보정: 게임/단톡방에서 벌어진 말 문제는 장소 Intent로 다룬다.
+  if (intent === "profanity") {
+    if (has(t, W.game)) intent = "game_chat";
+    else if (has(t, W.groupChat)) intent = "group_chat";
+  }
   return {
     intent,
     candidates: scored.map((s) => s.intent),
