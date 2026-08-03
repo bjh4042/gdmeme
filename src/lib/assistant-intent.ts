@@ -45,6 +45,11 @@ export type AssistantAnalysis = {
   candidates: AssistantIntent[];
   confidence: number; // 0~1
   context: AssistantContext;
+  /** 질문 목적 (정보/이유/실천/예시/상담/절차/예절/판단) */
+  goal?: import("./assistant-scenario").QuestionGoal;
+  /** Intent 안의 세부 상황 분기 키 */
+  scenarioKey?: string;
+  scenarioLabel?: string;
 };
 
 export type AssistantSuggestion = { icon: string; label: string; prompt: string };
