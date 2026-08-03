@@ -9,6 +9,16 @@
  *   ✅ 순수 함수 모듈. React import 금지.
  */
 
+import {
+  detectScenario,
+  detectGoal,
+  pickEmpathy,
+  flowSuggestions,
+  EXPRESSION_BANK,
+  EXAMPLE_COUNT,
+  LAYOUT,
+} from "./assistant-scenario";
+
 export type AssistantIntent =
   | "slang_meaning" // ① 유행어 뜻
   | "profanity" // ② 비속어·욕설
