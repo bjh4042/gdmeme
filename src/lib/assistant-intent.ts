@@ -724,39 +724,88 @@ export function composeAssistantReply(raw: string, opts: ComposeOptions = {}): A
   const analysis = analyzeStudentQuestion(raw);
   const { intent, context } = analysis;
   const body = bodyFor(intent, context, context.term);
-  const opener = pickOpener(seedOf(raw), context);
+  const t = norm(raw);
+  const seed = seedOf(raw);
 
-  const lines: string[] = [];
-  lines.push(`${opener}`);
-  lines.push("");
-  lines.push(`✅ ${body.judgement}`);
+  // ① 세부 상황(Scenario) → ② 질문 목적(Goal) 판단
+  const scenario = detectScenario(intent, t, context);
+  const goal = detectGoal(t, context);
 
+  // 시나리오가 있으면 기본 본문을 덮어쓴다.
+  const judgement = scenario.judgement ?? body.judgement;
+  const reason = scenario.reason ?? body.reason;
+  const think = scenario.think ?? body.think;
+
+  // 순화 표현: 시나리오 은행 + 기존 본문 예시 + 데이터셋 대체 표현
+  const bank = scenario.bank ? (EXPRESSION_BANK[scenario.bank] ?? []) : [];
+  const rotated = bank.length > 0 ? bank.slice(Math.abs(seed) % bank.length).concat(bank) : [];
+  const seen = new Set<string>();
+  const examples: string[] = [];
+  const pushEx = (s: string) => {
+    const line = s.trim();
+    if (!line || seen.has(line)) return;
+    seen.add(line);
+    examples.push(line.startsWith("❌") || line.startsWith("⭕") || line.startsWith("•") ? line : `⭕ ${line}`);
+  };
+  (scenario.actions ?? []).forEach(pushEx);
+  rotated.forEach(pushEx);
+  (opts.alternatives ?? []).forEach(pushEx);
+  if (examples.length === 0) body.action.forEach(pushEx);
+  else body.action.filter((a) => a.startsWith("❌")).slice(0, 1).forEach((a) => examples.unshift(a));
+
+  const limited = examples.slice(0, EXAMPLE_COUNT[goal]);
+  const steps = scenario.steps ?? null;
   const meaning = opts.termMeaning?.trim();
-  lines.push("");
-  lines.push(meaning ? `📖 ${meaning}\n\n${body.reason}` : body.reason);
 
-  const actions = [...body.action];
-  if (opts.alternatives && opts.alternatives.length > 0) {
-    actions.push(`⭕ 이렇게 바꿔 쓸 수 있어: ${opts.alternatives.slice(0, 3).join(" / ")}`);
+  const out: string[] = [];
+  const add = (s: string) => {
+    if (out.length > 0) out.push("");
+    out.push(s);
+  };
+
+  for (const section of LAYOUT[goal]) {
+    switch (section) {
+      case "empathy":
+        add(pickEmpathy(goal, context, scenario.key, seed));
+        break;
+      case "judgement":
+        add(`✅ ${judgement}`);
+        break;
+      case "meaning":
+        if (meaning) add(`📖 ${meaning}`);
+        else add(`✅ ${judgement}`);
+        break;
+      case "reason":
+        add(reason);
+        break;
+      case "examples":
+        if (limited.length > 0) add(`🌱 이렇게 말해 보자\n${limited.join("\n")}`);
+        break;
+      case "steps":
+        if (steps && steps.length > 0) add(`📋 이렇게 해 보자\n${steps.join("\n")}`);
+        else if (goal === "practice" && limited.length > 0) add(`✅ ${judgement}`);
+        break;
+      case "think":
+        if (goal !== "definition" || Math.abs(seed) % 2 === 0) add(`🤔 함께 생각해 볼까? ${think}`);
+        break;
+    }
   }
-  lines.push("");
-  lines.push("🌱 이렇게 말해 보자");
-  lines.push(actions.join("\n"));
 
-  // 8단계 — 확실히 판단할 수 없거나 위험한 상황이면 어른과 함께
+  // 위험하거나 판단이 어려운 상황이면 어른과 함께
   if (context.needsAdultHelp || analysis.confidence < 0.4) {
-    lines.push("");
-    lines.push(
-      "🙋 이 일은 혼자 판단하기 어려워. 오늘 안에 선생님이나 보호자와 함께 이야기해 보자.",
-    );
+    add("🙋 이 일은 혼자 판단하기 어려워. 오늘 안에 선생님이나 보호자와 함께 이야기해 보자.");
   }
 
-  lines.push("");
-  lines.push(`🤔 함께 생각해 볼까? ${body.think}`);
+  const enrichedAnalysis: AssistantAnalysis = {
+    ...analysis,
+    goal,
+    scenarioKey: scenario.key,
+    scenarioLabel: scenario.label,
+  };
 
   return {
-    text: lines.join("\n"),
-    analysis,
-    suggestions: SUGGESTIONS[intent] ?? SUGGESTIONS.other,
+    text: out.join("\n"),
+    analysis: enrichedAnalysis,
+    suggestions: flowSuggestions(scenario.key, goal, SUGGESTIONS[intent] ?? SUGGESTIONS.other),
   };
 }
