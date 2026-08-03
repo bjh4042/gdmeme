@@ -334,35 +334,6 @@ function analyzeContext(raw: string, t: string, intent: AssistantIntent): Assist
 }
 
 // ─────────────────────────────────────────────────────────────
-// 3) 말투 — 시작 표현 다양화 (같은 표현 연속 금지)
-// ─────────────────────────────────────────────────────────────
-
-const OPENERS: string[] = [
-  "좋은 질문이야.",
-  "그럴 수도 있겠구나.",
-  "속상했겠다.",
-  "먼저 함께 생각해 보자.",
-  "친구 입장도 떠올려 볼까?",
-  "정말 중요한 상황이네.",
-  "용기 내어 물어봐 줘서 고마워.",
-  "그 마음, 충분히 이해돼.",
-  "이건 우리 반에서도 자주 있는 일이야.",
-  "천천히 하나씩 살펴보자.",
-];
-
-const recentOpeners: string[] = [];
-
-function pickOpener(seed: number, ctx: AssistantContext): string {
-  const emotional =
-    ctx.role === "victim" ? ["속상했겠다.", "그 마음, 충분히 이해돼.", "많이 힘들었겠구나."] : null;
-  const pool = (emotional ?? OPENERS).filter((o) => !recentOpeners.includes(o));
-  const use = pool.length > 0 ? pool : (emotional ?? OPENERS);
-  const line = use[Math.abs(seed) % use.length];
-  recentOpeners.push(line);
-  if (recentOpeners.length > 3) recentOpeners.shift();
-  return line;
-}
-
 function seedOf(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
