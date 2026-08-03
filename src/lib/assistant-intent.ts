@@ -732,7 +732,7 @@ export function composeAssistantReply(raw: string, opts: ComposeOptions = {}): A
   rotated.forEach(pushEx);
   (opts.alternatives ?? []).forEach(pushEx);
   if (examples.length === 0) body.action.forEach(pushEx);
-  else if (!scenario.actions && goal !== "example")
+  else if (!scenario.actions && goal !== "example" && scenario.key.endsWith(".general"))
     body.action
       .filter((a) => a.startsWith("❌"))
       .slice(0, 1)
