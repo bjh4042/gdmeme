@@ -732,13 +732,18 @@ export function composeAssistantReply(raw: string, opts: ComposeOptions = {}): A
   rotated.forEach(pushEx);
   (opts.alternatives ?? []).forEach(pushEx);
   if (examples.length === 0) body.action.forEach(pushEx);
-  else body.action.filter((a) => a.startsWith("❌")).slice(0, 1).forEach((a) => examples.unshift(a));
+  else if (!scenario.actions && goal !== "example")
+    body.action
+      .filter((a) => a.startsWith("❌"))
+      .slice(0, 1)
+      .forEach((a) => examples.unshift(a));
 
   const limited = examples.slice(0, EXAMPLE_COUNT[goal]);
   const steps = scenario.steps ?? null;
   const meaning = opts.termMeaning?.trim();
 
   const out: string[] = [];
+  const emitted = new Set<string>();
   const add = (s: string) => {
     if (out.length > 0) out.push("");
     out.push(s);
@@ -750,11 +755,12 @@ export function composeAssistantReply(raw: string, opts: ComposeOptions = {}): A
         add(pickEmpathy(goal, context, scenario.key, seed));
         break;
       case "judgement":
-        add(`✅ ${judgement}`);
+        if (!emitted.has("judgement")) add(`✅ ${judgement}`);
+        emitted.add("judgement");
         break;
       case "meaning":
-        if (meaning) add(`📖 ${meaning}`);
-        else add(`✅ ${judgement}`);
+        add(meaning ? `📖 ${meaning}\n\n✅ ${judgement}` : `✅ ${judgement}`);
+        emitted.add("judgement");
         break;
       case "reason":
         add(reason);
@@ -764,7 +770,10 @@ export function composeAssistantReply(raw: string, opts: ComposeOptions = {}): A
         break;
       case "steps":
         if (steps && steps.length > 0) add(`📋 이렇게 해 보자\n${steps.join("\n")}`);
-        else if (goal === "practice" && limited.length > 0) add(`✅ ${judgement}`);
+        else if (goal === "practice" && !emitted.has("judgement")) {
+          add(`✅ ${judgement}`);
+          emitted.add("judgement");
+        }
         break;
       case "think":
         if (goal !== "definition" || Math.abs(seed) % 2 === 0) add(`🤔 함께 생각해 볼까? ${think}`);

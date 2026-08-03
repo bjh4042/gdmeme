@@ -197,7 +197,24 @@ const any = (t: string, ws: string[]) => ws.some((w) => t.includes(w));
 
 const SCEN: Partial<Record<AssistantIntent, (t: string, ctx: AssistantContext) => Scenario>> = {
   group_chat: (t, ctx) => {
-    if (any(t, ["초대", "들어오래", "부르는데", "초대 거절"]))
+    if (
+      any(t, ["나만 빼", "빼고", "따돌", "초대 안", "혼자 남", "나가라", "나만 없"]) ||
+      ctx.role === "victim"
+    )
+      return {
+        key: "group_chat.exclusion",
+        label: "단톡방 따돌림",
+        judgement: "여러 명이 한 사람을 빼놓는 건 장난이 아니라 따돌림이야. 네 잘못이 아니야.",
+        reason:
+          "혼자만 빠지면 '나는 여기 필요 없나?' 하는 마음이 들어. 그건 네가 이상해서가 아니라, 그런 방법이 잘못된 거야.",
+        steps: [
+          "1) 화면을 저장해 둔다.",
+          "2) 혼자 참지 말고 오늘 안에 선생님이나 보호자에게 말한다.",
+          "3) 그 방에 계속 있을 필요는 없어. 나와도 괜찮아.",
+        ],
+        bank: "도움요청",
+      };
+    if (any(t, ["초대", "들어오래", "부르는데"]) && any(t, ["거절", "싫", "가기 싫", "안 들어", "빠지고"]))
       return {
         key: "group_chat.invite_decline",
         label: "단톡방 초대 거절",
@@ -242,18 +259,6 @@ const SCEN: Partial<Record<AssistantIntent, (t: string, ctx: AssistantContext) =
         judgement: "읽고 가만히 있는 것도 놀림을 이어지게 할 수 있어.",
         reason: "웃는 이모티콘 하나도 '괜찮다'는 신호로 보여. 반대로 짧은 한마디는 분위기를 바꿔.",
         bank: "단톡방",
-      };
-    if (any(t, ["따돌", "나만 빼", "초대 안", "혼자 남", "나가라"]) || ctx.role === "victim")
-      return {
-        key: "group_chat.exclusion",
-        label: "단톡방 따돌림",
-        judgement: "여러 명이 한 사람을 빼놓는 건 장난이 아니라 따돌림이야. 네 잘못이 아니야.",
-        steps: [
-          "1) 화면을 저장해 둔다.",
-          "2) 혼자 참지 말고 오늘 안에 선생님이나 보호자에게 말한다.",
-          "3) 그 방에 계속 있을 필요는 없어. 나와도 괜찮아.",
-        ],
-        bank: "도움요청",
       };
     if (any(t, ["예절", "지켜야", "규칙"]))
       return {
